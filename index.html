@@ -1,11 +1,134 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Grupo Rainha da Paz</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rainha da Paz</title>
+  <meta name="description" content="Conteúdos e avisos do Rainha da Paz." />
+
+  <!-- Tailwind (visual moderno sem instalar nada) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Deixa com carinha “app” */
+    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.08); }
+  </style>
 </head>
-<body>
-  <h1>Meu site no GitHub Pages</h1>
-  <p>Site criado gratuitamente com GitHub Pages 🚀</p>
-</body>
-</html>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <!-- Topbar -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur">
+    <div class="mx-auto max-w-6xl px-4 py-4 flex items-center gap-3">
+      <div class="h-10 w-10 rounded-2xl bg-white/10 grid place-items-center">
+        ✨
+      </div>
+      <div class="flex-1">
+        <h1 class="text-lg font-semibold leading-tight">Rainha da Paz</h1>
+        <p class="text-sm text-slate-300">Conteúdos, avisos e mensagens</p>
+      </div>
+
+      <button id="toggleTheme"
+        class="rounded-xl border border-white/10 px-3 py-2 text-sm hover:bg-white/5">
+        🌙 / ☀️
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-6">
+    <div class="rounded-3xl border border-white/10 p-6 md:p-10 glass">
+      <div class="flex flex-col md:flex-row md:items-end gap-4">
+        <div class="flex-1">
+          <h2 class="text-2xl md:text-4xl font-bold tracking-tight">
+            Um feed vivo, atualizado pelo n8n 🚀
+          </h2>
+          <p class="mt-2 text-slate-300 max-w-2xl">
+            Aqui você publica conteúdos automaticamente (notícias, avisos, reflexões, agenda).
+          </p>
+        </div>
+
+        <div class="w-full md:w-96">
+          <label class="text-xs text-slate-300">Buscar</label>
+          <input id="search"
+            class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:ring-2 focus:ring-white/20"
+            placeholder="Digite: querigma, grupo, evento, oração..." />
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-2" id="tagBar"></div>
+    </div>
+  </section>
+
+  <!-- Conteúdo -->
+  <main class="mx-auto max-w-6xl px-4 pb-16">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-slate-300">
+        <span id="count">0</span> publicações
+      </p>
+      <a class="text-sm underline text-slate-300 hover:text-white" href="./content.json" target="_blank">
+        Ver JSON
+      </a>
+    </div>
+
+    <div id="grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+    <div id="empty" class="hidden mt-10 text-center text-slate-300">
+      Nada encontrado. Tenta outra palavra 😄
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/70" id="modalBg"></div>
+    <div class="relative mx-auto max-w-3xl p-4 md:p-8">
+      <div class="rounded-3xl border border-white/10 bg-slate-950 p-6 md:p-8">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 id="mTitle" class="text-xl md:text-2xl font-semibold"></h3>
+            <p id="mMeta" class="mt-1 text-sm text-slate-300"></p>
+          </div>
+          <button id="closeModal" class="rounded-xl border border-white/10 px-3 py-2 hover:bg-white/5">✖</button>
+        </div>
+        <div id="mBody" class="prose prose-invert max-w-none mt-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = { items: [], q: "", tag: "Todos", dark: true };
+
+    const el = (id) => document.getElementById(id);
+
+    function fmtDate(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleDateString("pt-BR", { year: "numeric", month: "short", day: "2-digit" });
+      } catch { return ""; }
+    }
+
+    function uniqueTags(items) {
+      const tags = new Set();
+      items.forEach(i => (i.tags || []).forEach(t => tags.add(t)));
+      return ["Todos", ...Array.from(tags).sort((a,b)=>a.localeCompare(b))];
+    }
+
+    function matches(item) {
+      const q = state.q.trim().toLowerCase();
+      const inTag = state.tag === "Todos" || (item.tags || []).includes(state.tag);
+      if (!q) return inTag;
+
+      const hay = [
+        item.title, item.summary, item.category,
+        ...(item.tags || []),
+        item.content
+      ].join(" ").toLowerCase();
+
+      return inTag && hay.includes(q);
+    }
+
+    function renderTags() {
+      const tags = uniqueTags(state.items);
+      const bar = el("tagBar");
+      bar.innerHTML = "";
+      tags.forEach(t => {
+        const active =
