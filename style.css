@@ -1,0 +1,693 @@
+/* Reset e Variáveis */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Cores da RCC Brasil */
+    --rcc-red: #C8102E;
+    --rcc-yellow: #FFD100;
+    --rcc-white: #FFFFFF;
+    --rcc-dark: #1a1a1a;
+    --rcc-gray: #666666;
+    --rcc-light-gray: #f5f5f5;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--rcc-red) 0%, #a00d25 100%);
+    --gradient-accent: linear-gradient(135deg, var(--rcc-yellow) 0%, #ffb700 100%);
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.15);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--rcc-dark);
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.header-top {
+    background: var(--rcc-dark);
+    color: var(--rcc-white);
+    padding: 10px 0;
+    font-size: 0.9rem;
+}
+
+.header-top .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-contact a {
+    color: var(--rcc-white);
+    text-decoration: none;
+    margin-right: 20px;
+    transition: color 0.3s;
+}
+
+.header-contact a:hover {
+    color: var(--rcc-yellow);
+}
+
+.header-social {
+    display: flex;
+    gap: 15px;
+}
+
+.header-social a {
+    color: var(--rcc-white);
+    transition: color 0.3s;
+}
+
+.header-social a:hover {
+    color: var(--rcc-yellow);
+}
+
+/* Navbar */
+.navbar {
+    background: var(--rcc-white);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.nav-brand h1 {
+    color: var(--rcc-red);
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.nav-brand span {
+    color: var(--rcc-yellow);
+    font-weight: 700;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--rcc-red);
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-menu a {
+    color: var(--rcc-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--rcc-yellow);
+    transition: width 0.3s;
+}
+
+.nav-menu a:hover {
+    color: var(--rcc-red);
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(200, 16, 46, 0.8), rgba(200, 16, 46, 0.9)), 
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23C8102E" width="1200" height="600"/></svg>');
+    background-size: cover;
+    background-position: center;
+    color: var(--rcc-white);
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h2 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    opacity: 0.95;
+}
+
+.hero-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.info-icon {
+    font-size: 2.5rem;
+}
+
+.info-card strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.info-card p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: var(--rcc-yellow);
+    color: var(--rcc-dark);
+    padding: 15px 40px;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    background: #ffb700;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Sections */
+.section {
+    padding: 80px 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--rcc-red);
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--rcc-yellow);
+    margin: 20px auto 0;
+}
+
+/* About Section */
+.about {
+    background: var(--rcc-light-gray);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.about-text p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.mission-box {
+    background: var(--rcc-white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    margin-top: 30px;
+    border-left: 5px solid var(--rcc-red);
+}
+
+.mission-box h3 {
+    color: var(--rcc-red);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.rcc-emblem {
+    text-align: center;
+}
+
+.emblem-circle {
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--rcc-white);
+    box-shadow: var(--shadow-lg);
+    border: 8px solid var(--rcc-yellow);
+}
+
+.emblem-flame {
+    font-size: 5rem;
+    margin-bottom: 10px;
+}
+
+.emblem-circle p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.emblem-text {
+    margin-top: 20px;
+    color: var(--rcc-gray);
+    font-weight: 500;
+}
+
+/* Schedule Section */
+.schedule {
+    background: var(--rcc-white);
+}
+
+.schedule-content {
+    display: grid;
+    gap: 40px;
+}
+
+.schedule-card {
+    background: var(--rcc-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border: 3px solid var(--rcc-light-gray);
+    transition: all 0.3s;
+}
+
+.schedule-card.featured {
+    border-color: var(--rcc-yellow);
+    background: linear-gradient(to bottom, var(--rcc-white), #fffef8);
+}
+
+.schedule-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.schedule-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.schedule-card h3 {
+    color: var(--rcc-red);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.schedule-time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rcc-yellow);
+    margin-bottom: 10px;
+}
+
+.schedule-location {
+    font-size: 1.1rem;
+    color: var(--rcc-gray);
+    margin-bottom: 20px;
+}
+
+.schedule-description {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.what-to-expect {
+    background: var(--rcc-light-gray);
+    padding: 40px;
+    border-radius: 15px;
+}
+
+.what-to-expect h3 {
+    color: var(--rcc-red);
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.timeline {
+    list-style: none;
+    display: grid;
+    gap: 20px;
+}
+
+.timeline li {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: var(--rcc-white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.timeline strong {
+    display: block;
+    color: var(--rcc-red);
+    margin-bottom: 5px;
+}
+
+.timeline p {
+    color: var(--rcc-gray);
+}
+
+/* Prayer Section */
+.prayer {
+    background: var(--rcc-light-gray);
+}
+
+.prayer-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.prayer-text {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.prayer-text p {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.prayer-form {
+    background: var(--rcc-white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-md);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--rcc-dark);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--rcc-light-gray);
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--rcc-yellow);
+}
+
+.prayer-form button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+/* Location Section */
+.location {
+    background: var(--rcc-white);
+}
+
+.location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+.location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.contact-item {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 20px;
+    background: var(--rcc-light-gray);
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.contact-item:hover {
+    background: #fff8e1;
+    transform: translateX(5px);
+}
+
+.contact-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.contact-item strong {
+    display: block;
+    color: var(--rcc-red);
+    margin-bottom: 5px;
+}
+
+.contact-item a {
+    color: var(--rcc-dark);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.contact-item a:hover {
+    color: var(--rcc-red);
+}
+
+.location-map {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+/* Footer */
+.footer {
+    background: var(--rcc-dark);
+    color: var(--rcc-white);
+    padding: 50px 20px 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer h3, .footer h4 {
+    color: var(--rcc-yellow);
+    margin-bottom: 20px;
+}
+
+.footer p {
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links a {
+    color: var(--rcc-white);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: var(--rcc-yellow);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.footer-rcc {
+    color: var(--rcc-yellow);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--rcc-white);
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        display: none;
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-menu li {
+        margin: 10px 0;
+    }
+    
+    .hero h2 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .about-grid,
+    .location-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-top .container {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .header-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .header-contact a {
+        margin: 0;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .emblem-circle {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .emblem-flame {
+        font-size: 4rem;
+    }
+    
+    .emblem-circle p {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h2 {
+        font-size: 2rem;
+    }
+    
+    .hero-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .prayer-form {
+        padding: 25px;
+    }
+}

@@ -1,242 +1,270 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rainha da Paz</title>
-  <meta name="description" content="Conteúdos e avisos do Rainha da Paz." />
-
-  <!-- Tailwind (visual moderno sem instalar nada) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    /* Deixa com carinha “app” */
-    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.08); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Grupo de Oração Rainha da Paz - Paróquia Santo Antônio - Sinop/MT. Renovação Carismática Católica. Encontros todas as quartas-feiras às 19:30.">
+    <meta name="keywords" content="RCC, Renovação Carismática, Grupo de Oração, Sinop, Paróquia Santo Antônio, Rainha da Paz">
+    <title>Grupo de Oração Rainha da Paz - Sinop/MT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
-
-<body class="min-h-screen bg-slate-950 text-slate-100">
-  <!-- Topbar -->
-  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur">
-    <div class="mx-auto max-w-6xl px-4 py-4 flex items-center gap-3">
-      <div class="h-10 w-10 rounded-2xl bg-white/10 grid place-items-center">
-        ✨
-      </div>
-      <div class="flex-1">
-        <h1 class="text-lg font-semibold leading-tight">Rainha da Paz</h1>
-        <p class="text-sm text-slate-300">Conteúdos, avisos e mensagens</p>
-      </div>
-
-      <button id="toggleTheme"
-        class="rounded-xl border border-white/10 px-3 py-2 text-sm hover:bg-white/5">
-        🌙 / ☀️
-      </button>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="mx-auto max-w-6xl px-4 pt-10 pb-6">
-    <div class="rounded-3xl border border-white/10 p-6 md:p-10 glass">
-      <div class="flex flex-col md:flex-row md:items-end gap-4">
-        <div class="flex-1">
-          <h2 class="text-2xl md:text-4xl font-bold tracking-tight">
-            Um feed vivo, atualizado pelo n8n 🚀
-          </h2>
-          <p class="mt-2 text-slate-300 max-w-2xl">
-            Aqui você publica conteúdos automaticamente (notícias, avisos, reflexões, agenda).
-          </p>
-        </div>
-
-        <div class="w-full md:w-96">
-          <label class="text-xs text-slate-300">Buscar</label>
-          <input id="search"
-            class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:ring-2 focus:ring-white/20"
-            placeholder="Digite: querigma, grupo, evento, oração..." />
-        </div>
-      </div>
-
-      <div class="mt-6 flex flex-wrap gap-2" id="tagBar"></div>
-    </div>
-  </section>
-
-  <!-- Conteúdo -->
-  <main class="mx-auto max-w-6xl px-4 pb-16">
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-sm text-slate-300">
-        <span id="count">0</span> publicações
-      </p>
-      <a class="text-sm underline text-slate-300 hover:text-white" href="./content.json" target="_blank">
-        Ver JSON
-      </a>
-    </div>
-
-    <div id="grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
-
-    <div id="empty" class="hidden mt-10 text-center text-slate-300">
-      Nada encontrado. Tenta outra palavra 😄
-    </div>
-  </main>
-
-  <!-- Modal -->
-  <div id="modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/70" id="modalBg"></div>
-    <div class="relative mx-auto max-w-3xl p-4 md:p-8">
-      <div class="rounded-3xl border border-white/10 bg-slate-950 p-6 md:p-8">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h3 id="mTitle" class="text-xl md:text-2xl font-semibold"></h3>
-            <p id="mMeta" class="mt-1 text-sm text-slate-300"></p>
-          </div>
-          <button id="closeModal" class="rounded-xl border border-white/10 px-3 py-2 hover:bg-white/5">✖</button>
-        </div>
-        <div id="mBody" class="prose prose-invert max-w-none mt-6"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const state = { items: [], q: "", tag: "Todos", dark: true };
-
-    const el = (id) => document.getElementById(id);
-
-    function fmtDate(iso) {
-      try {
-        const d = new Date(iso);
-        return d.toLocaleDateString("pt-BR", { year: "numeric", month: "short", day: "2-digit" });
-      } catch { return ""; }
-    }
-
-    function uniqueTags(items) {
-      const tags = new Set();
-      items.forEach(i => (i.tags || []).forEach(t => tags.add(t)));
-      return ["Todos", ...Array.from(tags).sort((a,b)=>a.localeCompare(b))];
-    }
-
-    function matches(item) {
-      const q = state.q.trim().toLowerCase();
-      const inTag = state.tag === "Todos" || (item.tags || []).includes(state.tag);
-      if (!q) return inTag;
-
-      const hay = [
-        item.title, item.summary, item.category,
-        ...(item.tags || []),
-        item.content
-      ].join(" ").toLowerCase();
-
-      return inTag && hay.includes(q);
-    }
-
-    function renderTags() {
-      const tags = uniqueTags(state.items);
-      const bar = el("tagBar");
-      bar.innerHTML = "";
-      tags.forEach(t => {
-        const active = (t === state.tag);
-        const btn = document.createElement("button");
-        btn.className = "px-3 py-1.5 rounded-2xl text-sm border border-white/10 " + (active ? "bg-white/10" : "hover:bg-white/5");
-        btn.textContent = t;
-        btn.onclick = () => { state.tag = t; render(); };
-        bar.appendChild(btn);
-      });
-    }
-
-    function openModal(item) {
-      el("mTitle").textContent = item.title || "Sem título";
-      el("mMeta").textContent = [item.category, fmtDate(item.publishedAt)].filter(Boolean).join(" • ");
-
-      const body = el("mBody");
-      body.innerHTML = "";
-
-      if (item.cover) {
-        const img = document.createElement("img");
-        img.src = item.cover;
-        img.alt = item.title || "Capa";
-        img.className = "w-full rounded-2xl border border-white/10 mb-4";
-        body.appendChild(img);
-      }
-
-      const p = document.createElement("div");
-      p.innerHTML = (item.content || "").replace(/\n/g, "<br/>");
-      body.appendChild(p);
-
-      if (item.cta) {
-        const cta = document.createElement("div");
-        cta.className = "mt-6 p-4 rounded-2xl border border-white/10 bg-white/5";
-        cta.innerHTML = "<strong>Próximo passo:</strong> " + item.cta;
-        body.appendChild(cta);
-      }
-
-      el("modal").classList.remove("hidden");
-    }
-
-    function closeModal() {
-      el("modal").classList.add("hidden");
-    }
-
-    function render() {
-      const grid = el("grid");
-      const items = state.items.filter(matches);
-
-      el("count").textContent = items.length;
-      el("empty").classList.toggle("hidden", items.length !== 0);
-
-      grid.innerHTML = "";
-      items
-        .sort((a,b)=> new Date(b.publishedAt||0) - new Date(a.publishedAt||0))
-        .forEach(item => {
-          const card = document.createElement("article");
-          card.className = "rounded-3xl border border-white/10 bg-white/5 hover:bg-white/10 transition p-5 cursor-pointer";
-
-          card.innerHTML = `
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-xs text-slate-300">${(item.category||"").toUpperCase()}</p>
-                <h3 class="mt-1 text-lg font-semibold leading-snug">${item.title || "Sem título"}</h3>
-              </div>
-              <span class="text-xs text-slate-300">${fmtDate(item.publishedAt)}</span>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="header-contact">
+                    <a href="https://wa.me/5566981365456" target="_blank">📱 (66) 98136-5456</a>
+                    <a href="mailto:paroquiasantoantoniosinop@hotmail.com">✉️ paroquiasantoantoniosinop@hotmail.com</a>
+                </div>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/rainhadapazoficialsinop" target="_blank" aria-label="Facebook">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/paroquiasantoantoniosinop" target="_blank" aria-label="Instagram">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
             </div>
-
-            <p class="mt-3 text-sm text-slate-200/90">${item.summary || ""}</p>
-
-            <div class="mt-4 flex flex-wrap gap-2">
-              ${(item.tags||[]).slice(0,4).map(t => `<span class="text-xs px-2 py-1 rounded-2xl bg-black/30 border border-white/10">${t}</span>`).join("")}
+        </div>
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <h1>Grupo de Oração<br><span>Rainha da Paz</span></h1>
+                </div>
+                <button class="mobile-menu-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#encontros">Encontros</a></li>
+                    <li><a href="#oracao">Pedidos de Oração</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
             </div>
+        </nav>
+    </header>
 
-            <div class="mt-5 text-sm text-slate-300 underline">Ler</div>
-          `;
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2>Vem e Vê!</h2>
+            <p class="hero-subtitle">Experimenta a ação do Espírito Santo em sua vida</p>
+            <div class="hero-info">
+                <div class="info-card">
+                    <span class="info-icon">📅</span>
+                    <div>
+                        <strong>Quartas-feiras</strong>
+                        <p>19:30h</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">📍</span>
+                    <div>
+                        <strong>Paróquia Santo Antônio</strong>
+                        <p>Av. Sibipirunas, 3092 - Centro</p>
+                    </div>
+                </div>
+            </div>
+            <a href="https://wa.me/5566981365456" class="btn-primary" target="_blank">
+                Fale Conosco pelo WhatsApp
+            </a>
+        </div>
+    </section>
 
-          card.onclick = () => openModal(item);
-          grid.appendChild(card);
-        });
-    }
+    <!-- Sobre -->
+    <section id="sobre" class="section about">
+        <div class="container">
+            <h2 class="section-title">Sobre o Grupo de Oração</h2>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>O <strong>Grupo de Oração Rainha da Paz</strong> é parte da Renovação Carismática Católica (RCC) da Paróquia Santo Antônio em Sinop/MT.</p>
+                    
+                    <p>Somos uma comunidade de fé que se reúne semanalmente para louvar a Deus, orar uns pelos outros e viver a experiência do Batismo no Espírito Santo.</p>
+                    
+                    <p>Nosso grupo é um espaço de encontro com Jesus Cristo, onde experimentamos a ação do Espírito Santo através da oração, do louvor, da Palavra de Deus e da fraternidade.</p>
 
-    async function load() {
-      try {
-        const res = await fetch("./content.json?v=" + Date.now());
-        const data = await res.json();
-        state.items = Array.isArray(data.items) ? data.items : [];
-        renderTags();
-        render();
-      } catch (e) {
-        el("empty").classList.remove("hidden");
-        el("empty").textContent = "Não consegui carregar o content.json. Confere se ele existe na raiz do repo.";
-      }
-    }
+                    <div class="mission-box">
+                        <h3>🔥 Nossa Missão</h3>
+                        <p>Levar a experiência do Batismo no Espírito Santo, promover a renovação espiritual e vivenciar os dons e carismas do Espírito Santo na vida da Igreja.</p>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="rcc-emblem">
+                        <div class="emblem-circle">
+                            <span class="emblem-flame">🔥</span>
+                            <p>RCC<br>Brasil</p>
+                        </div>
+                        <p class="emblem-text">Renovação Carismática Católica</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Events
-    el("search").addEventListener("input", (e) => { state.q = e.target.value; render(); });
-    el("modalBg").addEventListener("click", closeModal);
-    el("closeModal").addEventListener("click", closeModal);
+    <!-- Encontros -->
+    <section id="encontros" class="section schedule">
+        <div class="container">
+            <h2 class="section-title">Nossos Encontros</h2>
+            <div class="schedule-content">
+                <div class="schedule-main">
+                    <div class="schedule-card featured">
+                        <div class="schedule-icon">📅</div>
+                        <h3>Grupo de Oração Semanal</h3>
+                        <p class="schedule-time">Quartas-feiras às 19:30</p>
+                        <p class="schedule-location">Paróquia Santo Antônio - Matriz</p>
+                        <p class="schedule-description">Momento de louvor, oração, pregação da Palavra e partilha em comunidade.</p>
+                    </div>
+                </div>
+                
+                <div class="what-to-expect">
+                    <h3>O que acontece no Grupo de Oração?</h3>
+                    <ul class="timeline">
+                        <li>
+                            <span class="timeline-icon">🎵</span>
+                            <div>
+                                <strong>Louvor e Adoração</strong>
+                                <p>Momentos de música e cânticos de louvor</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="timeline-icon">📖</span>
+                            <div>
+                                <strong>Proclamação da Palavra</strong>
+                                <p>Pregação e reflexão bíblica</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="timeline-icon">🙏</span>
+                            <div>
+                                <strong>Oração Comunitária</strong>
+                                <p>Intercessão e partilha de intenções</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="timeline-icon">🤝</span>
+                            <div>
+                                <strong>Fraternidade</strong>
+                                <p>Momento de comunhão e partilha</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Dark/light (bem simples)
-    el("toggleTheme").addEventListener("click", () => {
-      state.dark = !state.dark;
-      document.body.className = state.dark
-        ? "min-h-screen bg-slate-950 text-slate-100"
-        : "min-h-screen bg-slate-50 text-slate-900";
-    });
+    <!-- Pedidos de Oração -->
+    <section id="oracao" class="section prayer">
+        <div class="container">
+            <h2 class="section-title">Pedidos de Oração</h2>
+            <div class="prayer-content">
+                <div class="prayer-text">
+                    <p>Você pode contar com nossas orações! Envie seu pedido e nossa equipe de intercessão irá orar por você e sua intenção.</p>
+                    <p><strong>"A oração feita por um justo pode muito em seus efeitos."</strong> (Tiago 5:16)</p>
+                </div>
+                <form id="prayer-form" class="prayer-form">
+                    <div class="form-group">
+                        <label for="nome">Seu nome:</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pedido">Seu pedido de oração:</label>
+                        <textarea id="pedido" name="pedido" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Pedido</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-    load();
-  </script>
+    <!-- Localização -->
+    <section id="contato" class="section location">
+        <div class="container">
+            <h2 class="section-title">Como Chegar</h2>
+            <div class="location-grid">
+                <div class="location-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <div>
+                            <strong>Endereço</strong>
+                            <p>Av. das Sibipirunas, 3092<br>St. Comercial - Centro<br>Sinop - MT, 78550-230</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📱</span>
+                        <div>
+                            <strong>WhatsApp</strong>
+                            <p><a href="https://wa.me/5566981365456">(66) 98136-5456</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">☎️</span>
+                        <div>
+                            <strong>Telefone Paróquia</strong>
+                            <p><a href="tel:+556635312004">(66) 3531-2004</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">✉️</span>
+                        <div>
+                            <strong>E-mail</strong>
+                            <p><a href="mailto:paroquiasantoantoniosinop@hotmail.com">paroquiasantoantoniosinop@hotmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="location-map">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3867.8899!2d-55.5046!3d-11.8651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTHCsDUxJzU0LjQiUyA1NcKwMzAnMTYuNiJX!5e0!3m2!1spt-BR!2sbr!4v1234567890"
+                        width="100%" 
+                        height="350" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <h3>Grupo de Oração Rainha da Paz</h3>
+                    <p>Renovação Carismática Católica</p>
+                    <p>Paróquia Santo Antônio - Sinop/MT</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="https://rccbrasil.org.br" target="_blank">RCC Brasil</a></li>
+                        <li><a href="https://www.santoantoniosinop.org.br" target="_blank">Paróquia Santo Antônio</a></li>
+                        <li><a href="https://www.instagram.com/paroquiasantoantoniosinop" target="_blank">Instagram da Paróquia</a></li>
+                    </ul>
+                </div>
+                <div class="footer-schedule">
+                    <h4>Encontros</h4>
+                    <p><strong>Quartas-feiras</strong></p>
+                    <p>19:30h</p>
+                    <p>Paróquia Santo Antônio</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Grupo de Oração Rainha da Paz - Todos os direitos reservados</p>
+                <p class="footer-rcc">Parte da Renovação Carismática Católica do Brasil</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
