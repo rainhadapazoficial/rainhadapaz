@@ -1,0 +1,358 @@
+{
+  "name": "Gerenciar Notícias - Rainha da Paz",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "adicionar-noticia",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook - Adicionar Notícia",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "adicionar-noticia"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/SEU-USUARIO/grupo-rainha-da-paz/contents/content.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GitHub - Buscar Arquivo Atual",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SEU_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decodificar conteúdo atual do GitHub (base64)\nconst currentContent = $input.first().json.content;\nconst decodedContent = Buffer.from(currentContent, 'base64').toString('utf-8');\nconst currentData = JSON.parse(decodedContent);\n\n// Pegar dados da requisição\nconst body = $input.first().json.body;\n\n// Gerar novo ID\nconst newId = currentData.noticias.length > 0 \n  ? Math.max(...currentData.noticias.map(n => n.id)) + 1 \n  : 1;\n\n// Criar nova notícia\nconst novaNoticia = {\n  id: newId,\n  titulo: body.titulo,\n  descricao: body.descricao,\n  data: body.data || new Date().toISOString().split('T')[0],\n  autor: body.autor || 'Equipe Rainha da Paz',\n  destaque: body.destaque || false\n};\n\n// Adicionar à lista\ncurrentData.noticias.unshift(novaNoticia);\n\n// Preparar para envio ao GitHub\nconst newContent = Buffer.from(JSON.stringify(currentData, null, 2)).toString('base64');\n\nreturn {\n  json: {\n    content: newContent,\n    sha: $input.first().json.sha,\n    message: `Adicionar notícia: ${novaNoticia.titulo}`,\n    novaNoticia: novaNoticia\n  }\n};"
+      },
+      "name": "Code - Processar Nova Notícia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://api.github.com/repos/SEU-USUARIO/grupo-rainha-da-paz/contents/content.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "sha",
+              "value": "={{ $json.sha }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GitHub - Atualizar Arquivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SEU_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Notícia adicionada com sucesso!', noticia: $('Code - Processar Nova Notícia').item.json.novaNoticia } }}"
+      },
+      "name": "Responder Sucesso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "listar-noticias",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook - Listar Notícias",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 500],
+      "webhookId": "listar-noticias"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/SEU-USUARIO/grupo-rainha-da-paz/main/content.json",
+        "options": {}
+      },
+      "name": "GitHub - Buscar Notícias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "name": "Responder Lista",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "deletar-noticia/:id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook - Deletar Notícia",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 700],
+      "webhookId": "deletar-noticia"
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/SEU-USUARIO/grupo-rainha-da-paz/contents/content.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GitHub - Buscar para Deletar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 700],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SEU_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decodificar conteúdo atual\nconst currentContent = $input.first().json.content;\nconst decodedContent = Buffer.from(currentContent, 'base64').toString('utf-8');\nconst currentData = JSON.parse(decodedContent);\n\n// Pegar ID da URL\nconst idToDelete = parseInt($('Webhook - Deletar Notícia').item.json.params.id);\n\n// Filtrar notícia\ncurrentData.noticias = currentData.noticias.filter(n => n.id !== idToDelete);\n\n// Preparar para envio\nconst newContent = Buffer.from(JSON.stringify(currentData, null, 2)).toString('base64');\n\nreturn {\n  json: {\n    content: newContent,\n    sha: $input.first().json.sha,\n    message: `Deletar notícia ID: ${idToDelete}`\n  }\n};"
+      },
+      "name": "Code - Remover Notícia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 700]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://api.github.com/repos/SEU-USUARIO/grupo-rainha-da-paz/contents/content.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "sha",
+              "value": "={{ $json.sha }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "GitHub - Confirmar Deleção",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 700],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SEU_CREDENTIAL_ID",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, message: 'Notícia deletada com sucesso!' } }}"
+      },
+      "name": "Responder Deleção",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 700]
+    }
+  ],
+  "connections": {
+    "Webhook - Adicionar Notícia": {
+      "main": [
+        [
+          {
+            "node": "GitHub - Buscar Arquivo Atual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub - Buscar Arquivo Atual": {
+      "main": [
+        [
+          {
+            "node": "Code - Processar Nova Notícia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Processar Nova Notícia": {
+      "main": [
+        [
+          {
+            "node": "GitHub - Atualizar Arquivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub - Atualizar Arquivo": {
+      "main": [
+        [
+          {
+            "node": "Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Listar Notícias": {
+      "main": [
+        [
+          {
+            "node": "GitHub - Buscar Notícias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub - Buscar Notícias": {
+      "main": [
+        [
+          {
+            "node": "Responder Lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Deletar Notícia": {
+      "main": [
+        [
+          {
+            "node": "GitHub - Buscar para Deletar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub - Buscar para Deletar": {
+      "main": [
+        [
+          {
+            "node": "Code - Remover Notícia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Remover Notícia": {
+      "main": [
+        [
+          {
+            "node": "GitHub - Confirmar Deleção",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub - Confirmar Deleção": {
+      "main": [
+        [
+          {
+            "node": "Responder Deleção",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

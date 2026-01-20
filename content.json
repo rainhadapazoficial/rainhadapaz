@@ -1,0 +1,20 @@
+{
+  "noticias": [
+    {
+      "id": 1,
+      "titulo": "Bem-vindo ao nosso novo site!",
+      "descricao": "Estamos felizes em apresentar o novo site do Grupo de Oração Rainha da Paz. Aqui você encontrará informações sobre nossos encontros, pedidos de oração e muito mais.",
+      "data": "2026-01-20",
+      "autor": "Equipe Rainha da Paz",
+      "destaque": true
+    },
+    {
+      "id": 2,
+      "titulo": "Encontro desta quarta-feira - 19:30h",
+      "descricao": "Não perca nosso encontro de oração desta quarta-feira! Venha experimentar a ação do Espírito Santo em sua vida. Todos são bem-vindos!",
+      "data": "2026-01-20",
+      "autor": "Coordenação",
+      "destaque": false
+    }
+  ]
+}

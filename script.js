@@ -18,6 +18,87 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileMenuToggle.classList.remove('active');
         });
     });
+    
+    // Carregar notícias
+    loadNews();
+});
+
+// Função para carregar notícias do content.json
+async function loadNews() {
+    const newsContainer = document.getElementById('news-container');
+    
+    try {
+        const response = await fetch('content.json');
+        const data = await response.json();
+        
+        if (data.noticias && data.noticias.length > 0) {
+            // Ordenar por data (mais recente primeiro)
+            const sortedNews = data.noticias.sort((a, b) => {
+                return new Date(b.data) - new Date(a.data);
+            });
+            
+            // Limpar container
+            newsContainer.innerHTML = '';
+            
+            // Criar cards de notícias
+            sortedNews.forEach(noticia => {
+                const newsCard = createNewsCard(noticia);
+                newsContainer.appendChild(newsCard);
+            });
+        } else {
+            newsContainer.innerHTML = '<div class="no-news"><p>Nenhuma notícia publicada ainda.</p></div>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar notícias:', error);
+        newsContainer.innerHTML = '<div class="no-news"><p>Erro ao carregar notícias. Tente novamente mais tarde.</p></div>';
+    }
+}
+
+// Função para criar card de notícia
+function createNewsCard(noticia) {
+    const card = document.createElement('div');
+    card.className = 'news-card' + (noticia.destaque ? ' featured' : '');
+    
+    // Formatar data
+    const dataFormatada = new Date(noticia.data + 'T00:00:00').toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    
+    card.innerHTML = `
+        ${noticia.destaque ? '<div class="news-badge">DESTAQUE</div>' : ''}
+        <div class="news-content">
+            <div class="news-date">${dataFormatada}</div>
+            <h3 class="news-title">${noticia.titulo}</h3>
+            <p class="news-description">${noticia.descricao}</p>
+            ${noticia.autor ? `<div class="news-author">${noticia.autor}</div>` : ''}
+        </div>
+    `;
+    
+    return card;
+}
+
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    }
+    
+    // Fechar menu ao clicar em um link
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            navMenu.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
+        });
+    });
 });
 
 // Smooth Scroll

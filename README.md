@@ -15,6 +15,8 @@ Este site foi desenvolvido seguindo a identidade visual da RCC Brasil, com cores
 - ✅ Animações suaves e modernas
 - ✅ Menu mobile
 - ✅ Links para redes sociais
+- ✅ **Sistema de notícias integrado com n8n** 🔥
+- ✅ **Atualização automática via webhook**
 
 ## 🚀 Como Colocar no Ar (GitHub Pages)
 
@@ -104,15 +106,52 @@ background: linear-gradient(rgba(200, 16, 46, 0.8), rgba(200, 16, 46, 0.9)),
 
 ---
 
+## 📰 Sistema de Notícias com n8n
+
+O site possui um sistema completo de gerenciamento de notícias integrado com n8n!
+
+### Como Funciona:
+1. Você envia uma requisição HTTP para o webhook do n8n
+2. O n8n processa e atualiza o arquivo `content.json` no GitHub
+3. O site carrega automaticamente as notícias do arquivo
+4. Atualização em tempo real - sem precisar mexer no código!
+
+### Configuração:
+📖 **Guia completo de configuração:** Veja o arquivo `GUIA-N8N.md`
+
+### Recursos:
+- ✅ Adicionar notícias via webhook
+- ✅ Listar todas as notícias
+- ✅ Deletar notícias por ID
+- ✅ Marcar notícias como "destaque"
+- ✅ Commits automáticos no GitHub
+- ✅ Formulário web de administração (opcional)
+
+### Exemplo de Uso:
+```bash
+curl -X POST https://pandolfo.app.n8n.cloud/webhook/adicionar-noticia \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titulo": "Nova notícia",
+    "descricao": "Conteúdo da notícia aqui",
+    "destaque": true
+  }'
+```
+
+---
+
 ## 🔧 Estrutura de Arquivos
 
 ```
 grupo-rainha-da-paz/
 │
-├── index.html      # Estrutura e conteúdo do site
-├── style.css       # Estilos e cores
-├── script.js       # Funcionalidades e interatividade
-└── README.md       # Este arquivo (instruções)
+├── index.html                    # Estrutura e conteúdo do site
+├── style.css                     # Estilos e cores
+├── script.js                     # Funcionalidades e interatividade
+├── content.json                  # Arquivo de notícias (gerenciado pelo n8n)
+├── workflow-n8n-noticias.json    # Workflow para importar no n8n
+├── GUIA-N8N.md                   # Guia completo de configuração do n8n
+└── README.md                     # Este arquivo (instruções)
 ```
 
 ---
