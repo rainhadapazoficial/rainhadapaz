@@ -247,3 +247,86 @@ if (emblemFlame) {
 console.log('%c🔥 Grupo de Oração Rainha da Paz 🔥', 'font-size: 20px; font-weight: bold; color: #C8102E;');
 console.log('%cRenovação Carismática Católica', 'font-size: 14px; color: #FFD100;');
 console.log('%cVem e Vê! Quartas-feiras às 19:30', 'font-size: 12px; color: #666;');
+
+// Carregar Notícias do Blog
+async function carregarNoticias() {
+    const container = document.getElementById('noticias-container');
+    
+    try {
+        const response = await fetch('content.json');
+        if (!response.ok) throw new Error('Erro ao carregar notícias');
+        
+        const data = await response.json();
+        const noticias = data.noticias || [];
+        
+        if (noticias.length === 0) {
+            container.innerHTML = '<p class="loading">Nenhuma notícia disponível no momento.</p>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        // Mostrar até 6 notícias, com destaques primeiro
+        const noticiasOrdenadas = noticias.sort((a, b) => {
+            if (a.destaque && !b.destaque) return -1;
+            if (!a.destaque && b.destaque) return 1;
+            return new Date(b.data) - new Date(a.data);
+        }).slice(0, 6);
+        
+        noticiasOrdenadas.forEach(noticia => {
+            const card = document.createElement('div');
+            card.className = 'blog-card';
+            
+            const dataFormatada = new Date(noticia.data).toLocaleDateString('pt-BR');
+            
+            card.innerHTML = `
+                <div class="blog-card-header">
+                    <h3 class="blog-card-title">${noticia.titulo}</h3>
+                    <div class="blog-card-meta">
+                        📅 ${dataFormatada} | 👤 ${noticia.autor} 
+                        ${noticia.destaque ? '⭐ Destaque' : ''}
+                    </div>
+                </div>
+                <div class="blog-card-content">
+                    <p class="blog-card-excerpt">${noticia.resumo || noticia.conteudo.substring(0, 150) + '...'}</p>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
+        
+    } catch (error) {
+        console.error('Erro ao carregar notícias:', error);
+        container.innerHTML = '<p class="loading">Erro ao carregar notícias. Tente novamente mais tarde.</p>';
+    }
+}
+
+// Carregar Fotos da Galeria
+function carregarGaleria() {
+    const galeria = document.getElementById('galeria-fotos');
+    
+    // Lista de fotos (será preenchida conforme você adicionar fotos na pasta images/galeria/)
+    const fotos = [
+        // Exemplo: { src: 'images/galeria/foto1.jpg', alt: 'Descrição da foto' }
+    ];
+    
+    if (fotos.length > 0) {
+        galeria.innerHTML = '';
+        fotos.forEach(foto => {
+            const item = document.createElement('div');
+            item.className = 'galeria-item';
+            item.innerHTML = `<img src="${foto.src}" alt="${foto.alt}" loading="lazy">`;
+            galeria.appendChild(item);
+        });
+    }
+}
+
+// Atualizar chamadas no DOMContentLoaded
+const oldDOMContentLoaded = document.querySelector('[data-loaded]');
+if (!oldDOMContentLoaded) {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.setAttribute('data-loaded', 'true');
+        carregarNoticias();
+        carregarGaleria();
+    });
+}
