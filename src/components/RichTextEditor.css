@@ -1,0 +1,51 @@
+.custom-editor-container {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--primary-green);
+    font-size: 1rem;
+}
+
+.editor-wrapper {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+    background: white;
+}
+
+.editor-wrapper:focus-within {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+.editor-footer {
+    padding: 8px 15px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    font-size: 0.75rem;
+    color: #888;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Customizing TinyMCE UI inside our wrapper */
+.tox-tinymce {
+    border: none !important;
+}
+
+.tox .tox-toolbar-overlord {
+    background-color: #f8f9fa !important;
+}
+
+.tox .tox-toolbar {
+    background-color: transparent !important;
+}
