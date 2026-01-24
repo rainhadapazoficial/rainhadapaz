@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Rainha da Paz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D5B26D 0%, #B89849 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { background: white; max-width: 700px; width: 100%; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { color: #D5B26D; text-align: center; margin-bottom: 10px; font-size: 2rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.9rem; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95rem; }
+        input[type="text"], input[type="date"], textarea, select {
+            width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px;
+            font-size: 1rem; transition: all 0.3s; font-family: inherit;
+        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #D5B26D; box-shadow: 0 0 0 3px rgba(213, 178, 109, 0.1); }
+        textarea { resize: vertical; min-height: 120px; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; padding: 15px; background: #faf8f3; border-radius: 10px; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox-group label { margin: 0; cursor: pointer; font-weight: 500; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        button { padding: 15px 30px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-publish { background: #D5B26D; color: white; }
+        .btn-publish:hover { background: #B89849; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(213, 178, 109, 0.3); }
+        .btn-list { background: #727377; color: white; }
+        .btn-list:hover { background: #5a5d61; transform: translateY(-2px); }
+        #resultado { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Admin - Rainha da Paz</h1>
+        <p class="subtitle">Sistema de Gerenciamento de Notícias</p>
+        
+        <form id="noticiaForm">
+            <div class="form-group">
+                <label for="titulo">Título da Notícia *</label>
+                <input type="text" id="titulo" required placeholder="Ex: Retiro de Carnaval 2026">
+            </div>
+            
+            <div class="form-group">
+                <label for="descricao">Descrição / Conteúdo *</label>
+                <textarea id="descricao" required placeholder="Digite o conteúdo completo da notícia..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria">Categoria</label>
+                <select id="categoria">
+                    <option value="avisos">Avisos</option>
+                    <option value="eventos">Eventos</option>
+                    <option value="formacao">Formação</option>
+                    <option value="ministerios">Ministérios</option>
+                    <option value="agenda">Agenda</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="data">Data</label>
+                <input type="date" id="data">
+                <small style="color: #666; font-size: 0.85rem;">Se não preencher, usa a data de hoje</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="autor">Autor</label>
+                <input type="text" id="autor" value="Equipe Rainha da Paz">
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="destaque">
+                <label for="destaque">⭐ Marcar como notícia em destaque</label>
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn-publish">📝 Publicar</button>
+                <button type="button" class="btn-list" onclick="alert('Em breve!')">📋 Ver Notícias</button>
+            </div>
+        </form>
+        
+        <div id="resultado"></div>
+    </div>
+    
+    <script>
+        const WEBHOOK_URL = 'https://pandolfo.app.n8n.cloud/webhook/adicionar-noticia';
+        
+        document.getElementById('noticiaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultado = document.getElementById('resultado');
+            resultado.style.display = 'block';
+            resultado.className = '';
+            resultado.innerHTML = '⏳ Publicando notícia...';
+            
+            const data = {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                categoria: document.getElementById('categoria').value,
+                data: document.getElementById('data').value || new Date().toISOString().split('T')[0],
+                autor: document.getElementById('autor').value,
+                destaque: document.getElementById('destaque').checked
+            };
+            
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Erro na requisição');
+                
+                resultado.className = 'success';
+                resultado.innerHTML = '✅ <strong>Notícia publicada com sucesso!</strong>';
+                document.getElementById('noticiaForm').reset();
+                document.getElementById('autor').value = 'Equipe Rainha da Paz';
+            } catch (error) {
+                resultado.className = 'error';
+                resultado.innerHTML = '❌ <strong>Erro ao publicar</strong><br><small>Verifique o workflow n8n</small>';
+            }
+        });
+        
+        document.getElementById('data').valueAsDate = new Date();
+    </script>
+</body>
+</html>
