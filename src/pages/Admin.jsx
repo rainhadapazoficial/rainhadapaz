@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
-import { getContent, saveConfig, addNewsItem, updateNewsItem, deleteNewsItem } from '../services/contentService';
+import { getConfig, saveConfig, getNews, addNewsItem, updateNewsItem, deleteNewsItem } from '../services/contentService';
 
 const Admin = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [activeTab, setActiveTab] = useState('dashboard');
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     // Content State
     const [config, setConfig] = useState({});
@@ -17,10 +18,24 @@ const Admin = () => {
     const [newsForm, setNewsForm] = useState({ title: '', category: '', date: '', image: '', description: '' });
 
     useEffect(() => {
-        const { config, news } = getContent();
-        setConfig(config);
-        setNews(news);
+        loadContent();
     }, []);
+
+    const loadContent = async () => {
+        setLoading(true);
+        try {
+            const [fetchedConfig, fetchedNews] = await Promise.all([
+                getConfig(),
+                getNews()
+            ]);
+            setConfig(fetchedConfig);
+            setNews(fetchedNews);
+        } catch (error) {
+            console.error("Failed to load content:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -32,23 +47,32 @@ const Admin = () => {
         }
     };
 
-    const handleSaveConfig = (e) => {
+    const handleSaveConfig = async (e) => {
         e.preventDefault();
-        saveConfig(config);
-        alert('Configurações salvas com sucesso!');
+        setLoading(true);
+        await saveConfig(config);
+        setLoading(false);
+        alert('Configurações salvas no Firebase!');
     };
 
-    const handleNewsSubmit = (e) => {
+    const handleNewsSubmit = async (e) => {
         e.preventDefault();
-        if (editingNews) {
-            const updated = updateNewsItem(editingNews.id, newsForm);
-            setNews(updated);
+        setLoading(true);
+        try {
+            if (editingNews) {
+                await updateNewsItem(editingNews.id, newsForm);
+            } else {
+                await addNewsItem(newsForm);
+            }
+            await loadContent(); // Refresh list
             setEditingNews(null);
-        } else {
-            const updated = addNewsItem(newsForm);
-            setNews(updated);
+            setNewsForm({ title: '', category: '', date: '', image: '', description: '' });
+            setActiveTab('news');
+        } catch (error) {
+            alert("Erro ao salvar notícia: " + error.message);
+        } finally {
+            setLoading(false);
         }
-        setNewsForm({ title: '', category: '', date: '', image: '', description: '' });
     };
 
     const handleEditNews = (item) => {
@@ -57,10 +81,12 @@ const Admin = () => {
         setActiveTab('news-form');
     };
 
-    const handleDeleteNews = (id) => {
-        if (window.confirm('Tem certeza que deseja excluir esta notícia?')) {
-            const updated = deleteNewsItem(id);
-            setNews(updated);
+    const handleDeleteNews = async (id) => {
+        if (window.confirm('Tem certeza que deseja excluir esta notícia no Firebase?')) {
+            setLoading(true);
+            await deleteNewsItem(id);
+            await loadContent();
+            setLoading(false);
         }
     };
 
@@ -70,7 +96,7 @@ const Admin = () => {
                 <div className="admin-login-card">
                     <img src="/logo-rainha.jpg" alt="Logo Rainha da Paz" className="login-logo" />
                     <h2>Acesso Restrito</h2>
-                    <p>Entre com sua senha para gerenciar o portal</p>
+                    <p>Entre com sua senha (admin123)</p>
                     <form onSubmit={handleLogin}>
                         <input
                             type="password"
@@ -93,6 +119,7 @@ const Admin = () => {
                     <img src="/logo-rainha.jpg" alt="Logo" className="sidebar-logo" />
                     <span>Painel Admin</span>
                 </div>
+                {loading && <div className="loading-indicator">Sincronizando...</div>}
                 <nav className="sidebar-nav">
                     <button className={activeTab === 'dashboard' ? 'active' : ''} onClick={() => setActiveTab('dashboard')}>
                         🏠 Dashboard
@@ -123,12 +150,12 @@ const Admin = () => {
                     {activeTab === 'dashboard' && (
                         <div className="dashboard-stats">
                             <div className="stat-card">
-                                <h3>Notícias</h3>
+                                <h3>Notícias Ativas</h3>
                                 <p className="stat-number">{news.length}</p>
                             </div>
                             <div className="stat-card">
-                                <h3>WhatsApp</h3>
-                                <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{config.contactPhone}</p>
+                                <h3>Status do Banco</h3>
+                                <p style={{ marginTop: '10px', color: 'green', fontWeight: 'bold' }}>Conectado ao Firebase</p>
                             </div>
                         </div>
                     )}
@@ -216,7 +243,9 @@ const Admin = () => {
                                     ></textarea>
                                 </div>
                                 <div className="btn-group-row">
-                                    <button type="submit" className="btn-primary">{editingNews ? 'Atualizar' : 'Publicar'}</button>
+                                    <button type="submit" className="btn-primary" disabled={loading}>
+                                        {loading ? 'Salvando...' : (editingNews ? 'Atualizar' : 'Publicar')}
+                                    </button>
                                     <button type="button" className="btn-secondary" onClick={() => setActiveTab('news')}>Cancelar</button>
                                 </div>
                             </form>
@@ -257,7 +286,9 @@ const Admin = () => {
                                         onChange={(e) => setConfig({ ...config, contactPhone: e.target.value })}
                                     />
                                 </div>
-                                <button type="submit" className="btn-primary">Salvar Alterações</button>
+                                <button type="submit" className="btn-primary" disabled={loading}>
+                                    {loading ? 'Salvando...' : 'Salvar no Firebase'}
+                                </button>
                             </form>
                         </div>
                     )}

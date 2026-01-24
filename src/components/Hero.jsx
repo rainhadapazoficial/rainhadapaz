@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './Hero.css';
-import { getContent } from '../services/contentService';
+import { getConfig } from '../services/contentService';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
     const [config, setConfig] = useState({});
 
     useEffect(() => {
-        const { config } = getContent();
-        setConfig(config);
+        const fetchConfig = async () => {
+            const data = await getConfig();
+            setConfig(data);
+        };
+        fetchConfig();
     }, []);
 
     return (

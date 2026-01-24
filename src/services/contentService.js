@@ -1,24 +1,19 @@
-const CONFIG_KEY = 'rainha_da_paz_config';
-const NEWS_KEY = 'rainha_da_paz_news';
+import { db } from "../firebase";
+import {
+    collection,
+    getDocs,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    getDoc,
+    setDoc,
+    query,
+    orderBy
+} from "firebase/firestore";
 
-const defaultNews = [
-    {
-        id: 1,
-        title: "Seminário de Vida no Espírito Santo",
-        date: "2026-01-24",
-        category: "Formação",
-        image: "https://images.unsplash.com/photo-1519491050282-ce00c729c8bf?q=80&w=800&auto=format&fit=crop",
-        description: "Participe do nosso seminário de vida no Espírito Santo e experimente um novo Pentecostes."
-    },
-    {
-        id: 2,
-        title: "Cerne Especial: Jovens em Missão",
-        date: "2026-01-25",
-        category: "Eventos",
-        image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop",
-        description: "Encontro especial para jovens que desejam servir à Igreja com alegria."
-    }
-];
+const CONFIG_DOC_ID = 'site_settings';
+const NEWS_COLLECTION = 'news';
 
 const defaultConfig = {
     siteTitle: "Grupo de Oração Rainha da Paz",
@@ -29,38 +24,71 @@ const defaultConfig = {
     whatsappLink: "https://wa.me/5566981365456"
 };
 
-export const getContent = () => {
-    const config = JSON.parse(localStorage.getItem(CONFIG_KEY)) || defaultConfig;
-    const news = JSON.parse(localStorage.getItem(NEWS_KEY)) || defaultNews;
-    return { config, news };
+// Site Config
+export const getConfig = async () => {
+    try {
+        const configDoc = await getDoc(doc(db, "settings", CONFIG_DOC_ID));
+        if (configDoc.exists()) {
+            return configDoc.data();
+        } else {
+            // Initialize with defaults if it doesn't exist
+            await setDoc(doc(db, "settings", CONFIG_DOC_ID), defaultConfig);
+            return defaultConfig;
+        }
+    } catch (error) {
+        console.error("Error getting config:", error);
+        return defaultConfig;
+    }
 };
 
-export const saveConfig = (newConfig) => {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(newConfig));
+export const saveConfig = async (newConfig) => {
+    try {
+        await setDoc(doc(db, "settings", CONFIG_DOC_ID), newConfig);
+    } catch (error) {
+        console.error("Error saving config:", error);
+    }
 };
 
-export const saveNews = (newNews) => {
-    localStorage.setItem(NEWS_KEY, JSON.stringify(newNews));
+// News
+export const getNews = async () => {
+    try {
+        const q = query(collection(db, NEWS_COLLECTION), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Error getting news:", error);
+        return [];
+    }
 };
 
-export const addNewsItem = (item) => {
-    const { news } = getContent();
-    const newItem = { ...item, id: Date.now() };
-    const updatedNews = [newItem, ...news];
-    saveNews(updatedNews);
-    return updatedNews;
+export const addNewsItem = async (item) => {
+    try {
+        const docRef = await addDoc(collection(db, NEWS_COLLECTION), item);
+        return { id: docRef.id, ...item };
+    } catch (error) {
+        console.error("Error adding news:", error);
+        throw error;
+    }
 };
 
-export const updateNewsItem = (id, updatedItem) => {
-    const { news } = getContent();
-    const updatedNews = news.map(item => item.id === id ? { ...item, ...updatedItem } : item);
-    saveNews(updatedNews);
-    return updatedNews;
+export const updateNewsItem = async (id, updatedItem) => {
+    try {
+        const docRef = doc(db, NEWS_COLLECTION, id);
+        await updateDoc(docRef, updatedItem);
+    } catch (error) {
+        console.error("Error updating news:", error);
+        throw error;
+    }
 };
 
-export const deleteNewsItem = (id) => {
-    const { news } = getContent();
-    const updatedNews = news.filter(item => item.id !== id);
-    saveNews(updatedNews);
-    return updatedNews;
+export const deleteNewsItem = async (id) => {
+    try {
+        await deleteDoc(doc(db, NEWS_COLLECTION, id));
+    } catch (error) {
+        console.error("Error deleting news:", error);
+        throw error;
+    }
 };

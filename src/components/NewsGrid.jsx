@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import './NewsGrid.css';
-import { getContent } from '../services/contentService';
+import { getNews } from '../services/contentService';
 
 const NewsGrid = () => {
     const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const { news } = getContent();
-        setNews(news);
+        const fetchNews = async () => {
+            setLoading(true);
+            const data = await getNews();
+            setNews(data);
+            setLoading(false);
+        };
+        fetchNews();
     }, []);
 
     // Format date for display
     const formatDate = (dateStr) => {
+        if (!dateStr) return '';
         const date = new Date(dateStr);
         return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
     };
+
+    if (loading) return <div className="container" style={{ padding: '40px', textAlign: 'center' }}>Carregando notícias...</div>;
 
     return (
         <section className="news-section">
