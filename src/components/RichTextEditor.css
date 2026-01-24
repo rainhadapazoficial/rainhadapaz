@@ -12,17 +12,74 @@
     font-size: 1rem;
 }
 
-.editor-wrapper {
+.native-editor-wrapper {
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     overflow: hidden;
-    transition: border-color 0.3s ease;
     background: white;
+    transition: border-color 0.3s ease;
 }
 
-.editor-wrapper:focus-within {
+.native-editor-wrapper:focus-within {
     border-color: var(--primary-green);
-    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+/* Toolbar */
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.editor-toolbar button {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #444;
+    transition: all 0.2s;
+    min-width: 35px;
+}
+
+.editor-toolbar button:hover {
+    background: #f0f7f3;
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+}
+
+.toolbar-divider {
+    width: 1px;
+    background: #ddd;
+    margin: 5px 5px;
+}
+
+/* Editable Area */
+.editor-editable-area {
+    padding: 20px;
+    outline: none;
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #333;
+}
+
+.editor-editable-area p {
+    margin-bottom: 10px;
+}
+
+.editor-editable-area h3 {
+    color: var(--primary-green);
+    margin: 15px 0 10px;
+}
+
+.editor-editable-area ul,
+.editor-editable-area ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
 }
 
 .editor-footer {
@@ -35,17 +92,4 @@
     color: #888;
     text-align: right;
     font-weight: 500;
-}
-
-/* Customizing TinyMCE UI inside our wrapper */
-.tox-tinymce {
-    border: none !important;
-}
-
-.tox .tox-toolbar-overlord {
-    background-color: #f8f9fa !important;
-}
-
-.tox .tox-toolbar {
-    background-color: transparent !important;
 }
