@@ -11,6 +11,7 @@ import News from './pages/News'
 import Events from './pages/Events'
 import Multimedia from './pages/Multimedia'
 import Contact from './pages/Contact'
+import Admin from './pages/Admin'
 import PrayerRequest from './pages/PrayerRequest'
 import DailyLiturgy from './pages/DailyLiturgy'
 import DailySaint from './pages/DailySaint'
@@ -29,6 +30,7 @@ function App() {
             <Route path="/eventos" element={<Events />} />
             <Route path="/multimidia" element={<Multimedia />} />
             <Route path="/contato" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/pedido-oracao" element={<PrayerRequest />} />
             <Route path="/liturgia" element={<DailyLiturgy />} />
             <Route path="/santo-dia" element={<DailySaint />} />
