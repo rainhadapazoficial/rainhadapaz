@@ -1,9 +1,21 @@
+import React, { useState, useEffect } from 'react';
+import { getEvents } from '../services/contentService';
+
 const Events = () => {
-    const eventsList = [
-        { title: "Seminário de Vida no Espírito", date: "Sáb, 24 Jan - 14:00", place: "Salão Paroquial" },
-        { title: "Noite de Louvor Especial", date: "Seg, 26 Jan - 19:30", place: "Igreja Matriz" },
-        { title: "Encontro de Jovens", date: "Dom, 01 Fev - 08:00", place: "Sede RCC Sinop" },
-    ];
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            setLoading(true);
+            const data = await getEvents();
+            setEvents(data);
+            setLoading(false);
+        };
+        fetchEvents();
+    }, []);
+
+    if (loading) return <div className="container" style={{ padding: '60px', textAlign: 'center' }}>Carregando eventos...</div>;
 
     return (
         <div className="page-content">
@@ -16,18 +28,51 @@ const Events = () => {
 
             <section style={{ padding: '60px 0' }}>
                 <div className="container">
-                    <div style={{ display: 'grid', gap: '20px' }}>
-                        {eventsList.map((env, i) => (
-                            <div key={i} style={{ display: 'flex', background: 'var(--bg-gray)', padding: '20px', borderRadius: '12px', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div>
-                                    <h3 style={{ color: 'var(--primary-green)' }}>{env.title}</h3>
-                                    <p style={{ color: 'var(--text-secondary)' }}>📅 {env.date} | 📍 {env.place}</p>
+                    <div style={{ display: 'grid', gap: '40px' }}>
+                        {events.map((env) => (
+                            <div key={env.id} style={{
+                                display: 'grid',
+                                gridTemplateColumns: env.image ? '300px 1fr' : '1fr',
+                                gap: '30px',
+                                background: 'white',
+                                padding: '30px',
+                                borderRadius: '15px',
+                                boxShadow: '0 5px 20px rgba(0,0,0,0.05)',
+                                alignItems: 'start'
+                            }}>
+                                {env.image && (
+                                    <div style={{ width: '100%', height: '200px', borderRadius: '10px', overflow: 'hidden' }}>
+                                        <img src={env.image} alt={env.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    </div>
+                                )}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div>
+                                            <h2 style={{ color: 'var(--primary-green)', marginBottom: '10px' }}>{env.name}</h2>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', fontWeight: '500' }}>
+                                                📅 {env.date} | 📍 {env.location}
+                                            </p>
+                                        </div>
+                                        <button style={{
+                                            background: 'var(--accent-yellow)',
+                                            padding: '12px 30px',
+                                            borderRadius: '30px',
+                                            fontWeight: '800',
+                                            border: 'none',
+                                            cursor: 'pointer'
+                                        }}>
+                                            Inscrição
+                                        </button>
+                                    </div>
+                                    <div
+                                        className="event-info"
+                                        style={{ fontSize: '1rem', color: '#555', lineHeight: '1.6' }}
+                                        dangerouslySetInnerHTML={{ __html: env.info }}
+                                    />
                                 </div>
-                                <button style={{ background: 'var(--accent-yellow)', padding: '10px 25px', borderRadius: '25px', fontWeight: '800' }}>
-                                    Inscrição
-                                </button>
                             </div>
                         ))}
+                        {events.length === 0 && <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>Nenhum evento programado no momento.</p>}
                     </div>
                 </div>
             </section>

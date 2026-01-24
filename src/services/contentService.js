@@ -14,6 +14,7 @@ import {
 
 const CONFIG_DOC_ID = 'site_settings';
 const NEWS_COLLECTION = 'news';
+const EVENTS_COLLECTION = 'events';
 
 const defaultConfig = {
     siteTitle: "Grupo de Oração Rainha da Paz",
@@ -89,6 +90,50 @@ export const deleteNewsItem = async (id) => {
         await deleteDoc(doc(db, NEWS_COLLECTION, id));
     } catch (error) {
         console.error("Error deleting news:", error);
+        throw error;
+    }
+};
+
+// Events
+export const getEvents = async () => {
+    try {
+        const q = query(collection(db, EVENTS_COLLECTION), orderBy("date", "asc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Error getting events:", error);
+        return [];
+    }
+};
+
+export const addEvent = async (item) => {
+    try {
+        const docRef = await addDoc(collection(db, EVENTS_COLLECTION), item);
+        return { id: docRef.id, ...item };
+    } catch (error) {
+        console.error("Error adding event:", error);
+        throw error;
+    }
+};
+
+export const updateEvent = async (id, updatedItem) => {
+    try {
+        const docRef = doc(db, EVENTS_COLLECTION, id);
+        await updateDoc(docRef, updatedItem);
+    } catch (error) {
+        console.error("Error updating event:", error);
+        throw error;
+    }
+};
+
+export const deleteEvent = async (id) => {
+    try {
+        await deleteDoc(doc(db, EVENTS_COLLECTION, id));
+    } catch (error) {
+        console.error("Error deleting event:", error);
         throw error;
     }
 };

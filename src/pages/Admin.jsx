@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
 import RichTextEditor from '../components/RichTextEditor';
-import { getConfig, saveConfig, getNews, addNewsItem, updateNewsItem, deleteNewsItem } from '../services/contentService';
+import { getConfig, saveConfig, getNews, addNewsItem, updateNewsItem, deleteNewsItem, getEvents, addEvent, updateEvent, deleteEvent } from '../services/contentService';
 
 const Admin = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,13 +10,16 @@ const Admin = () => {
     const [loginError, setLoginError] = useState('');
     const [loading, setLoading] = useState(true);
 
-    // Content State
     const [config, setConfig] = useState({});
     const [news, setNews] = useState([]);
+    const [events, setEvents] = useState([]);
 
     // Form States
     const [editingNews, setEditingNews] = useState(null);
     const [newsForm, setNewsForm] = useState({ title: '', category: '', date: '', image: '', description: '' });
+
+    const [editingEvent, setEditingEvent] = useState(null);
+    const [eventForm, setEventForm] = useState({ name: '', date: '', location: '', info: '', image: '' });
 
     useEffect(() => {
         loadContent();
@@ -25,12 +28,14 @@ const Admin = () => {
     const loadContent = async () => {
         setLoading(true);
         try {
-            const [fetchedConfig, fetchedNews] = await Promise.all([
+            const [fetchedConfig, fetchedNews, fetchedEvents] = await Promise.all([
                 getConfig(),
-                getNews()
+                getNews(),
+                getEvents()
             ]);
             setConfig(fetchedConfig);
             setNews(fetchedNews);
+            setEvents(fetchedEvents);
         } catch (error) {
             console.error("Failed to load content:", error);
         } finally {
@@ -91,6 +96,42 @@ const Admin = () => {
         }
     };
 
+    // Event Handlers
+    const handleEventSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            if (editingEvent) {
+                await updateEvent(editingEvent.id, eventForm);
+            } else {
+                await addEvent(eventForm);
+            }
+            await loadContent();
+            setEditingEvent(null);
+            setEventForm({ name: '', date: '', location: '', info: '', image: '' });
+            setActiveTab('events');
+        } catch (error) {
+            alert("Erro ao salvar evento: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEditEvent = (item) => {
+        setEditingEvent(item);
+        setEventForm({ ...item });
+        setActiveTab('event-form');
+    };
+
+    const handleDeleteEvent = async (id) => {
+        if (window.confirm('Tem certeza que deseja excluir este evento no Firebase?')) {
+            setLoading(true);
+            await deleteEvent(id);
+            await loadContent();
+            setLoading(false);
+        }
+    };
+
     if (!isLoggedIn) {
         return (
             <div className="admin-login-overlay">
@@ -128,6 +169,9 @@ const Admin = () => {
                     <button className={activeTab.startsWith('news') ? 'active' : ''} onClick={() => setActiveTab('news')}>
                         📰 Notícias
                     </button>
+                    <button className={activeTab.startsWith('event') ? 'active' : ''} onClick={() => setActiveTab('events')}>
+                        📅 Eventos
+                    </button>
                     <button className={activeTab === 'site' ? 'active' : ''} onClick={() => setActiveTab('site')}>
                         ⚙️ Configurações
                     </button>
@@ -143,6 +187,8 @@ const Admin = () => {
                         {activeTab === 'dashboard' && 'Visão Geral'}
                         {activeTab === 'news' && 'Gerenciar Notícias'}
                         {activeTab === 'news-form' && (editingNews ? 'Editar Notícia' : 'Nova Notícia')}
+                        {activeTab === 'events' && 'Gerenciar Eventos'}
+                        {activeTab === 'event-form' && (editingEvent ? 'Editar Evento' : 'Novo Evento')}
                         {activeTab === 'site' && 'Configurações do Site'}
                     </h1>
                 </header>
@@ -153,6 +199,10 @@ const Admin = () => {
                             <div className="stat-card">
                                 <h3>Notícias Ativas</h3>
                                 <p className="stat-number">{news.length}</p>
+                            </div>
+                            <div className="stat-card">
+                                <h3>Eventos Ativos</h3>
+                                <p className="stat-number">{events.length}</p>
                             </div>
                             <div className="stat-card">
                                 <h3>Status do Banco</h3>
@@ -244,6 +294,95 @@ const Admin = () => {
                                         {loading ? 'Salvando...' : (editingNews ? 'Atualizar' : 'Publicar')}
                                     </button>
                                     <button type="button" className="btn-secondary" onClick={() => setActiveTab('news')}>Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
+                    {activeTab === 'events' && (
+                        <div className="admin-section">
+                            <div className="section-actions">
+                                <button className="btn-primary" onClick={() => {
+                                    setEditingEvent(null);
+                                    setEventForm({ name: '', date: '', location: '', info: '', image: '' });
+                                    setActiveTab('event-form');
+                                }}>+ Novo Evento</button>
+                            </div>
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Data/Hora</th>
+                                        <th>Local</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {events.map(item => (
+                                        <tr key={item.id}>
+                                            <td>{item.name}</td>
+                                            <td>{item.date}</td>
+                                            <td>{item.location}</td>
+                                            <td>
+                                                <button className="btn-edit" onClick={() => handleEditEvent(item)}>Editar</button>
+                                                <button className="btn-delete" onClick={() => handleDeleteEvent(item.id)}>Excluir</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {activeTab === 'event-form' && (
+                        <div className="admin-section">
+                            <form className="admin-form" onSubmit={handleEventSubmit}>
+                                <div className="form-group">
+                                    <label>Nome do Evento</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={eventForm.name}
+                                        onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Dia e Horário</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Ex: 25/01 às 19:30"
+                                        value={eventForm.date}
+                                        onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Local</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={eventForm.location}
+                                        onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>URL da Imagem</label>
+                                    <input
+                                        type="text"
+                                        value={eventForm.image}
+                                        onChange={(e) => setEventForm({ ...eventForm, image: e.target.value })}
+                                    />
+                                </div>
+                                <RichTextEditor
+                                    label="Informações Adicionais"
+                                    value={eventForm.info}
+                                    onChange={(content) => setEventForm({ ...eventForm, info: content })}
+                                />
+                                <div className="btn-group-row">
+                                    <button type="submit" className="btn-primary" disabled={loading}>
+                                        {loading ? 'Salvando...' : (editingEvent ? 'Atualizar' : 'Publicar')}
+                                    </button>
+                                    <button type="button" className="btn-secondary" onClick={() => setActiveTab('events')}>Cancelar</button>
                                 </div>
                             </form>
                         </div>
