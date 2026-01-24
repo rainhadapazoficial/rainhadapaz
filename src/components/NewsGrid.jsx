@@ -23,6 +23,13 @@ const NewsGrid = () => {
         return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
+    // Helper to strip HTML for preview
+    const stripHtml = (html) => {
+        const tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    };
+
     if (loading) return <div className="container" style={{ padding: '40px', textAlign: 'center' }}>Carregando notícias...</div>;
 
     return (
@@ -43,9 +50,12 @@ const NewsGrid = () => {
                             <div className="card-body">
                                 <span className="date">{formatDate(item.date)}</span>
                                 <h3>{item.title}</h3>
-                                <p className="description-preview">
-                                    {item.description ? item.description.substring(0, 100) + '...' : ''}
-                                </p>
+                                <div
+                                    className="description-preview"
+                                    dangerouslySetInnerHTML={{
+                                        __html: item.description ? (stripHtml(item.description).substring(0, 100) + '...') : ''
+                                    }}
+                                />
                                 <a href="#" className="read-more">Leia mais</a>
                             </div>
                         </div>

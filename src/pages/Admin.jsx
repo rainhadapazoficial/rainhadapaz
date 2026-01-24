@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import './Admin.css';
 import { getConfig, saveConfig, getNews, addNewsItem, updateNewsItem, deleteNewsItem } from '../services/contentService';
 
@@ -235,12 +236,25 @@ const Admin = () => {
                                 </div>
                                 <div className="form-group">
                                     <label>Descrição</label>
-                                    <textarea
-                                        required
-                                        rows="5"
+                                    <Editor
+                                        init={{
+                                            height: 300,
+                                            menubar: false,
+                                            plugins: [
+                                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                                                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                                            ],
+                                            toolbar: 'undo redo | blocks | ' +
+                                                'bold italic forecolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                            content_style: 'body { font-family:Inter,Helvetica,Arial,sans-serif; font-size:14px }',
+                                            language: 'pt_BR'
+                                        }}
                                         value={newsForm.description}
-                                        onChange={(e) => setNewsForm({ ...newsForm, description: e.target.value })}
-                                    ></textarea>
+                                        onEditorChange={(content) => setNewsForm({ ...newsForm, description: content })}
+                                    />
                                 </div>
                                 <div className="btn-group-row">
                                     <button type="submit" className="btn-primary" disabled={loading}>
