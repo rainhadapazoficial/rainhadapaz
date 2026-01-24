@@ -31,6 +31,7 @@ const Navbar = () => {
                         <li><NavLink to="/noticias" className={({ isActive }) => isActive ? "active" : ""}>Notícias</NavLink></li>
                         <li><NavLink to="/eventos" className={({ isActive }) => isActive ? "active" : ""}>Eventos</NavLink></li>
                         <li><NavLink to="/multimidia" className={({ isActive }) => isActive ? "active" : ""}>Multimídia</NavLink></li>
+                        <li><NavLink to="/contato" className={({ isActive }) => isActive ? "active" : ""}>Contato</NavLink></li>
                         <li><a href="#" className="btn-donate">Colabore</a></li>
                     </ul>
 
