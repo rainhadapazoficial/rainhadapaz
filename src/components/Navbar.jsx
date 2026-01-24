@@ -22,7 +22,9 @@ const Navbar = () => {
             <div className="main-nav">
                 <div className="container main-nav-content">
                     <div className="logo">
-                        <Link to="/" className="logo-text">RAINHA DA <span className="highlight">PAZ</span></Link>
+                        <Link to="/" className="logo-text">
+                            <img src="/logo-rainha.jpg" alt="Logo Rainha da Paz" className="navbar-logo" />
+                        </Link>
                     </div>
 
                     <ul className="nav-menu">

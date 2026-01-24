@@ -55,6 +55,12 @@
     color: var(--accent-yellow);
 }
 
+.navbar-logo {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
 .nav-menu {
     display: flex;
     gap: 25px;

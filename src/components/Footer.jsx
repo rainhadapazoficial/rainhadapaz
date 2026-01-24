@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container footer-content">
                 <div className="footer-info">
                     <div className="footer-logo">
-                        <span className="logo-text">RAINHA DA <span className="highlight">PAZ</span></span>
+                        <img src="/logo-rainha.jpg" alt="Logo Rainha da Paz" className="footer-logo-img" />
                     </div>
                     <p>Grupo de Oração Rainha da Paz - Sinop/MT. Um lugar de encontro com o amor de Deus.</p>
                     <div className="social-icons">
@@ -30,9 +30,9 @@ const Footer = () => {
 
                 <div className="footer-contact">
                     <h4>Contato</h4>
-                    <p>📍 Sinop - MT</p>
-                    <p>📞 (66) 9999-9999</p>
-                    <p>✉️ contato@rainhadapazsinop.com.br</p>
+                    <p>📍 Av. das Sibipirunas, 3092 - Centro</p>
+                    <p>📞 (66) 98136-5456</p>
+                    <p>✉️ rainhadapazsinop@rccdesinop.com.br</p>
                 </div>
             </div>
 

@@ -11,6 +11,12 @@
     padding-bottom: 60px;
 }
 
+.footer-logo-img {
+    height: 100px;
+    width: auto;
+    margin-bottom: 20px;
+}
+
 .footer-info p {
     margin: 20px 0;
     opacity: 0.8;

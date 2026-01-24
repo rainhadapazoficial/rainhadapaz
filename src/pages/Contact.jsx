@@ -52,7 +52,7 @@ const Contact = () => {
                                     <p style={{ fontWeight: 'bold' }}>Localização na Matriz Santo Antônio</p>
                                     <p>Sinop - MT</p>
                                     <a
-                                        href="https://www.google.com/maps/search/?api=1&query=Av.+das+Sibipirunas,+3092+-+St.+Comercial+-+Centro,+Sinop+-+MT,+78550-230"
+                                        href="https://share.google/KFueT3gsrl3pvhJhu"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{ display: 'inline-block', marginTop: '15px', padding: '10px 20px', background: 'var(--primary-green)', color: 'white', borderRadius: '5px' }}
