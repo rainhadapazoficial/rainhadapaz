@@ -235,6 +235,20 @@
     margin-top: 10px;
 }
 
+.btn-group-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-secondary {
+    background: #eee;
+    color: #666;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
 .error-msg {
     color: #e74c3c;
     font-size: 0.85rem;

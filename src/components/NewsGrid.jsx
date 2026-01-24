@@ -1,36 +1,20 @@
+import React, { useState, useEffect } from 'react';
 import './NewsGrid.css';
+import { getContent } from '../services/contentService';
 
 const NewsGrid = () => {
-    const news = [
-        {
-            id: 1,
-            title: "Seminário de Vida no Espírito Santo",
-            date: "24 Jan, 2026",
-            category: "Formação",
-            image: "https://images.unsplash.com/photo-1519491050282-ce00c729c8bf?q=80&w=800&auto=format&fit=crop"
-        },
-        {
-            id: 2,
-            title: "Cerne Especial: Jovens em Missão",
-            date: "25 Jan, 2026",
-            category: "Eventos",
-            image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop"
-        },
-        {
-            id: 3,
-            title: "Noite de Louvor: Rainha da Paz",
-            date: "26 Jan, 2026",
-            category: "Grupo de Oração",
-            image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=800&auto=format&fit=crop"
-        },
-        {
-            id: 4,
-            title: "Novo Livro: Escutando a voz de Deus",
-            date: "27 Jan, 2026",
-            category: "Editora",
-            image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop"
-        }
-    ];
+    const [news, setNews] = useState([]);
+
+    useEffect(() => {
+        const { news } = getContent();
+        setNews(news);
+    }, []);
+
+    // Format date for display
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
 
     return (
         <section className="news-section">
@@ -44,16 +28,20 @@ const NewsGrid = () => {
                     {news.map(item => (
                         <div key={item.id} className="news-card">
                             <div className="card-image">
-                                <img src={item.image} alt={item.title} />
+                                <img src={item.image || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=800'} alt={item.title} />
                                 <span className="category">{item.category}</span>
                             </div>
                             <div className="card-body">
-                                <span className="date">{item.date}</span>
+                                <span className="date">{formatDate(item.date)}</span>
                                 <h3>{item.title}</h3>
+                                <p className="description-preview">
+                                    {item.description ? item.description.substring(0, 100) + '...' : ''}
+                                </p>
                                 <a href="#" className="read-more">Leia mais</a>
                             </div>
                         </div>
                     ))}
+                    {news.length === 0 && <p>Nenhuma notícia encontrada.</p>}
                 </div>
             </div>
         </section>
