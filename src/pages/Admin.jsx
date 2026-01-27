@@ -404,6 +404,19 @@ const Admin = () => {
                         </div>
                     )}
 
+                    {activeTab === 'event-form' && (
+                        <div className="admin-section">
+                            <form className="admin-form" onSubmit={handleEventSubmit}>
+                                <div className="form-group"><label>Nome do Evento</label><input type="text" required value={eventForm.name} onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })} /></div>
+                                <div className="form-group"><label>Data</label><input type="text" required value={eventForm.date} onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })} /></div>
+                                <div className="form-group"><label>Local</label><input type="text" required value={eventForm.location} onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })} /></div>
+                                <div className="form-group"><label>URL da Imagem</label><input type="text" value={eventForm.image} onChange={(e) => setEventForm({ ...eventForm, image: e.target.value })} /></div>
+                                <RichTextEditor label="Informações Detalhadas" value={eventForm.info} onChange={(content) => setEventForm({ ...eventForm, info: content })} />
+                                <div className="btn-group-row"><button type="submit" className="btn-primary">{editingEvent ? 'Atualizar' : 'Criar Evento'}</button><button type="button" className="btn-secondary" onClick={() => setActiveTab('events')}>Cancelar</button></div>
+                            </form>
+                        </div>
+                    )}
+
                     {activeTab === 'events' && (
                         <div className="admin-section">
                             <button className="btn-primary" onClick={() => { setEditingEvent(null); setEventForm({ name: '', date: '', location: '', info: '', image: '' }); setActiveTab('event-form'); }}>+ Novo Evento</button>
@@ -455,7 +468,7 @@ const Admin = () => {
                             <form className="admin-form" onSubmit={handleSaveConfig}>
                                 <div className="form-group"><label>Título do Site</label><input type="text" value={config.siteTitle} onChange={(e) => setConfig({ ...config, siteTitle: e.target.value })} /></div>
                                 <div className="form-group"><label>WhatsApp</label><input type="text" value={config.contactPhone} onChange={(e) => setConfig({ ...config, contactPhone: e.target.value })} /></div>
-                                <button type="submit" className="btn-primary">Salvar no Firebase</button>
+                                <button type="submit" className="btn-primary">Salvar Configurações</button>
                             </form>
                         </div>
                     )}
