@@ -264,7 +264,8 @@ const Admin = () => {
         { name: 'Liturgia do Dia', slug: 'liturgia' },
         { name: 'Santo do Dia', slug: 'santo' },
         { name: 'Pedidos de Oração', slug: 'pedidos' },
-        { name: 'Colabore', slug: 'colabore' }
+        { name: 'Colabore', slug: 'colabore' },
+        { name: 'Caminho Formativo', slug: 'formacao' }
     ];
 
     return (

@@ -18,6 +18,7 @@ import DailySaint from './pages/DailySaint'
 import Donate from './pages/Donate'
 import NewsDetail from './pages/NewsDetail'
 import EventDetail from './pages/EventDetail'
+import FormationPath from './pages/FormationPath'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/noticias" element={<News />} />
             <Route path="/noticia/:id" element={<NewsDetail />} />
             <Route path="/evento/:id" element={<EventDetail />} />
+            <Route path="/formacao" element={<FormationPath />} />
             <Route path="/eventos" element={<Events />} />
             <Route path="/multimidia" element={<Multimedia />} />
             <Route path="/contato" element={<Contact />} />
