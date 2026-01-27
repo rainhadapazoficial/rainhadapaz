@@ -12,84 +12,97 @@
     font-size: 1rem;
 }
 
-.native-editor-wrapper {
+.advanced-editor .native-editor-wrapper {
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     overflow: hidden;
     background: white;
-    transition: border-color 0.3s ease;
+    transition: 0.3s;
 }
 
-.native-editor-wrapper:focus-within {
+.advanced-editor .native-editor-wrapper:focus-within {
     border-color: var(--primary-green);
+    box-shadow: 0 0 0 4px rgba(0, 104, 56, 0.1);
 }
 
-/* Toolbar */
 .editor-toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 8px;
     padding: 10px;
     background: #f8f9fa;
     border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 4px;
 }
 
 .editor-toolbar button {
     background: white;
     border: 1px solid #ddd;
     border-radius: 6px;
-    padding: 5px 12px;
+    padding: 8px 12px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 14px;
     color: #444;
     transition: all 0.2s;
-    min-width: 35px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .editor-toolbar button:hover {
-    background: #f0f7f3;
-    border-color: var(--primary-green);
-    color: var(--primary-green);
+    background: #f0f0f0;
+    border-color: #bbb;
 }
 
 .toolbar-divider {
     width: 1px;
+    height: 24px;
     background: #ddd;
-    margin: 5px 5px;
+    margin: 0 4px;
 }
 
-/* Editable Area */
+.color-picker-tool {
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 .editor-editable-area {
-    padding: 20px;
+    padding: 25px;
     outline: none;
     line-height: 1.6;
-    font-size: 1rem;
+    font-size: 16px;
     color: #333;
+    background: white;
 }
 
-.editor-editable-area p {
-    margin-bottom: 10px;
+.editor-editable-area img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px 0;
 }
 
-.editor-editable-area h3 {
+.editor-editable-area h2 {
     color: var(--primary-green);
     margin: 15px 0 10px;
 }
 
-.editor-editable-area ul,
-.editor-editable-area ol {
-    margin-left: 20px;
-    margin-bottom: 10px;
-}
-
 .editor-footer {
     padding: 8px 15px;
-    background: #f8f9fa;
-    border: 2px solid #e0e0e0;
+    background: #fff;
+    border: 1px solid #eee;
     border-top: none;
     border-radius: 0 0 12px 12px;
-    font-size: 0.75rem;
-    color: #888;
-    text-align: right;
-    font-weight: 500;
+    font-size: 11px;
+    color: #999;
 }

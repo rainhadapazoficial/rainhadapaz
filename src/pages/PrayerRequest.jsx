@@ -1,11 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { addPrayerRequest, getPageBySlug } from '../services/contentService';
 
 const PrayerRequest = () => {
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({ name: '', request: '' });
+    const [extraContent, setExtraContent] = useState(null);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const fetchContent = async () => {
+            const data = await getPageBySlug('pedidos');
+            if (data) setExtraContent(data.content);
+        };
+        fetchContent();
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
+        setLoading(true);
+        try {
+            await addPrayerRequest({
+                name: formData.name || 'Anônimo',
+                request: formData.request
+            });
+            setSubmitted(true);
+            setFormData({ name: '', request: '' });
+        } catch (error) {
+            alert("Erro ao enviar pedido. Tente novamente.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -19,6 +43,9 @@ const PrayerRequest = () => {
 
             <section style={{ padding: '60px 0' }}>
                 <div className="container" style={{ maxWidth: '600px' }}>
+                    {extraContent && (
+                        <div className="dynamic-intro" style={{ marginBottom: '40px' }} dangerouslySetInnerHTML={{ __html: extraContent }} />
+                    )}
                     {submitted ? (
                         <div style={{ textAlign: 'center', padding: '40px', background: 'var(--bg-gray)', borderRadius: '12px' }}>
                             <h2 style={{ color: 'var(--primary-green)' }}>Pedido Enviado!</h2>
@@ -34,14 +61,38 @@ const PrayerRequest = () => {
                         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Seu Nome</label>
-                                <input type="text" required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }} placeholder="Opcional" />
+                                <input
+                                    type="text"
+                                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    placeholder="Opcional"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                />
                             </div>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Sua Intenção</label>
-                                <textarea required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', minHeight: '150px' }} placeholder="Escreva aqui seu pedido de oração..."></textarea>
+                                <textarea
+                                    required
+                                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', minHeight: '150px' }}
+                                    placeholder="Escreva aqui seu pedido de oração..."
+                                    value={formData.request}
+                                    onChange={(e) => setFormData({ ...formData, request: e.target.value })}
+                                ></textarea>
                             </div>
-                            <button type="submit" style={{ background: 'var(--accent-yellow)', padding: '15px', borderRadius: '8px', fontWeight: '800', fontSize: '1rem' }}>
-                                Enviar Pedido
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                style={{
+                                    background: 'var(--accent-yellow)',
+                                    padding: '15px',
+                                    borderRadius: '8px',
+                                    fontWeight: '800',
+                                    fontSize: '1rem',
+                                    cursor: 'pointer',
+                                    opacity: loading ? 0.7 : 1
+                                }}
+                            >
+                                {loading ? 'Enviando...' : 'Enviar Pedido'}
                             </button>
                         </form>
                     )}

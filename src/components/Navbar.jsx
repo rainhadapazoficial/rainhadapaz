@@ -34,7 +34,7 @@ const Navbar = () => {
                         <li><NavLink to="/eventos" className={({ isActive }) => isActive ? "active" : ""}>Eventos</NavLink></li>
                         <li><NavLink to="/multimidia" className={({ isActive }) => isActive ? "active" : ""}>Multimídia</NavLink></li>
                         <li><NavLink to="/contato" className={({ isActive }) => isActive ? "active" : ""}>Contato</NavLink></li>
-                        <li><a href="#" className="btn-donate">Colabore</a></li>
+                        <li><Link to="/colabore" className="btn-donate">Colabore</Link></li>
                     </ul>
 
                     <div className="mobile-menu-btn">

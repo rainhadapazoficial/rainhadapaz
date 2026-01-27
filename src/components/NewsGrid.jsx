@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './NewsGrid.css';
 import { getNews } from '../services/contentService';
 
@@ -56,7 +57,7 @@ const NewsGrid = () => {
                                         __html: item.description ? (stripHtml(item.description).substring(0, 100) + '...') : ''
                                     }}
                                 />
-                                <a href="#" className="read-more">Leia mais</a>
+                                <Link to={`/noticia/${item.id}`} className="read-more">Leia mais</Link>
                             </div>
                         </div>
                     ))}

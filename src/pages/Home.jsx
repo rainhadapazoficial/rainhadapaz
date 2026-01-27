@@ -1,11 +1,31 @@
+import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero'
 import NewsGrid from '../components/NewsGrid'
+import { getPageBySlug } from '../services/contentService';
 
 const Home = () => {
+    const [extraContent, setExtraContent] = useState(null);
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            const data = await getPageBySlug('home');
+            if (data) setExtraContent(data.content);
+        };
+        fetchContent();
+    }, []);
+
     return (
         <>
             <Hero />
             <NewsGrid />
+
+            {extraContent && (
+                <section className="dynamic-home-content" style={{ padding: '60px 0' }}>
+                    <div className="container">
+                        <div dangerouslySetInnerHTML={{ __html: extraContent }} />
+                    </div>
+                </section>
+            )}
 
             <section className="about-cta" style={{ background: 'var(--bg-gray)', textAlign: 'center' }}>
                 <div className="container">
