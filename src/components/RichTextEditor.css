@@ -1,108 +1,70 @@
-.custom-editor-container {
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: column;
+.wordpress-style-editor {
+    margin-bottom: 30px;
 }
 
 .editor-label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: 700;
     color: var(--primary-green);
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
-.advanced-editor .native-editor-wrapper {
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    overflow: hidden;
+.quill-wrapper {
     background: white;
-    transition: 0.3s;
-}
-
-.advanced-editor .native-editor-wrapper:focus-within {
-    border-color: var(--primary-green);
-    box-shadow: 0 0 0 4px rgba(0, 104, 56, 0.1);
-}
-
-.editor-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e0e0e0;
-    align-items: center;
-}
-
-.toolbar-group {
-    display: flex;
-    gap: 4px;
-}
-
-.editor-toolbar button {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #444;
-    transition: all 0.2s;
-    min-width: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.editor-toolbar button:hover {
-    background: #f0f0f0;
-    border-color: #bbb;
-}
-
-.toolbar-divider {
-    width: 1px;
-    height: 24px;
-    background: #ddd;
-    margin: 0 4px;
-}
-
-.color-picker-tool {
-    padding: 0;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.editor-editable-area {
-    padding: 25px;
-    outline: none;
-    line-height: 1.6;
-    font-size: 16px;
-    color: #333;
-    background: white;
-}
-
-.editor-editable-area img {
-    max-width: 100%;
-    height: auto;
     border-radius: 8px;
-    margin: 10px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.editor-editable-area h2 {
+/* Customização do Quill para parecer WordPress */
+.ql-toolbar.ql-snow {
+    border: 1px solid #e2e8f0 !important;
+    background: #f8fafc;
+    border-radius: 8px 8px 0 0;
+    padding: 12px !important;
+}
+
+.ql-container.ql-snow {
+    border: 1px solid #e2e8f0 !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+.ql-editor {
+    min-height: 200px;
+    line-height: 1.6;
+}
+
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3 {
     color: var(--primary-green);
-    margin: 15px 0 10px;
+    font-weight: 700;
+    margin-top: 1em;
 }
 
-.editor-footer {
-    padding: 8px 15px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-top: none;
-    border-radius: 0 0 12px 12px;
+.ql-editor blockquote {
+    border-left: 4px solid var(--accent-yellow) !important;
+    background: #fff9e6;
+    padding: 15px 20px !important;
+    font-style: italic;
+}
+
+.editor-footer-hint {
     font-size: 11px;
-    color: #999;
+    color: #94a3b8;
+    margin-top: 8px;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .ql-toolbar.ql-snow {
+        padding: 5px !important;
+    }
 }
