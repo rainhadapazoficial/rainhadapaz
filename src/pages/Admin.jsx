@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
 import RichTextEditor from '../components/RichTextEditor';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { supabase } from '../supabase';
 import {
     getConfig, saveConfig, getNews, addNewsItem, updateNewsItem, deleteNewsItem,
     getEvents, addEvent, updateEvent, deleteEvent,
     getPrayerRequests, deletePrayerRequest,
-    getMultimedia, addMultimediaItem, deleteMultimediaItem
+    getMultimedia, addMultimediaItem, deleteMultimediaItem,
+    getPages, savePage
 } from '../services/contentService';
 
 const Admin = () => {
@@ -38,15 +38,20 @@ const Admin = () => {
     const [pageForm, setPageForm] = useState({ slug: '', content: '' });
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            if (currentUser) {
-                loadContent();
-            } else {
-                setLoading(false);
-            }
+        // Check current session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null);
+            if (session?.user) loadContent();
+            else setLoading(false);
         });
-        return () => unsubscribe();
+
+        // Listen for changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+            if (session?.user) loadContent();
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
     const loadContent = async () => {
@@ -77,14 +82,15 @@ const Admin = () => {
         e.preventDefault();
         setLoginError('');
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
         } catch (error) {
             setLoginError('Falha no login: ' + error.message);
         }
     };
 
     const handleLogout = async () => {
-        await signOut(auth);
+        await supabase.auth.signOut();
     };
 
     const handleSaveConfig = async (e) => {
