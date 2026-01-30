@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -25,6 +25,8 @@ import FormationPath from './pages/FormationPath'
 
 function App() {
   const [siteConfig, setSiteConfig] = useState(null);
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -44,10 +46,10 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <>
       <ScrollToTop />
       <div className="app">
-        <Navbar />
+        {!isAdmin && <Navbar />}
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -66,9 +68,9 @@ function App() {
             <Route path="/colabore" element={<Donate />} />
           </Routes>
         </main>
-        <Footer />
+        {!isAdmin && <Footer />}
       </div>
-    </Router>
+    </>
   )
 }
 
