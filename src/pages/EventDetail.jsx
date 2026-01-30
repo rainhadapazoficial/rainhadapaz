@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { updateSEO } from '../services/seoService';
 
 const EventDetail = () => {
     const { id } = useParams();
@@ -19,6 +20,11 @@ const EventDetail = () => {
 
                 if (data) {
                     setEvent(data);
+                    updateSEO({
+                        title: data.seo_title || data.name,
+                        description: data.seo_description || data.info.replace(/<[^>]*>/g, '').substring(0, 160),
+                        ogImage: data.og_image || data.image
+                    });
                 } else {
                     navigate('/eventos');
                 }
@@ -61,7 +67,13 @@ const EventDetail = () => {
 
                     <div
                         className="rich-content"
-                        style={{ lineHeight: '1.8', fontSize: '1.1rem', color: '#333' }}
+                        style={{
+                            lineHeight: '1.8',
+                            fontSize: '1.1rem',
+                            color: '#333',
+                            wordBreak: 'break-word',
+                            overflowWrap: 'break-word'
+                        }}
                         dangerouslySetInnerHTML={{ __html: event.info }}
                     />
 

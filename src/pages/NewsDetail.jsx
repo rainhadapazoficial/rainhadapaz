@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getNewsItemById } from '../services/contentService';
+import { updateSEO } from '../services/seoService';
 
 const NewsDetail = () => {
     const { id } = useParams();
@@ -14,6 +15,11 @@ const NewsDetail = () => {
                 const data = await getNewsItemById(id);
                 if (data) {
                     setItem(data);
+                    updateSEO({
+                        title: data.seo_title || data.title,
+                        description: data.seo_description || data.description.replace(/<[^>]*>/g, '').substring(0, 160),
+                        ogImage: data.og_image || data.image
+                    });
                 } else {
                     navigate('/noticias');
                 }

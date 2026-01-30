@@ -17,6 +17,14 @@ const Events = () => {
         fetchEvents();
     }, []);
 
+    // Helper to strip HTML for cleaner previews
+    const stripHtml = (html) => {
+        if (!html) return "";
+        const tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    };
+
     if (loading) return <div className="container" style={{ padding: '60px', textAlign: 'center' }}>Carregando eventos...</div>;
 
     return (
@@ -28,16 +36,17 @@ const Events = () => {
                 </div>
             </section>
 
-            <section style={{ padding: '60px 0' }}>
+            <section className="events-list" style={{ padding: '60px 0' }}>
                 <div className="container">
                     <div style={{ display: 'grid', gap: '40px' }}>
                         {events.map((env) => (
                             <div
                                 key={env.id}
                                 onClick={() => navigate(`/evento/${env.id}`)}
+                                className="event-card-horizontal"
                                 style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: env.image ? '300px 1fr' : '1fr',
+                                    display: 'flex',
+                                    flexDirection: window.innerWidth < 768 ? 'column' : 'row',
                                     gap: '30px',
                                     background: 'white',
                                     padding: '30px',
@@ -45,39 +54,52 @@ const Events = () => {
                                     boxShadow: '0 5px 20px rgba(0,0,0,0.05)',
                                     alignItems: 'start',
                                     cursor: 'pointer',
-                                    transition: 'transform 0.3s'
+                                    transition: 'transform 0.3s',
+                                    overflow: 'hidden',
+                                    width: '100%'
                                 }}
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                             >
                                 {env.image && (
-                                    <div style={{ width: '100%', height: '200px', borderRadius: '10px', overflow: 'hidden' }}>
+                                    <div style={{
+                                        flex: window.innerWidth < 768 ? '0 0 auto' : '0 0 300px',
+                                        width: '100%',
+                                        height: '200px',
+                                        borderRadius: '10px',
+                                        overflow: 'hidden'
+                                    }}>
                                         <img src={env.image} alt={env.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     </div>
                                 )}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div>
+                                <div style={{
+                                    flex: '1',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '15px',
+                                    minWidth: 0 // Crucial for flex child to allow inner content to shrink/truncate
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '15px' }}>
+                                        <div style={{ flex: '1', minWidth: '200px' }}>
                                             <h2 style={{ color: 'var(--primary-green)', marginBottom: '10px' }}>{env.name}</h2>
                                             <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', fontWeight: '500' }}>
                                                 📅 {env.date} | 📍 {env.location}
                                             </p>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '10px' }}>
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); navigate(`/evento/${env.id}`); }}
-                                                style={{
-                                                    background: 'var(--primary-green)',
-                                                    color: 'white',
-                                                    padding: '10px 25px',
-                                                    borderRadius: '30px',
-                                                    fontWeight: '600',
-                                                    border: 'none',
-                                                    cursor: 'pointer'
-                                                }}>
-                                                Ver Detalhes
-                                            </button>
-                                        </div>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); navigate(`/evento/${env.id}`); }}
+                                            style={{
+                                                background: 'var(--primary-green)',
+                                                color: 'white',
+                                                padding: '10px 25px',
+                                                borderRadius: '30px',
+                                                fontWeight: '600',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                alignSelf: 'flex-start'
+                                            }}>
+                                            Ver Detalhes
+                                        </button>
                                     </div>
                                     <div
                                         className="event-info-preview"
@@ -88,10 +110,12 @@ const Events = () => {
                                             display: '-webkit-box',
                                             WebkitLineClamp: '3',
                                             WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden'
+                                            overflow: 'hidden',
+                                            wordBreak: 'break-word'
                                         }}
-                                        dangerouslySetInnerHTML={{ __html: env.info }}
-                                    />
+                                    >
+                                        {stripHtml(env.info)}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -102,5 +126,6 @@ const Events = () => {
         </div>
     );
 };
+
 
 export default Events;

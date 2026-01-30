@@ -3,6 +3,9 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
+import { useEffect, useState } from 'react'
+import { getConfig } from './services/contentService'
+import { injectTrackingScripts, updateSEO } from './services/seoService'
 
 // Pages
 import Home from './pages/Home'
@@ -21,6 +24,25 @@ import EventDetail from './pages/EventDetail'
 import FormationPath from './pages/FormationPath'
 
 function App() {
+  const [siteConfig, setSiteConfig] = useState(null);
+
+  useEffect(() => {
+    const loadConfig = async () => {
+      const config = await getConfig();
+      setSiteConfig(config);
+
+      // Injetar Scripts (Analytics, Pixel, GTM)
+      injectTrackingScripts(config);
+
+      // SEO Global Inicial
+      updateSEO({
+        siteTitle: config.siteTitle,
+        description: config.seo_description
+      });
+    };
+    loadConfig();
+  }, []);
+
   return (
     <Router>
       <ScrollToTop />
