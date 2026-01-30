@@ -463,7 +463,9 @@ const Admin = () => {
                                 {Array.from({ length: 31 }).map((_, i) => {
                                     const day = i + 1;
                                     const items = [...news, ...events].filter(item => {
-                                        const date = new Date(item.published_at || item.date);
+                                        const dateValue = item.published_at || item.date;
+                                        if (!dateValue) return false;
+                                        const date = new Date(dateValue);
                                         return date.getDate() === day && date.getMonth() === new Date().getMonth();
                                     });
                                     return (
@@ -564,7 +566,7 @@ const Admin = () => {
                                 </thead>
                                 <tbody>
                                     {news
-                                        .filter(n => n.title.toLowerCase().includes(newsSearch.toLowerCase()))
+                                        .filter(n => (n.title || '').toLowerCase().includes((newsSearch || '').toLowerCase()))
                                         .map(n => (
                                             <tr key={n.id}>
                                                 <td>{n.title}</td>
@@ -606,7 +608,7 @@ const Admin = () => {
                                         </div>
                                         <div className="form-group">
                                             <label>Data de Publicação</label>
-                                            <input type="date" value={newsForm.published_at?.split('T')[0]} onChange={(e) => setNewsForm({ ...newsForm, published_at: e.target.value })} />
+                                            <input type="date" value={newsForm.published_at ? newsForm.published_at.split('T')[0] : ''} onChange={(e) => setNewsForm({ ...newsForm, published_at: e.target.value })} />
                                         </div>
                                         <div className="form-group full-width">
                                             <label>URL da Imagem (Opcional)</label>
@@ -616,7 +618,7 @@ const Admin = () => {
                                             <label>Campos Dinâmicos (JSON)</label>
                                             <textarea
                                                 placeholder='{"chave": "valor"}'
-                                                value={JSON.stringify(newsForm.custom_fields)}
+                                                value={JSON.stringify(newsForm.custom_fields || {})}
                                                 onChange={(e) => {
                                                     try {
                                                         const val = JSON.parse(e.target.value);
@@ -667,7 +669,7 @@ const Admin = () => {
                                     </div>
                                     <div className="form-group">
                                         <label>Data de Publicação/Lançamento</label>
-                                        <input type="date" value={eventForm.published_at?.split('T')[0]} onChange={(e) => setEventForm({ ...eventForm, published_at: e.target.value })} />
+                                        <input type="date" value={eventForm.published_at ? eventForm.published_at.split('T')[0] : ''} onChange={(e) => setEventForm({ ...eventForm, published_at: e.target.value })} />
                                     </div>
                                     <div className="form-group">
                                         <label>Data do Evento (Texto)</label>
@@ -685,7 +687,7 @@ const Admin = () => {
                                         <label>Campos Dinâmicos (JSON)</label>
                                         <textarea
                                             placeholder='{"link": "https://..."}'
-                                            value={JSON.stringify(eventForm.custom_fields)}
+                                            value={JSON.stringify(eventForm.custom_fields || {})}
                                             onChange={(e) => {
                                                 try {
                                                     const val = JSON.parse(e.target.value);
@@ -744,7 +746,7 @@ const Admin = () => {
                                 </thead>
                                 <tbody>
                                     {events
-                                        .filter(e => e.name.toLowerCase().includes(eventSearch.toLowerCase()))
+                                        .filter(e => (e.name || '').toLowerCase().includes((eventSearch || '').toLowerCase()))
                                         .map(item => (
                                             <tr key={item.id}>
                                                 <td>{item.name}</td>
@@ -805,14 +807,7 @@ const Admin = () => {
                         </div>
                     )}
 
-                    {activeTab === 'site' && (
-                        <div className="admin-section">
-                            <form className="admin-form" onSubmit={handleSaveConfig}>
-                                <div className="form-group"><label>Título do Site</label><input type="text" value={config.siteTitle} onChange={(e) => setConfig({ ...config, siteTitle: e.target.value })} /></div>
-                                <div className="form-group"><label>WhatsApp</label><input type="text" value={config.contactPhone} onChange={(e) => setConfig({ ...config, contactPhone: e.target.value })} /></div>
-                            </form>
-                        </div>
-                    )}
+
 
                     {activeTab === 'users' && (
                         <div className="admin-section">
@@ -1037,7 +1032,7 @@ const Admin = () => {
                                         </div>
                                         <div className="form-group">
                                             <label>Idioma do Painel (i18n)</label>
-                                            <select value={config.i18n_config?.language} onChange={(e) => setConfig({ ...config, i18n_config: { ...config.i18n_config, language: e.target.value } })}>
+                                            <select value={config.i18n_config?.language || 'pt-BR'} onChange={(e) => setConfig({ ...config, i18n_config: { ...(config.i18n_config || {}), language: e.target.value } })}>
                                                 <option value="pt-BR">Português (Brasil)</option>
                                                 <option value="en">English</option>
                                                 <option value="es">Español</option>
