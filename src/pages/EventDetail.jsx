@@ -12,7 +12,7 @@ const EventDetail = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const { data, error } = await supabase
+                const { data } = await supabase
                     .from('events')
                     .select('*')
                     .eq('id', id)
@@ -28,8 +28,8 @@ const EventDetail = () => {
                 } else {
                     navigate('/eventos');
                 }
-            } catch (error) {
-                console.error("Error loading event:", error);
+            } catch (_error) {
+                console.error("Error loading event:", _error);
             } finally {
                 setLoading(false);
             }

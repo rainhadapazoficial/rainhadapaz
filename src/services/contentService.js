@@ -363,13 +363,14 @@ export const getPageBySlug = async (slug) => {
     }
 };
 
-export const savePage = async (slug, content) => {
+export const savePage = async (slug, content, metadata = {}) => {
     try {
         const { error } = await supabase
             .from(PAGES_TABLE)
             .upsert({
                 slug,
                 content,
+                ...metadata,
                 updated_at: new Date().toISOString()
             }, { onConflict: 'slug' });
         if (error) throw error;

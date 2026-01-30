@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Admin.css';
 import RichTextEditor from '../components/RichTextEditor';
 import { supabase } from '../supabase';
@@ -51,40 +51,14 @@ const Admin = () => {
     const [multimediaForm, setMultimediaForm] = useState({ url: '', category: '' });
 
     const [editingPage, setEditingPage] = useState(null);
-    const [pageForm, setPageForm] = useState({ slug: '', content: '' });
-
-    useEffect(() => {
-        // Check current session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            const currentUser = session?.user ?? null;
-            setUser(currentUser);
-            if (currentUser) {
-                loadProfile(currentUser.id);
-                loadContent(currentUser.id);
-            } else {
-                setLoading(false);
-            }
-        });
-
-        // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            const currentUser = session?.user ?? null;
-            setUser(currentUser);
-            if (currentUser) {
-                loadProfile(currentUser.id);
-                loadContent(currentUser.id);
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
+    const [pageForm, setPageForm] = useState({ slug: '', content: '', custom_fields: {}, i18n_config: {} });
 
     const loadProfile = async (userId) => {
         const profile = await getProfile(userId);
         setUserProfile(profile);
     };
 
-    const loadContent = async (userId) => {
+    const loadContent = useCallback(async (userId) => {
         setLoading(true);
         try {
             // Primeiro carregar o perfil para saber as permissões
@@ -130,7 +104,33 @@ const Admin = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user?.id]); // Add user.id to dependencies
+
+    useEffect(() => {
+        // Check current session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (currentUser) {
+                loadProfile(currentUser.id);
+                loadContent(currentUser.id);
+            } else {
+                setLoading(false);
+            }
+        });
+
+        // Listen for changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (currentUser) {
+                loadProfile(currentUser.id);
+                loadContent(currentUser.id);
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [loadContent]); // Added loadContent to dependencies
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -158,7 +158,7 @@ const Admin = () => {
             const interval = setInterval(check, 30000);
             return () => clearInterval(interval);
         }
-    }, [activeTab]);
+    }, [activeTab, loadContent]); // Added loadContent to dependencies
 
     const handleSaveConfig = async (e) => {
         e.preventDefault();
@@ -198,9 +198,13 @@ const Admin = () => {
     const handleDeleteNews = async (id) => {
         if (window.confirm('Excluir esta notícia?')) {
             setLoading(true);
-            await logAction(user.id, 'DELETE', 'news', { id });
-            await loadContent();
-            setLoading(false);
+            try {
+                await deleteNewsItem(id);
+                await logAction(user.id, 'DELETE', 'news', { id });
+                await loadContent();
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -272,9 +276,18 @@ const Admin = () => {
     };
 
     // Pages CMS Handlers
-    const handlePageEdit = (slug, content = '') => {
+    const handlePageEdit = (slug, fullPage = null) => {
         setEditingPage(slug);
-        setPageForm({ slug, content: content || '' });
+        if (fullPage) {
+            setPageForm({
+                slug: fullPage.slug,
+                content: fullPage.content || '',
+                custom_fields: fullPage.custom_fields || {},
+                i18n_config: fullPage.i18n_config || {}
+            });
+        } else {
+            setPageForm({ slug, content: '', custom_fields: {}, i18n_config: {} });
+        }
         setActiveTab('page-editor');
     };
 
@@ -282,7 +295,10 @@ const Admin = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await savePage(pageForm.slug, pageForm.content);
+            await savePage(pageForm.slug, pageForm.content, {
+                custom_fields: pageForm.custom_fields,
+                i18n_config: pageForm.i18n_config
+            });
             await loadContent();
             alert('Página salva com sucesso!');
             setActiveTab('pages');
@@ -503,14 +519,14 @@ const Admin = () => {
                         <div className="admin-section">
                             <div className="pages-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
                                 {availablePages.map(p => {
-                                    const savedPage = pages.find(sp => sp.id === p.slug);
+                                    const savedPage = pages.find(sp => sp.slug === p.slug);
                                     return (
                                         <div key={p.slug} className="stat-card page-card">
                                             <h3>{p.name}</h3>
                                             <p style={{ fontSize: '0.8rem', color: '#888', margin: '10px 0' }}>
-                                                {savedPage ? `Última edição: ${new Date(savedPage.updatedAt).toLocaleDateString()}` : 'Nunca editada'}
+                                                {savedPage ? `Última edição: ${new Date(savedPage.updated_at).toLocaleDateString()}` : 'Nunca editada'}
                                             </p>
-                                            <button className="btn-primary" style={{ width: '100%' }} onClick={() => handlePageEdit(p.slug, savedPage?.content)}>
+                                            <button className="btn-primary" style={{ width: '100%' }} onClick={() => handlePageEdit(p.slug, savedPage)}>
                                                 Editar Conteúdo
                                             </button>
                                         </div>
@@ -527,11 +543,117 @@ const Admin = () => {
                                     label={`Editor de Conteúdo - ${availablePages.find(p => p.slug === editingPage)?.name}`}
                                     value={pageForm.content}
                                     onChange={(content) => setPageForm({ ...pageForm, content })}
-                                    height={500}
+                                    height={400}
                                 />
-                                <div className="btn-group-row" style={{ marginTop: '20px' }}>
-                                    <button type="submit" className="btn-primary" disabled={loading}>
-                                        {loading ? 'Salvando...' : 'Salvar Alterações'}
+
+                                {editingPage === 'formacao' && (
+                                    <div className="custom-fields-panel" style={{ marginTop: '30px', padding: '25px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                            <h3 style={{ margin: 0, color: '#1e293b' }}>⚙️ Seções da Trilha (Timeline)</h3>
+                                            <button
+                                                type="button"
+                                                className="btn-secondary"
+                                                onClick={() => {
+                                                    const sections = pageForm.custom_fields?.sections || [];
+                                                    const newSection = {
+                                                        id: Date.now(),
+                                                        title: "Nova Seção",
+                                                        subtitle: "Descrição curta",
+                                                        icon: "✨",
+                                                        color: "#6366f1",
+                                                        items: ["Item 1"]
+                                                    };
+                                                    setPageForm({
+                                                        ...pageForm,
+                                                        custom_fields: {
+                                                            ...pageForm.custom_fields,
+                                                            sections: [...sections, newSection]
+                                                        }
+                                                    });
+                                                }}
+                                            >
+                                                + Adicionar Etapa
+                                            </button>
+                                        </div>
+
+                                        <div style={{ display: 'grid', gap: '20px' }}>
+                                            {(pageForm.custom_fields?.sections || []).map((section, sIdx) => (
+                                                <div key={section.id || sIdx} style={{ background: 'white', padding: '20px', borderRadius: '12px', border: `2px solid ${section.color || '#e2e8f0'}`, position: 'relative' }}>
+                                                    <button
+                                                        type="button"
+                                                        style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.2rem' }}
+                                                        onClick={() => {
+                                                            const sections = [...pageForm.custom_fields.sections];
+                                                            sections.splice(sIdx, 1);
+                                                            setPageForm({
+                                                                ...pageForm,
+                                                                custom_fields: { ...pageForm.custom_fields, sections }
+                                                            });
+                                                        }}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                                                        <div>
+                                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Título</label>
+                                                            <input type="text" value={section.title} onChange={(e) => {
+                                                                const sections = [...pageForm.custom_fields.sections];
+                                                                sections[sIdx].title = e.target.value;
+                                                                setPageForm({ ...pageForm, custom_fields: { ...pageForm.custom_fields, sections } });
+                                                            }} />
+                                                        </div>
+                                                        <div>
+                                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Subtítulo</label>
+                                                            <input type="text" value={section.subtitle} onChange={(e) => {
+                                                                const sections = [...pageForm.custom_fields.sections];
+                                                                sections[sIdx].subtitle = e.target.value;
+                                                                setPageForm({ ...pageForm, custom_fields: { ...pageForm.custom_fields, sections } });
+                                                            }} />
+                                                        </div>
+                                                        <div>
+                                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Ícone/Emoji</label>
+                                                            <input type="text" value={section.icon} onChange={(e) => {
+                                                                const sections = [...pageForm.custom_fields.sections];
+                                                                sections[sIdx].icon = e.target.value;
+                                                                setPageForm({ ...pageForm, custom_fields: { ...pageForm.custom_fields, sections } });
+                                                            }} />
+                                                        </div>
+                                                        <div>
+                                                            <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Cor (Hex)</label>
+                                                            <input type="color" value={section.color} onChange={(e) => {
+                                                                const sections = [...pageForm.custom_fields.sections];
+                                                                sections[sIdx].color = e.target.value;
+                                                                setPageForm({ ...pageForm, custom_fields: { ...pageForm.custom_fields, sections } });
+                                                            }} style={{ height: '40px' }} />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Itens (um por linha)</label>
+                                                        <textarea
+                                                            value={(section.items || []).join('\n')}
+                                                            onChange={(e) => {
+                                                                const sections = [...pageForm.custom_fields.sections];
+                                                                sections[sIdx].items = e.target.value.split('\n').filter(i => i.trim() !== '');
+                                                                setPageForm({ ...pageForm, custom_fields: { ...pageForm.custom_fields, sections } });
+                                                            }}
+                                                            rows={3}
+                                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {(pageForm.custom_fields?.sections || []).length === 0 && (
+                                                <div style={{ textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '12px', border: '2px dashed #e2e8f0', color: '#64748b' }}>
+                                                    Nenhuma etapa configurada. Clique em "+ Adicionar Etapa" para começar.
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="btn-group-row" style={{ marginTop: '30px' }}>
+                                    <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '12px 30px' }}>
+                                        {loading ? 'Salvando...' : '💾 Salvar Alterações'}
                                     </button>
                                     <button type="button" className="btn-secondary" onClick={() => setActiveTab('pages')}>Voltar</button>
                                 </div>

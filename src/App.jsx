@@ -3,7 +3,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { getConfig } from './services/contentService'
 import { injectTrackingScripts, updateSEO } from './services/seoService'
 
@@ -24,14 +24,12 @@ import EventDetail from './pages/EventDetail'
 import FormationPath from './pages/FormationPath'
 
 function App() {
-  const [siteConfig, setSiteConfig] = useState(null);
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     const loadConfig = async () => {
       const config = await getConfig();
-      setSiteConfig(config);
 
       // Injetar Scripts (Analytics, Pixel, GTM)
       injectTrackingScripts(config);

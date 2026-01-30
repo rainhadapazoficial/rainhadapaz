@@ -3,18 +3,16 @@ import { getPageBySlug } from '../services/contentService';
 
 const FormationPath = () => {
     const [pageData, setPageData] = useState(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchContent = async () => {
             const data = await getPageBySlug('formacao');
             if (data) setPageData(data);
-            setLoading(false);
         };
         fetchContent();
     }, []);
 
-    const sections = [
+    const defaultSections = [
         {
             id: 1,
             title: "1- QUERIGMA",
@@ -53,6 +51,8 @@ const FormationPath = () => {
             ]
         }
     ];
+
+    const sections = pageData?.custom_fields?.sections || defaultSections;
 
     return (
         <div className="page-content">

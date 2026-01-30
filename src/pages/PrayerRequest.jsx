@@ -25,7 +25,7 @@ const PrayerRequest = () => {
             });
             setSubmitted(true);
             setFormData({ name: '', request: '' });
-        } catch (error) {
+        } catch {
             alert("Erro ao enviar pedido. Tente novamente.");
         } finally {
             setLoading(false);
