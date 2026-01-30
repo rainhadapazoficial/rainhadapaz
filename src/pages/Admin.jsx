@@ -540,7 +540,7 @@ const Admin = () => {
                     {activeTab === 'news' && (
                         <div className="admin-section">
                             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                <button className="btn-primary" onClick={() => { setEditingNews(null); setNewsForm({ title: '', category: '', date: '', image: '', description: '', status: 'published', published_at: new Date().toISOString().split('T')[0], custom_fields: {}, seo_title: '', seo_description: '' }); setShowNewsForm(true); }}>+ Nova Notícia</button>
+                                <button className="btn-primary" onClick={() => { setEditingNews(null); setNewsForm({ title: '', category: '', date: '', image: '', description: '', status: 'published', published_at: new Date().toISOString().split('T')[0], custom_fields: {}, seo_title: '', seo_description: '' }); setActiveTab('news-form'); }}>+ Nova Notícia</button>
                                 <div className="search-bar">
                                     <input
                                         type="text"
@@ -621,7 +621,9 @@ const Admin = () => {
                                                     try {
                                                         const val = JSON.parse(e.target.value);
                                                         setNewsForm({ ...newsForm, custom_fields: val });
-                                                    } catch (err) { }
+                                                    } catch (err) {
+                                                        console.warn("Invalid JSON in custom fields:", err);
+                                                    }
                                                 }}
                                                 style={{ height: '80px', fontSize: '0.8rem', fontFamily: 'monospace' }}
                                             />
@@ -688,7 +690,9 @@ const Admin = () => {
                                                 try {
                                                     const val = JSON.parse(e.target.value);
                                                     setEventForm({ ...eventForm, custom_fields: val });
-                                                } catch (err) { }
+                                                } catch (err) {
+                                                    console.warn("Invalid JSON in custom fields:", err);
+                                                }
                                             }}
                                             style={{ height: '80px', fontSize: '0.8rem', fontFamily: 'monospace' }}
                                         />
@@ -716,7 +720,7 @@ const Admin = () => {
                     {activeTab === 'events' && (
                         <div className="admin-section">
                             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                <button className="btn-primary" onClick={() => { setEditingEvent(null); setEventForm({ name: '', date: '', location: '', info: '', image: '', status: 'published', published_at: new Date().toISOString().split('T')[0], custom_fields: {}, seo_title: '', seo_description: '' }); setShowEventForm(true); }}>+ Novo Evento</button>
+                                <button className="btn-primary" onClick={() => { setEditingEvent(null); setEventForm({ name: '', date: '', location: '', info: '', image: '', status: 'published', published_at: new Date().toISOString().split('T')[0], custom_fields: {}, seo_title: '', seo_description: '' }); setActiveTab('event-form'); }}>+ Novo Evento</button>
                                 <div className="search-bar">
                                     <input
                                         type="text"
