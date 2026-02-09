@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { mcpServer } from "@/lib/mcpService";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
     const authHeader = request.headers.get("Authorization");
 
