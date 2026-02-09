@@ -1,0 +1,94 @@
+import Link from "next/link";
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Radio, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export function Footer() {
+    return (
+        <footer className="bg-brand-blue text-white pt-16 pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                    {/* Logo & Info */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <img
+                                src="https://www.rccdesinop.com.br/wp-content/uploads/2025/06/Logo-RCC-Diocese-de-Sinop-PNG-150x150.png"
+                                alt="RCC Diocese de Sinop Logo"
+                                className="w-12 h-12 rounded-full object-cover shadow-lg border-2 border-white/20"
+                            />
+                            <span className="text-xl font-bold italic">Diocese de Sinop</span>
+                        </div>
+                        <p className="text-blue-100 text-sm leading-relaxed">
+                            Renovação Carismática Católica - Diocese de Sinop/MT. <br />
+                            A serviço da Igreja, promovendo a cultura de Pentecostes.
+                        </p>
+                        <div className="flex gap-4">
+                            <a href="https://www.instagram.com/rccsinop/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                <Instagram className="w-5 h-5" />
+                            </a>
+                            <a href="https://www.facebook.com/rccsinop/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                <Facebook className="w-5 h-5" />
+                            </a>
+                            <a href="https://www.youtube.com/@rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                <Youtube className="w-5 h-5" />
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div>
+                        <h3 className="text-lg font-bold mb-6 text-brand-gold">Links Rápidos</h3>
+                        <ul className="space-y-4 text-sm">
+                            <li><Link href="/quem-somos" className="hover:underline">Quem Somos</Link></li>
+                            <li><Link href="/blog" className="hover:underline">Blog e Notícias</Link></li>
+                            <li><Link href="/eventos" className="hover:underline">Calendário de Eventos</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Resources */}
+                    <div>
+                        <h3 className="text-lg font-bold mb-6 text-brand-gold">Recursos</h3>
+                        <ul className="space-y-4 text-sm">
+                            <li><Link href="/podcast" className="hover:underline">Web Rádio & Podcast</Link></li>
+                            <li><Link href="/contato#pedido-oracao" className="hover:underline">Fazer Pedido de Oração</Link></li>
+                            <li><Link href="/admin/login" className="hover:underline">Painel Administrativo</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Contact */}
+                    <div>
+                        <h3 className="text-lg font-bold mb-6 text-brand-gold">Contato</h3>
+                        <ul className="space-y-4 text-sm">
+                            <li className="flex items-start gap-3">
+                                <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
+                                <span>Centro de Evangelização João Paulo II <br /> Sinop - MT</span>
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <Phone className="w-5 h-5 text-brand-gold flex-shrink-0" />
+                                <a href="https://wa.me/5566999999999" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                    (66) 9.9999-9999 (Escritório Diocesano)
+                                </a>
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <Mail className="w-5 h-5 text-brand-gold flex-shrink-0" />
+                                <span>contato@rccdesinop.com.br</span>
+                            </li>
+                            <li className="pt-4">
+                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
+                                    <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 w-full">
+                                        <MessageCircle className="w-5 h-5 fill-current" />
+                                        Fale agora conosco
+                                    </Button>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="mt-16 pt-8 border-t border-blue-800 text-center text-xs text-blue-200">
+                    <p>Renovação Carismática Católica da Diocese de Sinop - CNPJ: 03.162.415/0001-50</p>
+                    <p className="mt-2 text-[10px] opacity-50">&copy; {new Date().getFullYear()} RCC Diocese de Sinop. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    );
+}

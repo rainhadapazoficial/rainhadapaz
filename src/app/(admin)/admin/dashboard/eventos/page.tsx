@@ -1,0 +1,354 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+    Plus,
+    Trash2,
+    Edit,
+    Loader2,
+    Calendar,
+    Clock,
+    MapPin,
+    Type,
+    Image as ImageIcon,
+    CheckCircle2,
+    XCircle,
+    AlertCircle,
+    CalendarDays
+} from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { PremiumEditor } from "@/components/admin/PremiumEditor";
+
+export default function EventosAdminPage() {
+    const [events, setEvents] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editingEvent, setEditingEvent] = useState<any>(null);
+    const [editorContent, setEditorContent] = useState("");
+
+    useEffect(() => {
+        fetchEvents();
+    }, []);
+
+    async function fetchEvents() {
+        setIsLoading(true);
+        const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .order("date", { ascending: true });
+
+        if (error) console.error("Error fetching events:", error);
+        else setEvents(data || []);
+        setIsLoading(false);
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const formData = new FormData(e.currentTarget);
+        const eventData = {
+            title: formData.get("title"),
+            description: editorContent,
+            date: formData.get("date"),
+            time: formData.get("time"),
+            location: formData.get("location"),
+            image_url: formData.get("image_url"),
+            category: formData.get("category"),
+        };
+
+        let result;
+        if (editingEvent) {
+            result = await supabase
+                .from("events")
+                .update(eventData)
+                .eq("id", editingEvent.id);
+        } else {
+            result = await supabase
+                .from("events")
+                .insert([eventData]);
+        }
+
+        if (result.error) {
+            alert("Erro ao salvar evento: " + result.error.message);
+        } else {
+            setIsDialogOpen(false);
+            setEditingEvent(null);
+            setEditorContent("");
+            fetchEvents();
+        }
+        setIsSubmitting(false);
+    }
+
+    async function deleteEvent(event: any) {
+        if (!confirm(`Confirmar exclusão definitiva do evento: "${event.title}"?`)) return;
+
+        try {
+            // 1. Limpeza de imagem no Storage (Tentativa Segura)
+            try {
+                if (event.image_url && event.image_url.includes("supabase.co/storage/v1/object/public/")) {
+                    const urlParts = event.image_url.split("/public/")[1];
+                    const bucketName = urlParts.split("/")[0];
+                    const filePath = urlParts.split("/").slice(1).join("/");
+
+                    if (bucketName && filePath) {
+                        console.log(`[STORAGE] Removendo banner: ${bucketName}/${filePath}`);
+                        await supabase.storage.from(bucketName).remove([filePath]);
+                    }
+                }
+            } catch (storageErr) {
+                console.warn("[STORAGE_WARN] Falha ao apagar imagem, mas prosseguindo com exclusão do evento:", storageErr);
+            }
+
+            // 2. Deletar no banco
+            const { error: dbError } = await supabase
+                .from("events")
+                .delete()
+                .eq("id", event.id);
+
+            if (dbError) {
+                console.error("[DATABASE] Erro ao deletar evento:", dbError);
+                throw new Error(`Erro no Banco: ${dbError.message} (Código: ${dbError.code})`);
+            }
+
+            // 3. Sincronização de Estado
+            setEvents(prev => prev.filter(e => e.id !== event.id));
+            alert("Sucesso! O evento foi removido da agenda.");
+
+        } catch (error: any) {
+            console.error("ERRO TÉCNICO NA EXCLUSÃO:", error);
+            alert(`⚠️ FALHA NA EXCLUSÃO\n\nMotivo: ${error.message}\n\nSe o erro for '403 Forbidden', verifique as permissões de DELETE no Supabase.`);
+        }
+    }
+
+    return (
+        <div className="p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-bold text-brand-blue italic">Agenda do Grupo</h1>
+                    <p className="text-gray-500">Gerencie os encontros, retiros e missas.</p>
+                </div>
+                <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                    setIsDialogOpen(open);
+                    if (!open) {
+                        setEditingEvent(null);
+                        setEditorContent("");
+                    }
+                }}>
+                    <DialogTrigger asChild>
+                        <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12 px-6 shadow-lg shadow-brand-blue/20">
+                            <Plus className="w-5 h-5 mr-2" />
+                            Novo Evento
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+                        <form onSubmit={handleSubmit}>
+                            <DialogHeader className="bg-brand-blue text-white p-8">
+                                <DialogTitle className="text-2xl font-bold italic text-brand-gold">
+                                    {editingEvent ? "Editar Evento" : "Novo Evento"}
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                        <Type className="w-4 h-4" /> Nome do Evento
+                                    </label>
+                                    <Input
+                                        name="title"
+                                        defaultValue={editingEvent?.title}
+                                        placeholder="Ex: Retiro de Carnaval 2024"
+                                        className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                            <Calendar className="w-4 h-4" /> Data
+                                        </label>
+                                        <Input
+                                            name="date"
+                                            type="date"
+                                            defaultValue={editingEvent?.date}
+                                            className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                            <Clock className="w-4 h-4" /> Horário
+                                        </label>
+                                        <Input
+                                            name="time"
+                                            defaultValue={editingEvent?.time}
+                                            placeholder="Ex: 19:30"
+                                            className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                        <MapPin className="w-4 h-4" /> Localização
+                                    </label>
+                                    <Input
+                                        name="location"
+                                        defaultValue={editingEvent?.location}
+                                        placeholder="Ex: Matriz da Paróquia Santo Antônio"
+                                        className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4" /> Categoria
+                                        </label>
+                                        <Input
+                                            name="category"
+                                            defaultValue={editingEvent?.category}
+                                            placeholder="Ex: Retiro, Grupo de Oração..."
+                                            className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                            <ImageIcon className="w-4 h-4" /> URL da Imagem
+                                        </label>
+                                        <Input
+                                            name="image_url"
+                                            defaultValue={editingEvent?.image_url}
+                                            placeholder="Banner do evento"
+                                            className="h-12 rounded-xl border-gray-200 bg-gray-50 focus:bg-white"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                        <AlertCircle className="w-4 h-4" /> Descrição
+                                    </label>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Descrição Completa</label>
+                                        <PremiumEditor
+                                            content={editorContent}
+                                            onChange={setEditorContent}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <DialogFooter className="p-8 bg-gray-50 border-t">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    onClick={() => setIsDialogOpen(false)}
+                                    className="rounded-xl h-12 px-6"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    className="bg-brand-gold hover:bg-brand-gold/90 text-white font-bold rounded-xl h-12 px-10 shadow-lg shadow-brand-gold/20"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Salvar Evento"}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isLoading ? (
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-400">
+                        <Loader2 className="w-12 h-12 animate-spin mb-4 text-brand-gold" />
+                        <p className="font-bold italic">Carregando agenda...</p>
+                    </div>
+                ) : events.length === 0 ? (
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed rounded-[3rem]">
+                        <XCircle className="w-16 h-16 mb-4 opacity-20" />
+                        <p className="text-xl font-bold italic">Nenhum evento agendado.</p>
+                    </div>
+                ) : (
+                    events.map((event) => (
+                        <Card key={event.id} className="group overflow-hidden rounded-[2rem] border-none shadow-sm hover:shadow-2xl transition-all duration-500">
+                            <div className="relative h-40 bg-brand-blue/5 overflow-hidden">
+                                {event.image_url ? (
+                                    <img src={event.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-brand-blue/20">
+                                        <Calendar className="w-20 h-20" />
+                                    </div>
+                                )}
+                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-brand-blue uppercase tracking-widest border border-brand-blue/10">
+                                    {event.category}
+                                </div>
+                            </div>
+                            <CardContent className="p-6 space-y-4">
+                                <div>
+                                    <h3 className="text-xl font-bold text-brand-blue line-clamp-1 italic">{event.title}</h3>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                                        <div className="flex items-center gap-1">
+                                            <Calendar className="w-4 h-4 text-brand-gold" />
+                                            {new Date(event.date).toLocaleDateString("pt-BR")}
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Clock className="w-4 h-4 text-brand-gold" />
+                                            {event.time}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                                    <div className="flex items-center gap-1 text-xs text-gray-400 truncate">
+                                        <MapPin className="w-3 h-3" />
+                                        {event.location}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                                setEditingEvent(event);
+                                                setEditorContent(event.description || "");
+                                                setIsDialogOpen(true);
+                                            }}
+                                            className="h-10 w-10 rounded-xl text-brand-blue hover:bg-brand-blue/5"
+                                        >
+                                            <Edit className="w-5 h-5" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => deleteEvent(event)}
+                                            className="h-10 w-10 rounded-xl text-red-500 hover:bg-red-50"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))
+                )}
+            </div>
+        </div>
+    );
+}

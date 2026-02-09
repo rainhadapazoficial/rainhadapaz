@@ -1,0 +1,30 @@
+name: Sincronização Diária de Notícias
+
+on:
+  schedule:
+    - cron: '0 9 * * *'    # 06:00 BRT / Sinop (UTC-3)
+    - cron: '10 21 * * *'  # 18:10 BRT / Sinop (UTC-3)
+  workflow_dispatch:      # Permite rodar manualmente pelo painel do GitHub
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar Dependências
+        run: npm install
+
+      - name: Rodar Sincronização RCC Brasil
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/sync-rcc.ts

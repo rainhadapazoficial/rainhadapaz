@@ -1,0 +1,19 @@
+{
+    "mcpServers": {
+        "rainha-da-paz-manager": {
+            "command": "curl",
+            "args": [
+                "-X",
+                "POST",
+                "https://site-rcc-rainhadapaz.vercel.app/api/mcp",
+                "-H",
+                "Content-Type: application/json",
+                "-H",
+                "Authorization: Bearer YOUR_MCP_AUTH_TOKEN_HERE",
+                "-d",
+                "$(cat)"
+            ],
+            "env": {}
+        }
+    }
+}
