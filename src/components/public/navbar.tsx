@@ -12,6 +12,7 @@ const navLinks = [
     { name: "Ministérios", href: "/ministerios" },
     { name: "Blog", href: "/blog" },
     { name: "Eventos", href: "/eventos" },
+    { name: "Calendário", href: "/calendario" },
     { name: "Podcast", href: "/podcast" },
     { name: "Contato", href: "/contato" },
 ];

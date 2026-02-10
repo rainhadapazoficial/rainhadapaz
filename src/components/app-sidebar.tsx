@@ -54,6 +54,11 @@ const data = {
             url: "/admin/dashboard/festa-rei-jesus",
             icon: Crown,
         },
+        {
+            title: "Calendário Diocesano",
+            url: "/admin/dashboard/calendario",
+            icon: Calendar,
+        },
     ],
     projects: [
         {
