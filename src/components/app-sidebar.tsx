@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor } from "lucide-react";
+import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -48,6 +48,11 @@ const data = {
             title: "Grupos de Oração",
             url: "/admin/dashboard/grupos",
             icon: Heart,
+        },
+        {
+            title: "Festa do Rei Jesus",
+            url: "/admin/dashboard/festa-rei-jesus",
+            icon: Crown,
         },
     ],
     projects: [
