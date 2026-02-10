@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Calendar, MapPin, Crown, ChevronRight, History } from "lucide-react";
+import { Loader2, Calendar, MapPin, Crown, ChevronRight, History, Info, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -67,10 +67,37 @@ export default function FestaReiJesusPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed"
+                        className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
                     >
-                        Reviva os momentos marcantes de cada edição, onde Deus derramou Sua graça e renovou nossa fé. Uma jornada de louvor e adoração através dos anos.
+                        A maior festa cristã da região norte de Mato Grosso! Um encontro de louvor, adoração, pregação e muita alegria na presença de Jesus.
                     </motion.p>
+                </div>
+            </section>
+
+            {/* About Section (New based on request) */}
+            <section className="py-16 bg-white">
+                <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <div className="inline-flex items-center gap-2 bg-brand-gold/10 text-brand-gold font-bold px-3 py-1 rounded-full text-xs uppercase tracking-widest">
+                            <Info className="w-4 h-4" />
+                            Sobre o Evento
+                        </div>
+                        <h2 className="text-4xl font-bold text-brand-blue italic">O que é a Festa do Rei Jesus?</h2>
+                        <p className="text-gray-600 leading-relaxed text-lg">
+                            A Festa do Rei Jesus é um evento tradicional da Renovação Carismática Católica da Diocese de Sinop.
+                            Todos os anos, reunimos milhares de fiéis para celebrar a realeza de Cristo em nossas vidas com shows nacionais, pregações impactantes e momentos profundos de oração.
+                        </p>
+                        <p className="text-gray-600 leading-relaxed text-lg">
+                            É um tempo de renovação espiritual e confraternização para toda a família católica.
+                        </p>
+                    </div>
+                    <div className="relative h-80 rounded-[2rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
+                        {/* Placeholder image since we can't fetch the real one yet */}
+                        <div className="absolute inset-0 bg-brand-blue text-white flex flex-col items-center justify-center p-8 text-center">
+                            <Crown className="w-20 h-20 mb-4 text-brand-gold" />
+                            <p className="font-bold text-xl">Venha Celebrar Conosco!</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
