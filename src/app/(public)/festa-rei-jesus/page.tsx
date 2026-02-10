@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Calendar, MapPin, Crown, ChevronRight, History, Info, PlayCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2, Calendar, MapPin, Crown, ChevronRight, History, Info, Star, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+
+interface Atracao {
+    nome: string;
+    descricao: string;
+    foto_url: string;
+}
 
 export default function FestaReiJesusPage() {
     const [editions, setEditions] = useState<any[]>([]);
@@ -17,7 +22,6 @@ export default function FestaReiJesusPage() {
     }, []);
 
     async function fetchEditions() {
-        // Fetch all editions ordered by year descending
         const { data, error } = await supabase
             .from("festa_rei_jesus_editions")
             .select("*")
@@ -27,12 +31,21 @@ export default function FestaReiJesusPage() {
             console.error("Error fetching history:", error);
         } else if (data && data.length > 0) {
             setEditions(data);
-            setSelectedYear(data[0].ano); // Select the most recent year by default
+            setSelectedYear(data[0].ano);
         }
         setIsLoading(false);
     }
 
-    const currentEdition = editions.find(e => e.ano === selectedYear);
+    const currentEdition = editions.find((e: any) => e.ano === selectedYear);
+
+    function formatDate(dateStr: string) {
+        if (!dateStr) return "";
+        return new Date(dateStr).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+        });
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
@@ -74,7 +87,7 @@ export default function FestaReiJesusPage() {
                 </div>
             </section>
 
-            {/* About Section (New based on request) */}
+            {/* About Section */}
             <section className="py-16 bg-white">
                 <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
@@ -92,7 +105,6 @@ export default function FestaReiJesusPage() {
                         </p>
                     </div>
                     <div className="relative h-80 rounded-[2rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
-                        {/* Placeholder image since we can't fetch the real one yet */}
                         <div className="absolute inset-0 bg-brand-blue text-white flex flex-col items-center justify-center p-8 text-center">
                             <Crown className="w-20 h-20 mb-4 text-brand-gold" />
                             <p className="font-bold text-xl">Venha Celebrar Conosco!</p>
@@ -121,7 +133,7 @@ export default function FestaReiJesusPage() {
                         <div className="lg:col-span-3 lg:sticky lg:top-24 space-y-4">
                             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-2 mb-4">Linha do Tempo</h3>
                             <div className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 pb-4 lg:pb-0 px-1 scrollbar-hide">
-                                {editions.map((edition) => (
+                                {editions.map((edition: any) => (
                                     <button
                                         key={edition.id}
                                         onClick={() => setSelectedYear(edition.ano)}
@@ -175,17 +187,24 @@ export default function FestaReiJesusPage() {
                                                         Edição {currentEdition.ano}
                                                     </div>
                                                     <h2 className="text-3xl md:text-5xl font-black italic shadow-black drop-shadow-lg leading-tight">
-                                                        "{currentEdition.tema}"
+                                                        &quot;{currentEdition.tema}&quot;
                                                     </h2>
                                                 </div>
                                             </div>
 
                                             {/* Details */}
                                             <div className="p-8 md:p-12 space-y-8">
-                                                <div className="flex items-center gap-6 text-gray-600 border-b border-gray-100 pb-8">
+                                                <div className="flex flex-wrap items-center gap-4 text-gray-600 border-b border-gray-100 pb-8">
                                                     <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl">
                                                         <Calendar className="w-5 h-5 text-brand-blue" />
-                                                        <span className="font-bold">{currentEdition.ano}</span>
+                                                        {currentEdition.data_inicio ? (
+                                                            <span className="font-bold">
+                                                                {formatDate(currentEdition.data_inicio)}
+                                                                {currentEdition.data_fim && ` — ${formatDate(currentEdition.data_fim)}`}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="font-bold">{currentEdition.ano}</span>
+                                                        )}
                                                     </div>
                                                     <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl">
                                                         <MapPin className="w-5 h-5 text-brand-blue" />
@@ -201,6 +220,43 @@ export default function FestaReiJesusPage() {
                                                         <p className="italic text-gray-400">Nenhuma descrição disponível para esta edição.</p>
                                                     )}
                                                 </div>
+
+                                                {/* Attractions */}
+                                                {currentEdition.atracoes && currentEdition.atracoes.length > 0 && (
+                                                    <div className="border-t border-gray-100 pt-8">
+                                                        <h3 className="text-2xl font-bold text-brand-blue italic mb-6 flex items-center gap-2">
+                                                            <Star className="w-6 h-6 text-brand-gold" />
+                                                            Atrações
+                                                        </h3>
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                            {currentEdition.atracoes.map((atracao: Atracao, index: number) => (
+                                                                <Card key={index} className="overflow-hidden rounded-2xl border shadow-sm hover:shadow-lg transition-all group">
+                                                                    <CardContent className="p-0">
+                                                                        <div className="h-40 w-full bg-gray-100 overflow-hidden">
+                                                                            {atracao.foto_url ? (
+                                                                                <img
+                                                                                    src={atracao.foto_url}
+                                                                                    alt={atracao.nome}
+                                                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                                                />
+                                                                            ) : (
+                                                                                <div className="w-full h-full flex items-center justify-center bg-brand-blue/5 text-brand-blue/20">
+                                                                                    <User className="w-12 h-12" />
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="p-4">
+                                                                            <h4 className="font-bold text-brand-blue text-lg">{atracao.nome}</h4>
+                                                                            {atracao.descricao && (
+                                                                                <p className="text-gray-500 text-sm mt-1">{atracao.descricao}</p>
+                                                                            )}
+                                                                        </div>
+                                                                    </CardContent>
+                                                                </Card>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </motion.div>

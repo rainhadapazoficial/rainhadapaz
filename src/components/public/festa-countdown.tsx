@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Crown, ArrowRight, Flame } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
-// Data estimada da Festa do Rei Jesus 2026 (ajustar quando definida)
-const FESTA_DATE = new Date("2026-07-18T18:00:00");
+// Fallback date if no edition with dates is found in the DB
+const FALLBACK_DATE = new Date("2026-07-18T18:00:00");
 
-function getTimeLeft() {
+function getTimeLeft(target: Date) {
     const now = new Date();
-    const diff = FESTA_DATE.getTime() - now.getTime();
+    const diff = target.getTime() - now.getTime();
 
     if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, passed: true };
 
@@ -24,12 +25,46 @@ function getTimeLeft() {
 }
 
 export default function FestaCountdown() {
-    const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+    const [festaDate, setFestaDate] = useState<Date>(FALLBACK_DATE);
+    const [festaYear, setFestaYear] = useState<number>(2026);
+    const [timeLeft, setTimeLeft] = useState(getTimeLeft(FALLBACK_DATE));
+    const [festaInfo, setFestaInfo] = useState<{ tema?: string; data_inicio?: string; data_fim?: string } | null>(null);
 
     useEffect(() => {
-        const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
-        return () => clearInterval(timer);
+        async function fetchNextFesta() {
+            const currentYear = new Date().getFullYear();
+            const { data } = await supabase
+                .from("festa_rei_jesus_editions")
+                .select("ano, tema, data_inicio, data_fim")
+                .gte("ano", currentYear)
+                .order("ano", { ascending: true })
+                .limit(1);
+
+            if (data && data.length > 0) {
+                const edition = data[0];
+                setFestaYear(edition.ano);
+                setFestaInfo(edition);
+                if (edition.data_inicio) {
+                    const d = new Date(edition.data_inicio + "T18:00:00");
+                    setFestaDate(d);
+                    setTimeLeft(getTimeLeft(d));
+                }
+            }
+        }
+        fetchNextFesta();
     }, []);
+
+    useEffect(() => {
+        const timer = setInterval(() => setTimeLeft(getTimeLeft(festaDate)), 1000);
+        return () => clearInterval(timer);
+    }, [festaDate]);
+
+    function formatDateBR(dateStr: string) {
+        return new Date(dateStr).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "long",
+        });
+    }
 
     return (
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-brand-blue to-blue-900">
@@ -45,7 +80,7 @@ export default function FestaCountdown() {
                 <div className="flex justify-center mb-6">
                     <div className="flex items-center gap-2 bg-brand-gold/20 backdrop-blur-sm border border-brand-gold/30 rounded-full px-5 py-2">
                         <Flame className="w-4 h-4 text-brand-gold animate-pulse" />
-                        <span className="text-brand-gold text-sm font-bold uppercase tracking-wider">Evento Principal 2026</span>
+                        <span className="text-brand-gold text-sm font-bold uppercase tracking-wider">Evento Principal {festaYear}</span>
                         <Flame className="w-4 h-4 text-brand-gold animate-pulse" />
                     </div>
                 </div>
@@ -60,17 +95,29 @@ export default function FestaCountdown() {
                     <h2 className="text-5xl md:text-6xl font-black text-white italic mb-4 drop-shadow-lg">
                         Festa do Rei Jesus
                     </h2>
+                    {festaInfo?.tema && (
+                        <p className="text-brand-gold text-lg font-bold italic mb-2">&quot;{festaInfo.tema}&quot;</p>
+                    )}
                     <p className="text-blue-200 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                         A maior festa cristã da região norte de Mato Grosso! Conheça o histórico
                         de cada edição com fotos, temas e muito mais.
                     </p>
+                    {/* Show dates if available */}
+                    {festaInfo?.data_inicio && (
+                        <div className="mt-4 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 text-white">
+                            <span className="font-bold">
+                                {formatDateBR(festaInfo.data_inicio)}
+                                {festaInfo.data_fim && ` — ${formatDateBR(festaInfo.data_fim)}`}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Countdown */}
                 {!timeLeft.passed ? (
                     <div className="mb-10">
                         <p className="text-center text-brand-gold text-sm font-bold uppercase tracking-widest mb-4">
-                            Contagem regressiva para 2026
+                            Contagem regressiva para {festaYear}
                         </p>
                         <div className="flex justify-center gap-3 md:gap-6 flex-wrap">
                             {[

@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Plus, Search, Trash2, Edit, Loader2,
-    CheckCircle2, XCircle, Calendar,
-    MapPin, ImageIcon, AlertCircle
+    XCircle, Calendar,
+    MapPin, ImageIcon, Star, UserPlus
 } from "lucide-react";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
@@ -17,6 +17,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+interface Atracao {
+    nome: string;
+    descricao: string;
+    foto_url: string;
+}
+
 export default function FestaReiJesusAdminPage() {
     const [editions, setEditions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +30,7 @@ export default function FestaReiJesusAdminPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingEdition, setEditingEdition] = useState<any>(null);
     const [formData, setFormData] = useState<any>({});
+    const [atracoes, setAtracoes] = useState<Atracao[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
@@ -51,8 +58,11 @@ export default function FestaReiJesusAdminPage() {
             ano: parseInt(formValues.get("ano") as string),
             tema: formValues.get("tema"),
             local: formValues.get("local"),
+            data_inicio: formValues.get("data_inicio") || null,
+            data_fim: formValues.get("data_fim") || null,
             descricao: formData.descricao,
             imagem_url: formData.imagem_url,
+            atracoes: atracoes,
         };
 
         let result;
@@ -73,6 +83,7 @@ export default function FestaReiJesusAdminPage() {
             setIsDialogOpen(false);
             setEditingEdition(null);
             setFormData({});
+            setAtracoes([]);
             fetchEditions();
         }
         setIsSubmitting(false);
@@ -88,16 +99,32 @@ export default function FestaReiJesusAdminPage() {
     const openEdit = (edition: any) => {
         setEditingEdition(edition);
         setFormData(edition);
+        setAtracoes(edition.atracoes || []);
         setIsDialogOpen(true);
     };
 
     const openNew = () => {
         setEditingEdition(null);
         setFormData({});
+        setAtracoes([]);
         setIsDialogOpen(true);
     };
 
-    const filteredEditions = editions.filter(e =>
+    const addAtracao = () => {
+        setAtracoes([...atracoes, { nome: "", descricao: "", foto_url: "" }]);
+    };
+
+    const updateAtracao = (index: number, field: keyof Atracao, value: string) => {
+        const updated = [...atracoes];
+        updated[index] = { ...updated[index], [field]: value };
+        setAtracoes(updated);
+    };
+
+    const removeAtracao = (index: number) => {
+        setAtracoes(atracoes.filter((_, i) => i !== index));
+    };
+
+    const filteredEditions = editions.filter((e: any) =>
         e.tema.toLowerCase().includes(searchTerm.toLowerCase()) ||
         e.ano.toString().includes(searchTerm)
     );
@@ -110,7 +137,7 @@ export default function FestaReiJesusAdminPage() {
                         <Calendar className="w-8 h-8 text-brand-gold" />
                         Histórico Festa do Rei Jesus
                     </h1>
-                    <p className="text-gray-500">Gerencie as edições passadas do evento.</p>
+                    <p className="text-gray-500">Gerencie as edições passadas e futuras do evento.</p>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">
@@ -119,14 +146,15 @@ export default function FestaReiJesusAdminPage() {
                             placeholder="Buscar por tema ou ano..."
                             className="pl-10 rounded-xl w-64"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                    <Dialog open={isDialogOpen} onOpenChange={(open: boolean) => {
                         setIsDialogOpen(open);
                         if (!open) {
                             setEditingEdition(null);
                             setFormData({});
+                            setAtracoes([]);
                         }
                     }}>
                         <DialogTrigger asChild>
@@ -135,7 +163,7 @@ export default function FestaReiJesusAdminPage() {
                                 Nova Edição
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl rounded-[2rem]">
+                        <DialogContent className="max-w-3xl rounded-[2rem] max-h-[90vh] overflow-y-auto">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <DialogHeader>
                                     <DialogTitle className="text-xl font-bold italic text-brand-blue">
@@ -143,6 +171,7 @@ export default function FestaReiJesusAdminPage() {
                                     </DialogTitle>
                                 </DialogHeader>
 
+                                {/* Basic Info */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="ano">Ano</Label>
@@ -150,8 +179,8 @@ export default function FestaReiJesusAdminPage() {
                                             name="ano"
                                             type="number"
                                             value={formData.ano || ""}
-                                            onChange={(e) => setFormData({ ...formData, ano: e.target.value })}
-                                            placeholder="Ex: 2023"
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ano: e.target.value })}
+                                            placeholder="Ex: 2026"
                                             required
                                             className="rounded-xl"
                                         />
@@ -161,7 +190,7 @@ export default function FestaReiJesusAdminPage() {
                                         <Input
                                             name="local"
                                             value={formData.local || ""}
-                                            onChange={(e) => setFormData({ ...formData, local: e.target.value })}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, local: e.target.value })}
                                             placeholder="Ex: Ginásio Olímpico"
                                             required
                                             className="rounded-xl"
@@ -172,7 +201,7 @@ export default function FestaReiJesusAdminPage() {
                                         <Input
                                             name="tema"
                                             value={formData.tema || ""}
-                                            onChange={(e) => setFormData({ ...formData, tema: e.target.value })}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, tema: e.target.value })}
                                             placeholder="Ex: O Amor de Deus foi derramado..."
                                             required
                                             className="rounded-xl"
@@ -180,21 +209,47 @@ export default function FestaReiJesusAdminPage() {
                                     </div>
                                 </div>
 
+                                {/* Dates */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="data_inicio">Data de Início</Label>
+                                        <Input
+                                            name="data_inicio"
+                                            type="date"
+                                            value={formData.data_inicio || ""}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_inicio: e.target.value })}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="data_fim">Data de Término</Label>
+                                        <Input
+                                            name="data_fim"
+                                            type="date"
+                                            value={formData.data_fim || ""}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, data_fim: e.target.value })}
+                                            className="rounded-xl"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Image */}
                                 <div className="space-y-2">
                                     <Label htmlFor="imagem_url">URL da Imagem (Opcional)</Label>
                                     <Input
                                         id="imagem_url"
                                         placeholder="https://exemplo.com/foto.jpg"
                                         value={formData.imagem_url || ""}
-                                        onChange={(e) => setFormData({ ...formData, imagem_url: e.target.value })}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, imagem_url: e.target.value })}
                                     />
                                     {formData.imagem_url && (
                                         <div className="mt-2 relative h-40 w-full rounded-md overflow-hidden bg-slate-100 border">
-                                            <img src={formData.imagem_url} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = "https://placehold.co/600x400?text=Erro+Imagem")} />
+                                            <img src={formData.imagem_url} alt="Preview" className="w-full h-full object-cover" onError={(e: React.SyntheticEvent<HTMLImageElement>) => (e.currentTarget.src = "https://placehold.co/600x400?text=Erro+Imagem")} />
                                         </div>
                                     )}
                                 </div>
 
+                                {/* Description */}
                                 <div className="space-y-2">
                                     <Label htmlFor="descricao">Descrição / Memória</Label>
                                     <Textarea
@@ -202,8 +257,70 @@ export default function FestaReiJesusAdminPage() {
                                         className="min-h-[100px]"
                                         placeholder="Conte um pouco sobre como foi essa edição..."
                                         value={formData.descricao || ""}
-                                        onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, descricao: e.target.value })}
                                     />
+                                </div>
+
+                                {/* Attractions */}
+                                <div className="space-y-4 border-t pt-6">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-lg font-bold text-brand-blue flex items-center gap-2">
+                                            <Star className="w-5 h-5 text-brand-gold" />
+                                            Atrações ({atracoes.length})
+                                        </Label>
+                                        <Button type="button" variant="outline" onClick={addAtracao} className="rounded-xl">
+                                            <UserPlus className="w-4 h-4 mr-2" />
+                                            Adicionar Atração
+                                        </Button>
+                                    </div>
+
+                                    {atracoes.map((atracao, index) => (
+                                        <div key={index} className="border rounded-2xl p-4 space-y-3 bg-gray-50 relative">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => removeAtracao(index)}
+                                                className="absolute top-2 right-2 text-gray-400 hover:text-red-500 h-8 w-8 rounded-xl"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                            <div className="grid grid-cols-2 gap-3 pr-10">
+                                                <div className="space-y-1">
+                                                    <Label className="text-xs text-gray-500">Nome</Label>
+                                                    <Input
+                                                        placeholder="Ex: Padre Fábio de Melo"
+                                                        value={atracao.nome}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateAtracao(index, "nome", e.target.value)}
+                                                        className="rounded-xl"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <Label className="text-xs text-gray-500">Foto URL</Label>
+                                                    <Input
+                                                        placeholder="https://..."
+                                                        value={atracao.foto_url}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateAtracao(index, "foto_url", e.target.value)}
+                                                        className="rounded-xl"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label className="text-xs text-gray-500">Descrição</Label>
+                                                <Input
+                                                    placeholder="Cantor, Pregador, Banda..."
+                                                    value={atracao.descricao}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateAtracao(index, "descricao", e.target.value)}
+                                                    className="rounded-xl"
+                                                />
+                                            </div>
+                                            {atracao.foto_url && (
+                                                <div className="h-20 w-20 rounded-xl overflow-hidden bg-gray-200">
+                                                    <img src={atracao.foto_url} alt={atracao.nome} className="w-full h-full object-cover" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <DialogFooter>
@@ -251,6 +368,20 @@ export default function FestaReiJesusAdminPage() {
                                         <p className="text-gray-500 text-sm flex items-center gap-1 mt-1">
                                             <MapPin className="w-3 h-3" /> {edition.local}
                                         </p>
+                                        {(edition.data_inicio || edition.data_fim) && (
+                                            <p className="text-gray-400 text-xs flex items-center gap-1 mt-1">
+                                                <Calendar className="w-3 h-3" />
+                                                {edition.data_inicio && new Date(edition.data_inicio).toLocaleDateString("pt-BR")}
+                                                {edition.data_inicio && edition.data_fim && " - "}
+                                                {edition.data_fim && new Date(edition.data_fim).toLocaleDateString("pt-BR")}
+                                            </p>
+                                        )}
+                                        {edition.atracoes && edition.atracoes.length > 0 && (
+                                            <p className="text-brand-gold text-xs font-bold mt-1 flex items-center gap-1">
+                                                <Star className="w-3 h-3" />
+                                                {edition.atracoes.length} {edition.atracoes.length === 1 ? "atração" : "atrações"}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="flex gap-2">
                                         <Button variant="ghost" size="icon" onClick={() => openEdit(edition)} className="text-gray-400 hover:text-brand-blue rounded-xl h-8 w-8">
