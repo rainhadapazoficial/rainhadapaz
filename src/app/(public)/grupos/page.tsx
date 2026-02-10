@@ -13,7 +13,6 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function GruposPublicPage() {
     const [groups, setGroups] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [pageSettings, setPageSettings] = useState<any>({
         title: "Grupos de Oração",
@@ -38,24 +37,14 @@ export default function GruposPublicPage() {
 
     async function fetchGroups() {
         setIsLoading(true);
-        setError(null);
-        try {
-            const { data, error } = await supabase
-                .from("groups")
-                .select("*")
-                .order("nome", { ascending: true });
+        const { data, error } = await supabase
+            .from("groups")
+            .select("*")
+            .order("nome", { ascending: true });
 
-            if (error) {
-                console.error("Error fetching groups:", error);
-                setError(error.message + " (" + error.code + ")");
-            } else {
-                setGroups(data || []);
-            }
-        } catch (err: any) {
-            setError(err.message || "Erro desconhecido ao conectar.");
-        } finally {
-            setIsLoading(false);
-        }
+        if (error) console.error("Error fetching groups:", error);
+        else setGroups(data || []);
+        setIsLoading(false);
     }
 
     const filteredGroups = groups.filter(g =>
@@ -87,15 +76,6 @@ export default function GruposPublicPage() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 py-12 -mt-10">
-                {/* Debug Info - Temporary */}
-                <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-xs font-mono text-yellow-800 break-all">
-                    <p className="font-bold mb-2">DEBUG INFO (v1.2):</p>
-                    <p>SUPABASE_URL: {process.env.NEXT_PUBLIC_SUPABASE_URL ? process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 15) + "..." : "UNDEFINED"}</p>
-                    <p>GROUPS_COUNT: {groups.length}</p>
-                    <p>LOADING: {isLoading ? "YES" : "NO"}</p>
-                    <p>ERROR: {error || "NONE"}</p>
-                </div>
-
                 {/* Search Bar */}
                 <div className="bg-white p-6 rounded-[2.5rem] shadow-xl mb-12 flex flex-col md:flex-row gap-4 items-center border border-brand-blue/5">
                     <div className="relative flex-1 w-full">
@@ -122,9 +102,15 @@ export default function GruposPublicPage() {
                                 <Card key={group.id} className="group overflow-hidden rounded-[3rem] border-none shadow-sm hover:shadow-2xl transition-all duration-500 bg-white flex flex-col">
                                     <CardContent className="p-8 space-y-6 flex-1 flex flex-col">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 bg-brand-blue/5 rounded-2xl flex items-center justify-center group-hover:bg-brand-blue transition-colors duration-500">
-                                                <Users className="w-8 h-8 text-brand-blue group-hover:text-white transition-colors duration-500" />
-                                            </div>
+                                            {group.imagem && group.imagem.length > 10 ? (
+                                                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm shrink-0">
+                                                    <img src={group.imagem} alt={group.nome} className="w-full h-full object-cover" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-16 h-16 bg-brand-blue/5 rounded-2xl flex items-center justify-center group-hover:bg-brand-blue transition-colors duration-500 shrink-0">
+                                                    <Users className="w-8 h-8 text-brand-blue group-hover:text-white transition-colors duration-500" />
+                                                </div>
+                                            )}
                                             <div>
                                                 <h3 className="text-2xl font-bold text-brand-blue italic line-clamp-1">{group.nome}</h3>
                                                 <p className="text-brand-gold font-bold flex items-center gap-1 uppercase tracking-widest text-[10px]">
@@ -132,6 +118,12 @@ export default function GruposPublicPage() {
                                                 </p>
                                             </div>
                                         </div>
+
+                                        {group.descricao && (
+                                            <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
+                                                {group.descricao}
+                                            </p>
+                                        )}
 
                                         <div className="space-y-4 text-gray-600">
                                             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">

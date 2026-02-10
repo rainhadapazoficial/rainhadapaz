@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Plus, Search, Trash2, Edit, Loader2,
@@ -21,6 +22,7 @@ export default function GruposAdminPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingGroup, setEditingGroup] = useState<any>(null);
+    const [formData, setFormData] = useState<any>({});
     const [searchTerm, setSearchTerm] = useState("");
 
     // Page Settings State
@@ -84,19 +86,21 @@ export default function GruposAdminPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        const formData = new FormData(e.currentTarget);
+        const formValues = new FormData(e.currentTarget);
         const groupData = {
-            nome: formData.get("nome"),
-            dia: formData.get("dia"),
-            local: formData.get("local"),
-            cidade: formData.get("cidade"),
-            geolocalizacao: formData.get("geolocalizacao"),
-            coordenador: formData.get("coordenador"),
-            whatsapp: formData.get("whatsapp"),
-            site: formData.get("site"),
-            facebook: formData.get("facebook"),
-            instagram: formData.get("instagram"),
-            slug: (formData.get("nome") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
+            nome: formValues.get("nome"),
+            dia: formValues.get("dia"),
+            local: formValues.get("local"),
+            cidade: formValues.get("cidade"),
+            geolocalizacao: formValues.get("geolocalizacao"),
+            coordenador: formValues.get("coordenador"),
+            whatsapp: formValues.get("whatsapp"),
+            site: formValues.get("site"),
+            facebook: formValues.get("facebook"),
+            instagram: formValues.get("instagram"),
+            descricao: formData.descricao,
+            imagem: formData.imagem,
+            slug: (formValues.get("nome") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
         };
 
         let result;
@@ -125,6 +129,13 @@ export default function GruposAdminPage() {
 
     const openEdit = (group: any) => {
         setEditingGroup(group);
+        setFormData(group);
+        setIsDialogOpen(true);
+    };
+
+    const openNew = () => {
+        setEditingGroup(null);
+        setFormData({});
         setIsDialogOpen(true);
     };
 
@@ -158,7 +169,7 @@ export default function GruposAdminPage() {
                         if (!open) setEditingGroup(null);
                     }}>
                         <DialogTrigger asChild>
-                            <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12">
+                            <Button onClick={openNew} className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12">
                                 <Plus className="w-5 h-5 mr-2" />
                                 Novo Grupo
                             </Button>
@@ -171,10 +182,43 @@ export default function GruposAdminPage() {
                                     </DialogTitle>
                                 </DialogHeader>
 
+                                <div className="space-y-2">
+                                    <Label htmlFor="imagem">URL da Imagem (Opcional)</Label>
+                                    <Input
+                                        id="imagem"
+                                        placeholder="https://exemplo.com/foto.jpg"
+                                        value={formData.imagem || ""}
+                                        onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
+                                    />
+                                    {formData.imagem && (
+                                        <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden bg-slate-100 border">
+                                            <img src={formData.imagem} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = "https://placehold.co/600x400?text=Erro+Imagem")} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="descricao">Descrição do Grupo</Label>
+                                    <textarea
+                                        id="descricao"
+                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        placeholder="Fale um pouco sobre o carisma do grupo, atividades..."
+                                        value={formData.descricao || ""}
+                                        onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                                    />
+                                </div>
+
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2 col-span-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Grupo</label>
-                                        <Input name="nome" defaultValue={editingGroup?.nome} placeholder="Ex: Grupo de Sinop" required className="rounded-xl" />
+                                        <Input
+                                            name="nome"
+                                            value={formData.nome || ""}
+                                            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                                            placeholder="Ex: Grupo de Sinop"
+                                            required
+                                            className="rounded-xl"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dia e Horário</label>
@@ -210,7 +254,13 @@ export default function GruposAdminPage() {
                                     </div>
                                     <div className="space-y-2 col-span-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Site</label>
-                                        <Input name="site" defaultValue={editingGroup?.site} placeholder="Link do Site" className="rounded-xl" />
+                                        <Input
+                                            name="site"
+                                            value={formData.site || ""}
+                                            onChange={(e) => setFormData({ ...formData, site: e.target.value })}
+                                            placeholder="Link do Site"
+                                            className="rounded-xl"
+                                        />
                                     </div>
                                 </div>
 
