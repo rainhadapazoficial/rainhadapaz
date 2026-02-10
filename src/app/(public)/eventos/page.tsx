@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Crown } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import FestaCountdown from "@/components/public/festa-countdown";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -45,12 +46,15 @@ export default async function EventosPage() {
 
     return (
         <div className="flex flex-col">
-            {/* Header */}
-            <section className="bg-brand-blue py-20 text-white text-center">
+            {/* Festa do Rei Jesus Hero - Destaque Principal */}
+            <FestaCountdown />
+
+            {/* Header Eventos */}
+            <section className="bg-white py-16 text-center border-b">
                 <div className="max-w-4xl mx-auto px-4">
-                    <h1 className="text-5xl font-bold mb-6 italic text-brand-gold">Agenda de Eventos</h1>
-                    <p className="text-xl text-blue-100">
-                        Fique por dentro de todos os encontros e atividades do nosso grupo.
+                    <h1 className="text-5xl font-bold mb-6 italic text-brand-blue">Agenda de Eventos</h1>
+                    <p className="text-xl text-gray-600">
+                        Fique por dentro de todos os encontros e atividades da nossa diocese.
                     </p>
                 </div>
             </section>
@@ -98,31 +102,6 @@ export default async function EventosPage() {
                 </div>
             </section>
 
-            {/* Festa do Rei Jesus Banner */}
-            <section className="py-16 bg-gradient-to-r from-brand-blue via-blue-900 to-brand-blue relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-4 left-8 text-brand-gold text-9xl font-bold opacity-20">✝</div>
-                    <div className="absolute bottom-4 right-8 text-brand-gold text-9xl font-bold opacity-20">♛</div>
-                </div>
-                <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8 relative z-10">
-                    <div className="flex-shrink-0 bg-brand-gold/20 rounded-full p-6">
-                        <Crown className="w-16 h-16 text-brand-gold" />
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                        <h2 className="text-4xl font-bold text-white italic mb-3">Festa do Rei Jesus</h2>
-                        <p className="text-blue-100 text-lg leading-relaxed max-w-2xl">
-                            A maior festa cristã da região norte de Mato Grosso! Conheça o histórico de cada edição com fotos, temas e muito mais.
-                        </p>
-                    </div>
-                    <Link href="/festa-rei-jesus">
-                        <Button className="bg-brand-gold hover:bg-yellow-500 text-brand-blue font-bold text-lg px-8 py-6 rounded-xl group whitespace-nowrap">
-                            Ver Histórico
-                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                    </Link>
-                </div>
-            </section>
-
             {/* Regular Meetings */}
             <section className="py-24 bg-white text-center">
                 <div className="max-w-4xl mx-auto px-4">
@@ -130,7 +109,7 @@ export default async function EventosPage() {
                     <div className="bg-brand-gold/10 p-12 rounded-3xl border-2 border-dashed border-brand-gold">
                         <h3 className="text-2xl font-bold text-brand-blue mb-4">Toda Quarta-feira</h3>
                         <p className="text-xl text-gray-700">Às 19:30 na Matriz da Paróquia Santo Antônio.</p>
-                        <p className="mt-4 text-gray-500 italic">"Esperamos por você com muita alegria!"</p>
+                        <p className="mt-4 text-gray-500 italic">&quot;Esperamos por você com muita alegria!&quot;</p>
                     </div>
                 </div>
             </section>
