@@ -32,7 +32,6 @@ const navLinks: NavItem[] = [
     {
         name: "Eventos",
         children: [
-            { name: "Agenda de Eventos", href: "/eventos" },
             { name: "Calendário Diocesano", href: "/calendario" },
             { name: "Festa do Rei Jesus", href: "/festa-rei-jesus" },
         ]
