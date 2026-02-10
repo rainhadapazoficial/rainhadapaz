@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight, Crown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const revalidate = 60; // Revalidate every minute
@@ -95,6 +95,31 @@ export default async function EventosPage() {
                             </div>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            {/* Festa do Rei Jesus Banner */}
+            <section className="py-16 bg-gradient-to-r from-brand-blue via-blue-900 to-brand-blue relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-4 left-8 text-brand-gold text-9xl font-bold opacity-20">✝</div>
+                    <div className="absolute bottom-4 right-8 text-brand-gold text-9xl font-bold opacity-20">♛</div>
+                </div>
+                <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8 relative z-10">
+                    <div className="flex-shrink-0 bg-brand-gold/20 rounded-full p-6">
+                        <Crown className="w-16 h-16 text-brand-gold" />
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <h2 className="text-4xl font-bold text-white italic mb-3">Festa do Rei Jesus</h2>
+                        <p className="text-blue-100 text-lg leading-relaxed max-w-2xl">
+                            A maior festa cristã da região norte de Mato Grosso! Conheça o histórico de cada edição com fotos, temas e muito mais.
+                        </p>
+                    </div>
+                    <Link href="/festa-rei-jesus">
+                        <Button className="bg-brand-gold hover:bg-yellow-500 text-brand-blue font-bold text-lg px-8 py-6 rounded-xl group whitespace-nowrap">
+                            Ver Histórico
+                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </Link>
                 </div>
             </section>
 
