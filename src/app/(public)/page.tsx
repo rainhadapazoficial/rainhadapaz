@@ -31,7 +31,7 @@ async function getHomeBanner() {
         .single();
 
     return data?.value || {
-        title: "Grupo de Oração Rainha da Paz",
+        title: "RCC Diocese de Sinop",
         subtitle: "Um encontro de amor com o Espírito Santo em Sinop",
         image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=2000&auto=format&fit=crop",
         button1_text: "Conheça nossa História",

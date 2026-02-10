@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             </div>
                             <div className="flex items-center gap-2">
                                 <User className="w-4 h-4 text-brand-gold" />
-                                {post.author || "Coordenação Rainha da Paz"}
+                                {post.author || "Coordenação Diocesana"}
                             </div>
                         </div>
                     </div>

@@ -152,7 +152,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="grid grid-cols-4 p-2 gap-1">
-                        {['#000000', '#003366', '#FFD700', '#FF0000', '#008000', '#808080'].map(color => (
+                        {['#000000', '#004d2c', '#FFD700', '#FF0000', '#008000', '#808080'].map(color => (
                             <button
                                 key={color}
                                 className="w-6 h-6 rounded-md border"
@@ -230,7 +230,7 @@ export function PremiumEditor({ content, onChange }: PremiumEditorProps) {
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
             <div className="p-2 bg-gray-50 border-t flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4">
-                <span>Rainha da Paz • Editor Premium</span>
+                <span>RCC Diocese de Sinop • Editor Premium</span>
                 <span>{editor?.storage.characterCount.words()} Palavras</span>
             </div>
         </div>

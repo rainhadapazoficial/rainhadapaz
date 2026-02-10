@@ -35,10 +35,10 @@ export default async function EventosPage() {
         {
             id: 2,
             title: "Noite de Louvor e Adoração",
-            description: "Momento de profunda entrega e louvor com a presença do Ministério de Música Rainha da Paz.",
+            description: "Momento de profunda entrega e louvor com a presença do Ministério de Música Diocesano.",
             date: "05 Abril, 2024",
             time: "19:30 - 21:30",
-            location: "Centro de Eventos Rainha da Paz",
+            location: "Centro de Eventos da Diocese",
             category: "Oração"
         },
     ];

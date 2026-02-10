@@ -11,12 +11,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const events = [
     // Seminário de Vida
-    { title: "Início do Seminário de Vida Rainha da Paz", date: "2026-03-07", time: "19:30", category: "Seminário", description: "Início da nossa caminhada de 8 semanas de Seminário de Vida no Espírito Santo." },
-    { title: "Encerramento do Seminário de Vida Rainha da Paz", date: "2026-04-25", time: "19:30", category: "Seminário", description: "Grande encerramento do Seminário de Vida no Espírito Santo." },
+    { title: "Início do Seminário de Vida - Diocese de Sinop", date: "2026-03-07", time: "19:30", category: "Seminário", description: "Início da nossa caminhada de 8 semanas de Seminário de Vida no Espírito Santo na Diocese de Sinop." },
+    { title: "Encerramento do Seminário de Vida - Diocese de Sinop", date: "2026-04-25", time: "19:30", category: "Seminário", description: "Grande encerramento do Seminário de Vida no Espírito Santo." },
 
     // Experiência de Oração
-    { title: "Experiência de Oração Rainha da Paz (Dia 1)", date: "2026-05-09", time: "13:30", category: "Retiro", description: "Um final de semana de profunda imersão e oração." },
-    { title: "Experiência de Oração Rainha da Paz (Dia 2)", date: "2026-05-10", time: "07:30", category: "Retiro", description: "Continuação da nossa Experiência de Oração." },
+    { title: "Experiência de Oração - Diocese de Sinop (Dia 1)", date: "2026-05-09", time: "13:30", category: "Retiro", description: "Um final de semana de profunda imersão e oração." },
+    { title: "Experiência de Oração - Diocese de Sinop (Dia 2)", date: "2026-05-10", time: "07:30", category: "Retiro", description: "Continuação da nossa Experiência de Oração." },
 
     // Formação - Apostilas
     { title: "Formação Básica: Apostila 1 (Sáb)", date: "2026-06-13", time: "13:30", category: "Formação", description: "Módulo Básico de Formação da RCC." },

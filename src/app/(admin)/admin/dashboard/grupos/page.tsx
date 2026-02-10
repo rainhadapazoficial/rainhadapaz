@@ -100,7 +100,7 @@ export default function GruposAdminPage() {
                         <Users className="w-8 h-8 text-brand-gold" />
                         Grupos de Oração
                     </h1>
-                    <p className="text-gray-500">Gerencie os grupos de oração da diocese.</p>
+                    <p className="text-gray-500">Gerencie os grupos de oração da RCC Diocese de Sinop.</p>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">
@@ -133,7 +133,7 @@ export default function GruposAdminPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2 col-span-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Grupo</label>
-                                        <Input name="nome" defaultValue={editingGroup?.nome} placeholder="Ex: Grupo Rainha da Paz" required className="rounded-xl" />
+                                        <Input name="nome" defaultValue={editingGroup?.nome} placeholder="Ex: Grupo de Sinop" required className="rounded-xl" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dia e Horário</label>

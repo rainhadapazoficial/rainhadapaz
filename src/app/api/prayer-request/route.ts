@@ -36,7 +36,7 @@ export async function POST(req: Request) {
                 subject: `Novo Pedido de Oração: ${name}`,
                 html: `
             <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-              <h2 style="color: #003366;">Novo Pedido de Oração</h2>
+              <h2 style="color: #004d2c;">Novo Pedido de Oração</h2>
               <p><strong>Nome:</strong> ${name}</p>
               <p><strong>E-mail:</strong> ${email}</p>
               <p><strong>Telefone:</strong> ${phone || "Não informado"}</p>

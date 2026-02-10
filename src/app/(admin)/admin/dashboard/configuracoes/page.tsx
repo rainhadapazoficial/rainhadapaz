@@ -4,7 +4,7 @@ import { ConfigClient } from "./ConfigClient";
 
 export default function ConfigPage() {
     const mcpToken = process.env.MCP_AUTH_TOKEN || "Não configurado";
-    const mcpUrl = "https://site-rcc-rainhadapaz.vercel.app/api/mcp";
+    const mcpUrl = "https://site-rcc-diocese.vercel.app/api/mcp";
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">

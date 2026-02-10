@@ -89,7 +89,7 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-brand-blue italic">Bem-vindo, Administrador</h1>
-                    <p className="text-gray-500">Aqui está o resumo da atividade do Grupo Rainha da Paz.</p>
+                    <p className="text-gray-500">Aqui está o resumo da atividade da RCC Diocese de Sinop.</p>
                 </div>
                 {stats.lastSync && (
                     <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 animate-in slide-in-from-right duration-700">
@@ -149,7 +149,7 @@ export default function DashboardPage() {
                                     cursor={{ fill: '#f8f8f8' }}
                                     contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                                 />
-                                <Bar dataKey="count" fill="#003366" radius={[10, 10, 0, 0]} barSize={40} />
+                                <Bar dataKey="count" fill="#004d2c" radius={[10, 10, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

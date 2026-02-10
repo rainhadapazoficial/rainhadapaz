@@ -11,7 +11,7 @@ export default function QuemSomosPage() {
                 <div className="max-w-4xl mx-auto px-4 relative z-10">
                     <h1 className="text-6xl font-bold mb-6 italic text-brand-gold">Quem Somos</h1>
                     <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-                        Conheça a história, a missão e os valores que movem o Grupo de Oração Rainha da Paz em Sinop.
+                        Conheça a história, a missão e os valores que movem a RCC Diocese de Sinop.
                     </p>
                 </div>
             </section>
@@ -26,13 +26,13 @@ export default function QuemSomosPage() {
                         <h2 className="text-4xl font-bold text-brand-blue font-serif italic">Uma Caminhada de Fé e Adoração</h2>
                         <div className="prose prose-lg text-gray-600 space-y-4">
                             <p>
-                                O Grupo de Oração Rainha da Paz nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo na Matriz da Paróquia Santo Antônio.
+                                A RCC Diocese de Sinop nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo na Matriz da Paróquia Santo Antônio.
                             </p>
                             <p>
                                 Fundado por leigos comprometidos com a Renovação Carismática Católica (RCC), o grupo tornou-se um refúgio para aqueles que buscam o Batismo no Espírito Santo, a cura interior e o crescimento na vida espiritual.
                             </p>
                             <p>
-                                Hoje, somos uma família unida pelo amor de Maria, nossa Rainha da Paz, e pela força do Pentecostes diário.
+                                Hoje, somos uma família unida pelo amor de Maria e pela força do Pentecostes diário.
                             </p>
                         </div>
                         <div className="bg-brand-blue/5 p-8 border-l-4 border-brand-gold rounded-r-3xl italic text-brand-blue relative">

@@ -50,25 +50,25 @@ export async function POST(request: Request) {
         });
 
         const mailOptions = {
-            from: `"Rainha da Paz - Site" <${process.env.SMTP_USER}>`,
+            from: `"Diocese de Sinop - Site" <${process.env.SMTP_USER}>`,
             to: "coordenacao@rccdesinop.com.br",
             replyTo: email,
             subject: `🙏 Novo Pedido de Oração: ${name}`,
             html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
-          <div style="background-color: #003366; padding: 20px; text-align: center;">
-            <h1 style="color: #FFD700; margin: 0; font-style: italic;">Rainha da Paz</h1>
+          <div style="background-color: #004d2c; padding: 20px; text-align: center;">
+            <h1 style="color: #d4af37; margin: 0; font-style: italic;">Diocese de Sinop</h1>
           </div>
           <div style="padding: 30px; color: #333;">
-            <h2 style="color: #003366; border-bottom: 2px solid #FFD700; padding-bottom: 10px;">Pedido de Intercessão</h2>
+            <h2 style="color: #004d2c; border-bottom: 2px solid #d4af37; padding-bottom: 10px;">Pedido de Intercessão</h2>
             <p><strong>Nome:</strong> ${name}</p>
             <p><strong>E-mail:</strong> ${email}</p>
             <p><strong>Telefone:</strong> ${phone || "Não informado"}</p>
-            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #FFD700;">
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #d4af37;">
               <p style="margin: 0; font-style: italic;">"${message}"</p>
             </div>
             <p style="margin-top: 30px; font-size: 12px; color: #999; text-align: center;">
-              Este é um e-mail automático enviado pelo site oficial do Grupo de Oração Rainha da Paz.
+              Este é um e-mail automático enviado pelo site oficial da RCC Diocese de Sinop.
             </p>
           </div>
         </div>

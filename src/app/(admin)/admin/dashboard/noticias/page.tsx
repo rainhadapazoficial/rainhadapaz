@@ -61,7 +61,7 @@ export default function NoticiasAdminPage() {
             const stripped = editorContent.replace(/<[^>]*>?/gm, '');
             const firstWords = stripped.slice(0, 60);
             setSeoTitle(`Reflexão: ${firstWords}...`);
-            setSeoExcerpt(`${stripped.slice(0, 150)}... Acompanhe esta formação completa do Grupo Rainha da Paz.`);
+            setSeoExcerpt(`${stripped.slice(0, 150)}... Acompanhe esta formação completa da RCC Diocese de Sinop.`);
             setIsGeneratingAI(false);
         }, 1500);
     };
@@ -103,7 +103,7 @@ export default function NoticiasAdminPage() {
                 shareToSocialMedia({
                     title: postData.title as string,
                     excerpt: postData.excerpt as string,
-                    url: `https://site-rcc-rainhadapaz.vercel.app/blog/${postData.slug}`,
+                    url: `https://site-rcc-diocese.vercel.app/blog/${postData.slug}`,
                     image_url: postData.image_url as string,
                     category: postData.category as string,
                 });
@@ -274,7 +274,7 @@ export default function NoticiasAdminPage() {
                                             </div>
                                             <div>
                                                 <p className="text-xs font-bold text-brand-blue uppercase">Preview do Google</p>
-                                                <p className="text-blue-600 text-sm font-medium hover:underline cursor-pointer truncate">rainhadapaz.com.br/blog/...</p>
+                                                <p className="text-blue-600 text-sm font-medium hover:underline cursor-pointer truncate">rccdesinop.com.br/blog/...</p>
                                                 <p className="text-gray-800 font-medium line-clamp-1">{seoTitle || "Título do Post"}</p>
                                                 <p className="text-gray-500 text-xs line-clamp-2">{seoExcerpt || "Escreva um resumo ou use a IA para gerar um snippet otimizado."}</p>
                                             </div>
