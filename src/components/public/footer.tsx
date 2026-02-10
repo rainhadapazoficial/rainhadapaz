@@ -11,7 +11,7 @@ export function Footer() {
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
                             <img
-                                src="https://www.rccdesinop.com.br/wp-content/uploads/2025/06/Logo-RCC-Diocese-de-Sinop-PNG-150x150.png"
+                                src="/logo-diocese.png"
                                 alt="RCC Diocese de Sinop Logo"
                                 className="w-12 h-12 rounded-full object-cover shadow-lg border-2 border-white/20"
                             />
@@ -60,20 +60,20 @@ export function Footer() {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <span>Centro de Evangelização João Paulo II <br /> Sinop - MT</span>
+                                <span>Av. das Palmeiras, 2697 – Jardim Imperial <br /> Sinop – MT, CEP: 78555-020</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <a href="https://wa.me/5566999999999" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
-                                    (66) 9.9999-9999 (Escritório Diocesano)
+                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                    (66) 99232-4636 (Escritório Diocesano)
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <span>contato@rccdesinop.com.br</span>
+                                <span>coordenacao@rccdesinop.com.br</span>
                             </li>
                             <li className="pt-4">
-                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
+                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
                                     <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 w-full">
                                         <MessageCircle className="w-5 h-5 fill-current" />
                                         Fale agora conosco

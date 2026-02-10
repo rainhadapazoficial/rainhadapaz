@@ -74,7 +74,7 @@ export default function ContatoPage() {
                                     <MapPin className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-lg mb-1">Localização</h4>
-                                <p className="text-gray-600 text-sm italic">Matriz da Paróquia Santo Antônio <br /> Av. das Sibipirunas, 3092 - Centro, Sinop - MT</p>
+                                <p className="text-gray-600 text-sm italic">Av. das Palmeiras, 2697 – Jardim Imperial <br /> Sinop – MT, CEP: 78555-020</p>
                             </div>
 
                             <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 group hover:border-brand-gold transition-colors">
@@ -82,8 +82,8 @@ export default function ContatoPage() {
                                     <Phone className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-lg mb-1">Telefone / Whats</h4>
-                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" className="text-gray-600 text-sm hover:text-brand-gold transition-colors">
-                                    (66) 98136-5456 (WhatsApp)
+                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" className="text-gray-600 text-sm hover:text-brand-gold transition-colors">
+                                    (66) 99232-4636 (WhatsApp)
                                 </a>
                             </div>
 
@@ -92,7 +92,7 @@ export default function ContatoPage() {
                                     <Mail className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-lg mb-1">E-mail</h4>
-                                <p className="text-gray-600 text-sm">rainhadapazsinop@rccdesinop.com.br</p>
+                                <p className="text-gray-600 text-sm">coordenacao@rccdesinop.com.br</p>
                             </div>
 
                             <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 group hover:border-brand-gold transition-colors">

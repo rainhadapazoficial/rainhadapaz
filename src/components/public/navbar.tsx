@@ -46,7 +46,7 @@ export function Navbar() {
                                 {link.name}
                             </Link>
                         ))}
-                        <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
+                        <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
                             <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2">
                                 <MessageCircle className="w-4 h-4 fill-current" />
                                 Fale agora conosco
@@ -78,7 +78,7 @@ export function Navbar() {
                             {link.name}
                         </Link>
                     ))}
-                    <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
+                    <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
                         <Button className="w-full bg-[#25D366] text-white gap-2">
                             <MessageCircle className="w-4 h-4 fill-current" />
                             Fale agora conosco
