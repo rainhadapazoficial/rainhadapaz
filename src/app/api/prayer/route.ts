@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
         const mailOptions = {
             from: `"Rainha da Paz - Site" <${process.env.SMTP_USER}>`,
-            to: "rainhadapazsinop@rccdesinop.com.br",
+            to: "coordenacao@rccdesinop.com.br",
             replyTo: email,
             subject: `🙏 Novo Pedido de Oração: ${name}`,
             html: `
