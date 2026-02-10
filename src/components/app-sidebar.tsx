@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 className="w-10 h-10 rounded-xl object-cover shadow-lg"
                             />
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-bold italic text-brand-gold">Rainha da Paz</span>
+                                <span className="truncate font-bold italic text-brand-gold">RCC Diocese de Sinop</span>
                                 <span className="truncate text-[10px] uppercase tracking-widest text-blue-200">Painel Admin</span>
                             </div>
                         </div>

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rainha da Paz - Grupo de Oração Sinop/MT",
-  description: "Um encontro de amor com o Espírito Santo na Matriz da Paróquia Santo Antônio.",
+  title: "RCC Diocese de Sinop",
+  description: "Portal oficial da Renovação Carismática Católica na Diocese de Sinop/MT.",
 };
 
 export default function RootLayout({
