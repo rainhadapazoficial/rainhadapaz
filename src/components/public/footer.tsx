@@ -13,7 +13,7 @@ export function Footer() {
                             <img
                                 src="/logo-diocese.png"
                                 alt="RCC Diocese de Sinop Logo"
-                                className="w-12 h-12 rounded-full object-cover shadow-lg border-2 border-white/20"
+                                className="w-14 h-14 object-contain"
                             />
                             <span className="text-xl font-bold italic">Diocese de Sinop</span>
                         </div>

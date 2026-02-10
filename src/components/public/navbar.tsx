@@ -28,7 +28,7 @@ export function Navbar() {
                             <img
                                 src="/logo-diocese.png"
                                 alt="RCC Diocese de Sinop Logo"
-                                className="w-12 h-12 rounded-full object-cover shadow-sm border border-brand-blue/10"
+                                className="w-14 h-14 object-contain"
                             />
                             <span className="text-xl font-bold text-brand-blue hidden md:block">
                                 Diocese de Sinop
