@@ -23,9 +23,50 @@ export default function GruposAdminPage() {
     const [editingGroup, setEditingGroup] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Page Settings State
+    const [pageSettings, setPageSettings] = useState<any>({
+        title: "Grupos de Oração",
+        subtitle: "Encontre um Grupo de Oração da Renovação Carismática Católica mais próximo de você e venha vivenciar Pentecostes!",
+        image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=2000&auto=format&fit=crop"
+    });
+    const [isSavingSettings, setIsSavingSettings] = useState(false);
+
     useEffect(() => {
         fetchGroups();
+        fetchPageSettings();
     }, []);
+
+    async function fetchPageSettings() {
+        const { data, error } = await supabase
+            .from("site_settings")
+            .select("value")
+            .eq("key", "groups_page")
+            .single();
+
+        if (data) setPageSettings(data.value);
+    }
+
+    async function handleSaveSettings(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsSavingSettings(true);
+        const formData = new FormData(e.currentTarget);
+        const newSettings = {
+            title: formData.get("title"),
+            subtitle: formData.get("subtitle"),
+            image_url: formData.get("image_url"),
+        };
+
+        const { error } = await supabase
+            .from("site_settings")
+            .upsert({ key: "groups_page", value: newSettings });
+
+        if (error) alert("Erro ao salvar configurações: " + error.message);
+        else {
+            setPageSettings(newSettings);
+            alert("Configurações salvas com sucesso!");
+        }
+        setIsSavingSettings(false);
+    }
 
     async function fetchGroups() {
         setIsLoading(true);
@@ -183,6 +224,37 @@ export default function GruposAdminPage() {
                     </Dialog>
                 </div>
             </div>
+
+            {/* Page Settings Section */}
+            <Card className="rounded-[2.5rem] border-none shadow-sm bg-white overflow-hidden">
+                <CardContent className="p-8">
+                    <form onSubmit={handleSaveSettings} className="space-y-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold italic text-brand-blue flex items-center gap-2">
+                                <Globe className="w-5 h-5 text-brand-gold" />
+                                Configurações da Página Pública
+                            </h2>
+                            <Button type="submit" disabled={isSavingSettings} className="bg-brand-gold hover:bg-brand-gold/90 text-brand-blue font-bold rounded-xl h-10 px-6">
+                                {isSavingSettings ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Alterações"}
+                            </Button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Título da Página</label>
+                                <Input name="title" defaultValue={pageSettings.title} placeholder="Ex: Grupos de Oração" required className="rounded-xl border-gray-100" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imagem de Fundo (URL)</label>
+                                <Input name="image_url" defaultValue={pageSettings.image_url} placeholder="https://..." required className="rounded-xl border-gray-100" />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subtítulo / Descrição</label>
+                                <Input name="subtitle" defaultValue={pageSettings.subtitle} placeholder="Uma breve descrição..." required className="rounded-xl border-gray-100" />
+                            </div>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {isLoading ? (

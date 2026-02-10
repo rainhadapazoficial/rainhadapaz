@@ -27,7 +27,8 @@ export default function LoginPage() {
             });
 
             if (authError) {
-                setError("E-mail ou senha inválidos.");
+                console.error("DEBUG AUTH ERROR:", authError);
+                setError(authError.message + " (Code: " + (authError.status || "unknown") + ")");
             } else {
                 router.push("/admin/dashboard");
             }
@@ -47,7 +48,7 @@ export default function LoginPage() {
                     </div>
                     <CardTitle className="text-3xl font-bold tracking-tight">Bem-vindo de volta</CardTitle>
                     <CardDescription>
-                        Insira suas credenciais para acessar o painel administrativo
+                        Insira suas credenciais para acessar o painel administrativo (v1.1-debug)
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleLogin}>
