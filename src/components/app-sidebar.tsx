@@ -44,6 +44,11 @@ const data = {
             url: "/admin/dashboard/banners",
             icon: Monitor,
         },
+        {
+            title: "Grupos de Oração",
+            url: "/admin/dashboard/grupos",
+            icon: Heart,
+        },
     ],
     projects: [
         {

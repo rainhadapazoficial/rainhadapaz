@@ -1,0 +1,238 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+    Plus, Search, Trash2, Edit, Loader2,
+    CheckCircle2, XCircle, Users,
+    MapPin, Calendar, Clock, Phone, Globe, Facebook, Instagram
+} from "lucide-react";
+import {
+    Dialog, DialogContent, DialogHeader, DialogTitle,
+    DialogTrigger, DialogFooter,
+} from "@/components/ui/dialog";
+
+export default function GruposAdminPage() {
+    const [groups, setGroups] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editingGroup, setEditingGroup] = useState<any>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        fetchGroups();
+    }, []);
+
+    async function fetchGroups() {
+        setIsLoading(true);
+        const { data, error } = await supabase
+            .from("groups")
+            .select("*")
+            .order("nome", { ascending: true });
+
+        if (error) console.error("Error fetching groups:", error);
+        else setGroups(data || []);
+        setIsLoading(false);
+    }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const formData = new FormData(e.currentTarget);
+        const groupData = {
+            nome: formData.get("nome"),
+            dia: formData.get("dia"),
+            local: formData.get("local"),
+            cidade: formData.get("cidade"),
+            geolocalizacao: formData.get("geolocalizacao"),
+            coordenador: formData.get("coordenador"),
+            whatsapp: formData.get("whatsapp"),
+            site: formData.get("site"),
+            facebook: formData.get("facebook"),
+            instagram: formData.get("instagram"),
+            slug: (formData.get("nome") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
+        };
+
+        let result;
+        if (editingGroup) {
+            result = await supabase.from("groups").update(groupData).eq("id", editingGroup.id);
+        } else {
+            result = await supabase.from("groups").insert([groupData]);
+        }
+
+        if (result.error) {
+            alert("Erro ao salvar grupo: " + result.error.message);
+        } else {
+            setIsDialogOpen(false);
+            setEditingGroup(null);
+            fetchGroups();
+        }
+        setIsSubmitting(false);
+    }
+
+    async function deleteGroup(id: number) {
+        if (!confirm("Confirmar exclusão deste grupo?")) return;
+        const { error } = await supabase.from("groups").delete().eq("id", id);
+        if (error) alert("Erro ao deletar: " + error.message);
+        else fetchGroups();
+    }
+
+    const openEdit = (group: any) => {
+        setEditingGroup(group);
+        setIsDialogOpen(true);
+    };
+
+    const filteredGroups = groups.filter(g =>
+        g.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        g.cidade.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div className="p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-bold text-brand-blue italic flex items-center gap-3">
+                        <Users className="w-8 h-8 text-brand-gold" />
+                        Grupos de Oração
+                    </h1>
+                    <p className="text-gray-500">Gerencie os grupos de oração da diocese.</p>
+                </div>
+                <div className="flex gap-4">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                            placeholder="Buscar grupo ou cidade..."
+                            className="pl-10 rounded-xl w-64"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                        setIsDialogOpen(open);
+                        if (!open) setEditingGroup(null);
+                    }}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12">
+                                <Plus className="w-5 h-5 mr-2" />
+                                Novo Grupo
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl rounded-[2rem]">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <DialogHeader>
+                                    <DialogTitle className="text-xl font-bold italic text-brand-blue">
+                                        {editingGroup ? "Editar Grupo" : "Novo Grupo de Oração"}
+                                    </DialogTitle>
+                                </DialogHeader>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2 col-span-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Grupo</label>
+                                        <Input name="nome" defaultValue={editingGroup?.nome} placeholder="Ex: Grupo Rainha da Paz" required className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dia e Horário</label>
+                                        <Input name="dia" defaultValue={editingGroup?.dia} placeholder="Ex: Terça-feira, 19:30" required className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cidade</label>
+                                        <Input name="cidade" defaultValue={editingGroup?.cidade} placeholder="Ex: Sinop" required className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2 col-span-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Local</label>
+                                        <Input name="local" defaultValue={editingGroup?.local} placeholder="Ex: Paróquia Santo Antônio" required className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2 col-span-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Geolocalização (Link Google Maps)</label>
+                                        <Input name="geolocalizacao" defaultValue={editingGroup?.geolocalizacao} placeholder="Link do Google Maps" className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Coordenador</label>
+                                        <Input name="coordenador" defaultValue={editingGroup?.coordenador} placeholder="Nome do coord." className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp Link</label>
+                                        <Input name="whatsapp" defaultValue={editingGroup?.whatsapp} placeholder="https://wa.me/..." className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Facebook Link</label>
+                                        <Input name="facebook" defaultValue={editingGroup?.facebook} placeholder="Link do Facebook" className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram Link</label>
+                                        <Input name="instagram" defaultValue={editingGroup?.instagram} placeholder="Link do Instagram" className="rounded-xl" />
+                                    </div>
+                                    <div className="space-y-2 col-span-2">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Site</label>
+                                        <Input name="site" defaultValue={editingGroup?.site} placeholder="Link do Site" className="rounded-xl" />
+                                    </div>
+                                </div>
+
+                                <DialogFooter>
+                                    <Button type="submit" className="bg-brand-blue text-white w-full rounded-xl" disabled={isSubmitting}>
+                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Grupo"}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {isLoading ? (
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-400">
+                        <Loader2 className="w-12 h-12 animate-spin mb-4 text-brand-gold" />
+                        <p className="font-bold italic">Carregando grupos...</p>
+                    </div>
+                ) : filteredGroups.length === 0 ? (
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed rounded-[3rem]">
+                        <XCircle className="w-16 h-16 mb-4 opacity-20" />
+                        <p className="text-xl font-bold italic text-brand-blue">Nenhum grupo encontrado.</p>
+                    </div>
+                ) : (
+                    filteredGroups.map((group) => (
+                        <Card key={group.id} className="group overflow-hidden rounded-[2.5rem] border-none shadow-sm hover:shadow-xl transition-all bg-white p-6">
+                            <CardContent className="p-0 space-y-4">
+                                <div className="flex justify-between items-start">
+                                    <div className="p-3 bg-brand-blue/5 rounded-2xl">
+                                        <Users className="w-6 h-6 text-brand-blue" />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button variant="ghost" size="icon" onClick={() => openEdit(group)} className="text-gray-400 hover:text-brand-blue rounded-xl">
+                                            <Edit className="w-4 h-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => deleteGroup(group.id)} className="text-gray-400 hover:text-red-500 rounded-xl">
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-brand-blue italic">{group.nome}</h3>
+                                    <p className="text-brand-gold font-medium text-sm flex items-center gap-1">
+                                        <MapPin className="w-3 h-3" /> {group.cidade}
+                                    </p>
+                                </div>
+                                <div className="space-y-2 text-sm text-gray-600">
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-brand-blue/40" />
+                                        <span>{group.dia}</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="w-4 h-4 text-brand-blue/40 shrink-0 mt-0.5" />
+                                        <span>{group.local}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))
+                )}
+            </div>
+        </div>
+    );
+}

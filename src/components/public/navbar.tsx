@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
     { name: "Home", href: "/" },
     { name: "Quem Somos", href: "/quem-somos" },
+    { name: "Grupos", href: "/grupos" },
     { name: "Ministérios", href: "/ministerios" },
     { name: "Blog", href: "/blog" },
     { name: "Eventos", href: "/eventos" },
@@ -25,7 +26,7 @@ export function Navbar() {
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/" className="flex items-center gap-3">
                             <img
-                                src="https://www.rccdesinop.com.br/wp-content/uploads/2025/06/Logo-RCC-Diocese-de-Sinop-PNG-150x150.png"
+                                src="/logo-diocese.png"
                                 alt="RCC Diocese de Sinop Logo"
                                 className="w-12 h-12 rounded-full object-cover shadow-sm border border-brand-blue/10"
                             />
