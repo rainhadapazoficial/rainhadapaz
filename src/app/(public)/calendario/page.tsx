@@ -20,7 +20,7 @@ export default function CalendarioPage() {
     const [events, setEvents] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [year, setYear] = useState(new Date().getFullYear());
-    const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+    const [selectedMonth, setSelectedMonth] = useState<number | null>(new Date().getMonth() + 1);
 
     useEffect(() => {
         fetchEvents();
