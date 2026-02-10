@@ -2,23 +2,52 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X, MessageCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const navLinks = [
+type NavItem = {
+    name: string;
+    href?: string;
+    children?: { name: string; href: string }[];
+};
+
+const navLinks: NavItem[] = [
     { name: "Home", href: "/" },
-    { name: "Quem Somos", href: "/quem-somos" },
+    {
+        name: "Quem Somos",
+        children: [
+            { name: "Sobre Nós", href: "/quem-somos" },
+            { name: "Conselho Diocesano", href: "/quem-somos/conselho" },
+        ]
+    },
     { name: "Grupos", href: "/grupos" },
     { name: "Ministérios", href: "/ministerios" },
     { name: "Blog", href: "/blog" },
-    { name: "Eventos", href: "/eventos" },
-    { name: "Calendário", href: "/calendario" },
+    {
+        name: "Eventos",
+        children: [
+            { name: "Agenda de Eventos", href: "/eventos" },
+            { name: "Calendário Diocesano", href: "/calendario" },
+            { name: "Festa do Rei Jesus", href: "/festa-rei-jesus" },
+        ]
+    },
     { name: "Podcast", href: "/podcast" },
     { name: "Contato", href: "/contato" },
 ];
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+
+    const toggleMobileSubmenu = (name: string) => {
+        setMobileSubmenu(mobileSubmenu === name ? null : name);
+    };
 
     return (
         <nav className="bg-white border-b sticky top-0 z-50">
@@ -37,24 +66,47 @@ export function Navbar() {
                         </Link>
                     </div>
 
-                    <div className="hidden lg:flex items-center space-x-8">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className="text-sm font-medium text-gray-700 hover:text-brand-blue transition-colors"
-                            >
-                                {link.name}
-                            </Link>
-                        ))}
+                    {/* Desktop Menu */}
+                    <div className="hidden lg:flex items-center space-x-6">
+                        {navLinks.map((link) => {
+                            if (link.children) {
+                                return (
+                                    <DropdownMenu key={link.name}>
+                                        <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-brand-blue transition-colors outline-none">
+                                            {link.name}
+                                            <ChevronDown className="w-4 h-4" />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="bg-white">
+                                            {link.children.map((child) => (
+                                                <DropdownMenuItem key={child.name} asChild>
+                                                    <Link href={child.href} className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50">
+                                                        {child.name}
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            ))}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                );
+                            }
+                            return (
+                                <Link
+                                    key={link.name}
+                                    href={link.href!}
+                                    className="text-sm font-medium text-gray-700 hover:text-brand-blue transition-colors"
+                                >
+                                    {link.name}
+                                </Link>
+                            );
+                        })}
                         <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
-                            <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2">
+                            <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2 rounded-full px-6">
                                 <MessageCircle className="w-4 h-4 fill-current" />
                                 Fale agora conosco
                             </Button>
                         </a>
                     </div>
 
+                    {/* Mobile Toggle */}
                     <div className="lg:hidden flex items-center">
                         <button
                             onClick={() => setIsOpen(!isOpen)}
@@ -68,23 +120,54 @@ export function Navbar() {
 
             {/* Mobile Menu */}
             {isOpen && (
-                <div className="lg:hidden bg-white border-t p-4 space-y-4 shadow-xl animate-in slide-in-from-top duration-300">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            onClick={() => setIsOpen(false)}
-                            className="block text-base font-medium text-gray-700 hover:text-brand-blue"
-                        >
-                            {link.name}
-                        </Link>
-                    ))}
-                    <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
-                        <Button className="w-full bg-[#25D366] text-white gap-2">
-                            <MessageCircle className="w-4 h-4 fill-current" />
-                            Fale agora conosco
-                        </Button>
-                    </a>
+                <div className="lg:hidden bg-white border-t p-4 space-y-2 shadow-xl animate-in slide-in-from-top duration-300 max-h-[80vh] overflow-y-auto">
+                    {navLinks.map((link) => {
+                        if (link.children) {
+                            return (
+                                <div key={link.name} className="space-y-1">
+                                    <button
+                                        onClick={() => toggleMobileSubmenu(link.name)}
+                                        className="flex items-center justify-between w-full text-base font-medium text-gray-700 hover:text-brand-blue py-2"
+                                    >
+                                        {link.name}
+                                        <ChevronDown className={`w-4 h-4 transition-transform ${mobileSubmenu === link.name ? "rotate-180" : ""}`} />
+                                    </button>
+                                    {mobileSubmenu === link.name && (
+                                        <div className="pl-4 space-y-2 border-l-2 border-brand-blue/10 ml-1">
+                                            {link.children.map((child) => (
+                                                <Link
+                                                    key={child.name}
+                                                    href={child.href}
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="block text-sm text-gray-600 hover:text-brand-blue py-1"
+                                                >
+                                                    {child.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+                        return (
+                            <Link
+                                key={link.name}
+                                href={link.href!}
+                                onClick={() => setIsOpen(false)}
+                                className="block text-base font-medium text-gray-700 hover:text-brand-blue py-2"
+                            >
+                                {link.name}
+                            </Link>
+                        );
+                    })}
+                    <div className="pt-4 border-t mt-2">
+                        <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
+                            <Button className="w-full bg-[#25D366] text-white gap-2 rounded-xl py-6 text-lg">
+                                <MessageCircle className="w-5 h-5 fill-current" />
+                                Fale agora conosco
+                            </Button>
+                        </a>
+                    </div>
                 </div>
             )}
         </nav>
