@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function GruposPublicPage() {
     const [groups, setGroups] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [pageSettings, setPageSettings] = useState<any>({
         title: "Grupos de Oração",
@@ -37,14 +38,24 @@ export default function GruposPublicPage() {
 
     async function fetchGroups() {
         setIsLoading(true);
-        const { data, error } = await supabase
-            .from("groups")
-            .select("*")
-            .order("nome", { ascending: true });
+        setError(null);
+        try {
+            const { data, error } = await supabase
+                .from("groups")
+                .select("*")
+                .order("nome", { ascending: true });
 
-        if (error) console.error("Error fetching groups:", error);
-        else setGroups(data || []);
-        setIsLoading(false);
+            if (error) {
+                console.error("Error fetching groups:", error);
+                setError(error.message + " (" + error.code + ")");
+            } else {
+                setGroups(data || []);
+            }
+        } catch (err: any) {
+            setError(err.message || "Erro desconhecido ao conectar.");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const filteredGroups = groups.filter(g =>
@@ -76,6 +87,15 @@ export default function GruposPublicPage() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 py-12 -mt-10">
+                {/* Debug Info - Temporary */}
+                <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-xs font-mono text-yellow-800 break-all">
+                    <p className="font-bold mb-2">DEBUG INFO (v1.2):</p>
+                    <p>SUPABASE_URL: {process.env.NEXT_PUBLIC_SUPABASE_URL ? process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 15) + "..." : "UNDEFINED"}</p>
+                    <p>GROUPS_COUNT: {groups.length}</p>
+                    <p>LOADING: {isLoading ? "YES" : "NO"}</p>
+                    <p>ERROR: {error || "NONE"}</p>
+                </div>
+
                 {/* Search Bar */}
                 <div className="bg-white p-6 rounded-[2.5rem] shadow-xl mb-12 flex flex-col md:flex-row gap-4 items-center border border-brand-blue/5">
                     <div className="relative flex-1 w-full">
