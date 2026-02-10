@@ -114,7 +114,7 @@ export default async function PodcastPage() {
                                     Não perca nossas transmissões ao vivo todas as quintas-feiras às 19:30.
                                 </p>
                                 <a
-                                    href="https://www.youtube.com/@GrupoRainhadaPazSinop"
+                                    href="https://www.youtube.com/@RCCDiocesedesinop"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors"

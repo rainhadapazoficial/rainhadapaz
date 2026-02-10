@@ -100,7 +100,7 @@ export default function ContatoPage() {
                                     <Instagram className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-lg mb-1">Redes Sociais</h4>
-                                <p className="text-gray-600 text-sm italic">@rainhadapazsinop</p>
+                                <p className="text-gray-600 text-sm italic">@rccdiocesedesinop</p>
                             </div>
                         </div>
 

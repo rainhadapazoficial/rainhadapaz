@@ -22,13 +22,13 @@ export function Footer() {
                             A serviço da Igreja, promovendo a cultura de Pentecostes.
                         </p>
                         <div className="flex gap-4">
-                            <a href="https://www.instagram.com/rccsinop/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="https://www.facebook.com/rccsinop/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="https://www.youtube.com/@rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Youtube className="w-5 h-5" />
                             </a>
                         </div>
