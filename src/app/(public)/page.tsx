@@ -105,7 +105,7 @@ export default async function HomePage() {
             <section className="py-24 bg-white text-center">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="mb-16">
-                        <h2 className="text-4xl font-bold text-brand-blue italic">Últimas Notícias <span className="text-[10px] text-gray-300 not-italic font-normal">v1.1</span></h2>
+                        <h2 className="text-4xl font-bold text-brand-blue italic">Últimas Notícias</h2>
                         <div className="w-24 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
                     </div>
 
