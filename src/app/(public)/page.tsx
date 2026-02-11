@@ -83,33 +83,39 @@ export default async function HomePage() {
                 <div className="max-w-7xl mx-auto px-4">
                     <h2 className="text-4xl font-bold mb-16 text-brand-blue">Últimas Notícias</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                        {latestPosts.map((post) => (
-                            <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow">
-                                <Link href={`/blog/${post.slug || post.id}`}>
-                                    <div className="h-48 bg-gray-200 relative overflow-hidden">
-                                        <img
-                                            src={post.image_url || "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1000"}
-                                            alt={post.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                    </div>
-                                </Link>
-                                <div className="p-6">
-                                    <span className="text-xs font-bold text-brand-gold uppercase">{post.category || 'Notícia'}</span>
+                        {latestPosts.length > 0 ? (
+                            latestPosts.map((post) => (
+                                <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-sm border group hover:shadow-md transition-shadow">
                                     <Link href={`/blog/${post.slug || post.id}`}>
-                                        <h3 className="text-xl font-bold mt-2 h-14 line-clamp-2 group-hover:text-brand-blue transition-colors">
-                                            {post.title}
-                                        </h3>
+                                        <div className="h-48 bg-gray-200 relative overflow-hidden">
+                                            <img
+                                                src={post.image_url || "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1000"}
+                                                alt={post.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            />
+                                        </div>
                                     </Link>
-                                    <p className="text-gray-600 text-sm mt-4 line-clamp-3 h-16">
-                                        {post.excerpt || (post.content && post.content.substring(0, 100)) || 'Leia mais sobre esta notícia...'}
-                                    </p>
-                                    <Link href={`/blog/${post.slug || post.id}`} className="mt-6 block text-sm font-bold text-brand-blue hover:text-brand-gold transition-colors">
-                                        Ler notícia completa &rarr;
-                                    </Link>
+                                    <div className="p-6">
+                                        <span className="text-xs font-bold text-brand-gold uppercase">{post.category || 'Notícia'}</span>
+                                        <Link href={`/blog/${post.slug || post.id}`}>
+                                            <h3 className="text-xl font-bold mt-2 h-14 line-clamp-2 group-hover:text-brand-blue transition-colors">
+                                                {post.title}
+                                            </h3>
+                                        </Link>
+                                        <p className="text-gray-600 text-sm mt-4 line-clamp-3 h-16">
+                                            {post.excerpt || (post.content && post.content.substring(0, 100)) || 'Leia mais sobre esta notícia...'}
+                                        </p>
+                                        <Link href={`/blog/${post.slug || post.id}`} className="mt-6 block text-sm font-bold text-brand-blue hover:text-brand-gold transition-colors">
+                                            Ler notícia completa &rarr;
+                                        </Link>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="col-span-3 text-center py-12 text-gray-400 italic">
+                                Nenhuma notícia encontrada no momento.
                             </div>
-                        ))}
+                        )}
                     </div>
                     <Link href="/blog" className="mt-16 inline-block">
                         <Button variant="outline" className="border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white px-8 h-12">

@@ -21,27 +21,7 @@ async function getPosts() {
 export default async function BlogPage() {
     const posts = await getPosts();
 
-    // Fallback mock data if DB is empty
-    const displayPosts = posts.length > 0 ? posts : [
-        {
-            id: 1,
-            title: "A importância da oração constante no cotidiano",
-            excerpt: "Descubra como manter a chama da fé acesa em meio à correria do dia a dia com dicas práticas de espiritualidade.",
-            date: "20 Jan 2024",
-            author: "Pe. João Silva",
-            category: "Espiritualidade",
-            image: "https://images.unsplash.com/photo-1519491054363-2287c8a41738?q=80&w=800&auto=format&fit=crop"
-        },
-        {
-            id: 2,
-            title: "Seminário de Vida no Espírito Santo: Inscreva-se",
-            excerpt: "Prepare-se para uma experiência profunda com o amor de Deus em nosso próximo seminário que acontecerá em Março.",
-            date: "15 Jan 2024",
-            author: "Coordenação",
-            category: "Eventos",
-            image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800&auto=format&fit=crop"
-        },
-    ];
+    const displayPosts = posts;
 
     return (
         <div className="flex flex-col">
