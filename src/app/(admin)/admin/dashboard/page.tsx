@@ -34,7 +34,8 @@ export default function DashboardPage() {
         prayers: 0,
         groups: 0,
         recentPrayers: [] as any[],
-        lastSync: null as any
+        lastSync: null as any,
+        monthlyPrayers: [] as any[]
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -42,10 +43,34 @@ export default function DashboardPage() {
         async function fetchDashboardData() {
             setIsLoading(true);
 
+            // Buscar pedidos de oração dos últimos 6 meses agrupados por mês
+            const { data: prayerData } = await supabase
+                .from("prayer_requests")
+                .select("created_at")
+                .gte("created_at", new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString());
+
+            // Agrupar por mês
+            const monthlyData: { [key: string]: number } = {};
+            const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+            if (prayerData) {
+                prayerData.forEach((prayer) => {
+                    const date = new Date(prayer.created_at);
+                    const monthKey = `${monthNames[date.getMonth()]}/${date.getFullYear().toString().slice(2)}`;
+                    monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
+                });
+            }
+
+            // Converter para array e pegar últimos 6 meses
+            const monthlyPrayers = Object.entries(monthlyData)
+                .map(([month, count]) => ({ month, count }))
+                .slice(-6);
+
             const [
                 { count: postsCount },
                 { count: eventsCount },
                 { count: prayersCount },
+                { count: groupsCount },
                 { data: recentPrayers },
                 { data: lastSync }
             ] = await Promise.all([
@@ -61,9 +86,10 @@ export default function DashboardPage() {
                 posts: postsCount || 0,
                 events: eventsCount || 0,
                 prayers: prayersCount || 0,
-                groups: (await supabase.from("groups").select("*", { count: 'exact', head: true })).count || 0,
+                groups: groupsCount || 0,
                 recentPrayers: recentPrayers || [],
-                lastSync: lastSync || null
+                lastSync: lastSync || null,
+                monthlyPrayers: monthlyPrayers.length > 0 ? monthlyPrayers : [{ month: "Sem dados", count: 0 }]
             });
             setIsLoading(false);
         }
@@ -140,11 +166,7 @@ export default function DashboardPage() {
                     </CardHeader>
                     <div className="h-[300px] mt-8">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={[
-                                { month: "Jan", count: 12 },
-                                { month: "Fev", count: 18 },
-                                { month: "Mar", count: stats.prayers },
-                            ]}>
+                            <BarChart data={stats.monthlyPrayers}>
                                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f0f0f0" />
                                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#999' }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#999' }} />
