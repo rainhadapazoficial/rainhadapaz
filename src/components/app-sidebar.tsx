@@ -59,6 +59,11 @@ const data = {
             url: "/admin/dashboard/calendario",
             icon: Calendar,
         },
+        {
+            title: "Página A RCC",
+            url: "/admin/dashboard/a-rcc",
+            icon: LayoutDashboard,
+        },
     ],
     projects: [
         {

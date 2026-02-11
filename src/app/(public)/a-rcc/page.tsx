@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Flame, Users, Globe, Target, Shield, Heart, Quote, ChevronRight, X } from "lucide-react";
@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/lib/supabase";
 
 const POPES = {
     "Papa Francisco": {
@@ -84,16 +85,52 @@ Acompanho a vossa Conferência com as minhas orações, convicto de que isto dar
 
 export default function ARCCPage() {
     const [selectedPope, setSelectedPope] = useState<keyof typeof POPES | null>(null);
+    const [content, setContent] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchContent() {
+            const { data } = await supabase
+                .from('site_settings')
+                .select('value')
+                .eq('key', 'a_rcc_content')
+                .single();
+
+            if (data?.value) {
+                setContent(data.value);
+            }
+            setIsLoading(false);
+        }
+        fetchContent();
+    }, []);
+
+    const hero = content?.hero || {
+        title: "A RCC",
+        subtitle: "\"O Movimento Eclesial Renovação Carismática Católica é uma Corrente de Graça para a Igreja e para o mundo.\"",
+        image_url: "https://images.unsplash.com/photo-1510915228340-29c85a43dbfe?q=80&w=2000"
+    };
+
+    const baptism = content?.baptism || {
+        title: "Batismo no Espírito Santo",
+        image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=1000&auto=format&fit=crop",
+        p1: "A espiritualidade carismática nasce em Pentecostes! No Cenáculo, com Maria e os apóstolos, vemos o derramamento do Espírito Santo sobre a Igreja. Esse evento se atualiza respondendo ao clamor por um Novo Pentecostes.",
+        p2: "O Batismo no Espírito Santo é uma experiência que renova e transforma a vida. É uma experiência profunda com o amor de Deus derramado no coração humano, recebido através da submissão ao senhorio de Jesus Cristo.",
+        p3: "Ele atualiza o batismo e o crisma sacramentais, aprofunda a comunhão com Deus e com os outros cristãos, reaviva o fervor evangelístico e equipa as pessoas com carismas para o serviço e a missão.",
+        quote: "Nosso apostolado é ser rosto e memória de Pentecostes nos dias de hoje!"
+    };
 
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
             <section className="bg-brand-blue py-24 text-white text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1510915228340-29c85a43dbfe?q=80&w=2000')] opacity-10 bg-cover bg-center" />
+                <div
+                    className="absolute inset-0 opacity-10 bg-cover bg-center transition-all duration-700"
+                    style={{ backgroundImage: `url('${hero.image_url}')` }}
+                />
                 <div className="max-w-4xl mx-auto px-4 relative z-10">
-                    <h1 className="text-6xl font-bold mb-6 italic text-brand-gold">A RCC</h1>
+                    <h1 className="text-6xl font-bold mb-6 italic text-brand-gold">{hero.title}</h1>
                     <p className="text-xl text-blue-100 max-w-2xl mx-auto italic font-medium">
-                        "O Movimento Eclesial Renovação Carismática Católica é uma Corrente de Graça para a Igreja e para o mundo."
+                        {hero.subtitle}
                     </p>
                 </div>
             </section>
@@ -105,22 +142,16 @@ export default function ARCCPage() {
                         <div className="inline-block px-4 py-1 bg-brand-gold/10 text-brand-gold rounded-full text-sm font-bold uppercase tracking-widest">
                             Nossa Identidade
                         </div>
-                        <h2 className="text-4xl font-bold text-brand-blue font-serif italic">Batismo no Espírito Santo</h2>
+                        <h2 className="text-4xl font-bold text-brand-blue font-serif italic">{baptism.title}</h2>
                         <div className="prose prose-lg text-gray-600 space-y-4">
-                            <p>
-                                A espiritualidade carismática nasce em Pentecostes! No Cenáculo, com Maria e os apóstolos, vemos o derramamento do Espírito Santo sobre a Igreja. Esse evento se atualiza respondendo ao clamor por um Novo Pentecostes.
-                            </p>
-                            <p>
-                                O Batismo no Espírito Santo é uma experiência que renova e transforma a vida. É uma experiência profunda com o amor de Deus derramado no coração humano, recebido através da submissão ao senhorio de Jesus Cristo.
-                            </p>
-                            <p>
-                                Ele atualiza o batismo e o crisma sacramentais, aprofunda a comunhão com Deus e com os outros cristãos, reaviva o fervor evangelístico e equipa as pessoas com carismas para o serviço e a missão.
-                            </p>
+                            <p>{baptism.p1}</p>
+                            <p>{baptism.p2}</p>
+                            <p>{baptism.p3}</p>
                         </div>
                         <div className="bg-brand-blue/5 p-8 border-l-4 border-brand-gold rounded-r-3xl italic text-brand-blue relative">
                             <Quote className="w-12 h-12 mb-4 text-brand-gold/20 absolute -top-4 -left-4" />
                             <p className="relative z-10 text-lg">
-                                "Nosso apostolado é ser rosto e memória de Pentecostes nos dias de hoje!"
+                                "{baptism.quote}"
                             </p>
                         </div>
                     </div>
@@ -128,8 +159,8 @@ export default function ARCCPage() {
                         <div className="absolute -inset-4 bg-brand-gold/20 rounded-[3rem] blur-2xl group-hover:bg-brand-gold/30 transition-all duration-500" />
                         <div className="relative h-[600px] bg-gray-200 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
                             <img
-                                src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=1000&auto=format&fit=crop"
-                                alt="Experiência de Pentecostes"
+                                src={baptism.image_url}
+                                alt={baptism.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                             />
                         </div>
