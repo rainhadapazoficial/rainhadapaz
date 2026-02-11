@@ -12,7 +12,7 @@ export default function FormacaoPage() {
 
                 <div className="relative z-20 max-w-4xl px-4">
                     <h1 className="text-4xl md:text-6xl font-bold italic mb-6 animate-in fade-in slide-in-from-bottom duration-1000">
-                        Processo Formativo
+                        PROCESSO FORMATIVO
                     </h1>
                     <div className="w-24 h-1 bg-brand-gold mx-auto mb-6 rounded-full" />
                     <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto font-medium">
