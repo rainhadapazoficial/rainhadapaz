@@ -92,27 +92,6 @@ export default function QuemSomosPage() {
                 </div>
             </section>
 
-            {/* CTA */}
-            <section className="py-24 bg-brand-blue text-white text-center relative overflow-hidden">
-                <div className="max-w-3xl mx-auto px-4 relative z-10">
-                    <h2 className="text-4xl font-bold mb-8 italic">Venha rezar conosco!</h2>
-                    <p className="text-xl text-blue-100 mb-10">
-                        Nossos encontros acontecem todas as quartas-feiras, às 19:30, na Matriz da Paróquia Santo Antônio.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <Link href="/contato">
-                            <Button size="lg" className="bg-brand-gold hover:bg-brand-gold/90 text-white font-bold h-14 px-12 rounded-full text-lg">
-                                Como Chegar
-                            </Button>
-                        </Link>
-                        <Link href="/eventos">
-                            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 h-14 px-12 rounded-full text-lg">
-                                Ver Agenda
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }
