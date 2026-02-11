@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users, Flame } from "lucide-react";
+import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users, Flame, History, Globe, GraduationCap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -60,9 +60,15 @@ const data = {
             icon: Calendar,
         },
         {
-            title: "Página A RCC",
-            url: "/admin/dashboard/a-rcc",
-            icon: LayoutDashboard,
+            title: "Páginas",
+            items: [
+                { title: "A RCC", url: "/admin/dashboard/a-rcc", icon: LayoutDashboard },
+                { title: "Quem Somos", url: "/admin/dashboard/quem-somos", icon: Users },
+                { title: "História da RCC", url: "/admin/dashboard/historia-da-rcc", icon: History },
+                { title: "História Diocese", url: "/admin/dashboard/diocesana", icon: Globe },
+                { title: "Formação", url: "/admin/dashboard/formacao", icon: GraduationCap },
+                { title: "Seminário de Vida", url: "/admin/dashboard/formacao/seminario-de-vida", icon: Flame },
+            ]
         },
     ],
     projects: [
@@ -117,18 +123,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent className="p-4">
-                <SidebarMenu className="space-y-1">
-                    <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Principal</div>
-                    {data.navMain.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
-                                <Link href={item.url}>
-                                    <item.icon className="group-hover:text-brand-gold transition-colors" />
-                                    <span className="font-medium">{item.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    ))}
+                <SidebarMenu className="space-y-4">
+                    <div className="space-y-1">
+                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Principal</div>
+                        {data.navMain.filter(item => !item.items).map((item: any) => (
+                            <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
+                                    <Link href={item.url}>
+                                        <item.icon className="group-hover:text-brand-gold transition-colors" />
+                                        <span className="font-medium">{item.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </div>
+
+                    <div className="space-y-1">
+                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Páginas Dinâmicas</div>
+                        {data.navMain.find(i => i.title === "Páginas")?.items?.map((item: any) => (
+                            <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
+                                    <Link href={item.url}>
+                                        <item.icon className="group-hover:text-brand-gold transition-colors" />
+                                        <span className="font-medium">{item.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </div>
                 </SidebarMenu>
                 <SidebarMenu className="mt-8 space-y-1">
                     <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sistema</div>

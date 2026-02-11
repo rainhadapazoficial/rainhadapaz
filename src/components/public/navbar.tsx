@@ -25,6 +25,7 @@ const navLinks: NavItem[] = [
             { name: "Sobre Nós", href: "/quem-somos" },
             { name: "A RCC", href: "/a-rcc" },
             { name: "História da RCC", href: "/historia-da-rcc" },
+            { name: "História Diocese de Sinop", href: "/quem-somos/historia-diocese" },
             { name: "Conselho Diocesano", href: "/quem-somos/conselho" },
         ]
     },

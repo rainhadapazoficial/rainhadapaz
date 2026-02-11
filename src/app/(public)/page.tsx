@@ -29,11 +29,18 @@ async function getLatestEvents() {
 async function getLatestGroups() {
     const { data, error } = await supabase
         .from('groups')
-        .select('id, nome, cidade, dia, local, slug')
-        .order('created_at', { ascending: false })
-        .limit(3);
-    if (error) console.error('Error fetching latest groups:', error);
-    return data || [];
+        .select('id, nome, cidade, dia, local, slug');
+
+    if (error) {
+        console.error('Error fetching latest groups:', error);
+        return [];
+    }
+
+    if (!data) return [];
+
+    // Shuffle and pick 3
+    const shuffled = [...data].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
 }
 
 async function getLatestMinistries() {
