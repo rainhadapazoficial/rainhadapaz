@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Heart, Users, Calendar, Newspaper, Radio, Clock, MapPin } from "lucide-react";
+import { HeroCarousel } from "@/components/public/HeroCarousel";
 
 export const revalidate = 0;
 
@@ -45,61 +46,41 @@ async function getLatestMinistries() {
     return data || [];
 }
 
-async function getHomeBanner() {
+async function getHomeBanners() {
     const { data } = await supabase
         .from('site_settings')
         .select('value')
         .eq('key', 'home_banner')
         .single();
 
-    return data?.value || {
-        title: "RCC Diocese de Sinop",
-        subtitle: "Um encontro de amor com o Espírito Santo em Sinop",
-        image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=2000&auto=format&fit=crop",
-        button1_text: "Conheça nossa História",
-        button1_link: "/quem-somos",
-        button2_text: "Ver Programação",
-        button2_link: "/eventos"
-    };
+    if (!data?.value) {
+        return [{
+            title: "RCC Diocese de Sinop",
+            subtitle: "Um encontro de amor com o Espírito Santo em Sinop",
+            image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=2000&auto=format&fit=crop",
+            button1_text: "Conheça nossa História",
+            button1_link: "/quem-somos",
+            button2_text: "Ver Programação",
+            button2_link: "/eventos"
+        }];
+    }
+
+    return Array.isArray(data.value) ? data.value : [data.value];
 }
 
 export default async function HomePage() {
-    const [latestPosts, latestEvents, latestGroups, latestMinistries, banner] = await Promise.all([
+    const [latestPosts, latestEvents, latestGroups, latestMinistries, banners] = await Promise.all([
         getLatestPosts(),
         getLatestEvents(),
         getLatestGroups(),
         getLatestMinistries(),
-        getHomeBanner()
+        getHomeBanners()
     ]);
 
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
-            <section className="relative h-[600px] flex items-center justify-center bg-brand-blue text-white text-center">
-                <div className="absolute inset-0 bg-black/40 z-10" />
-                <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url('${banner.image_url}')` }} />
-
-                <div className="relative z-20 max-w-5xl px-4">
-                    <h1 className="text-4xl md:text-6xl font-bold italic mb-6 animate-in fade-in slide-in-from-bottom duration-1000">
-                        {banner.title}
-                    </h1>
-                    <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-3xl mx-auto font-medium">
-                        {banner.subtitle}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href={banner.button1_link || "/quem-somos"}>
-                            <Button size="lg" className="bg-brand-gold hover:bg-brand-gold/90 text-white text-lg h-14 px-8 shadow-lg shadow-brand-gold/20">
-                                {banner.button1_text}
-                            </Button>
-                        </Link>
-                        <Link href={banner.button2_link || "/eventos"}>
-                            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-brand-blue text-lg h-14 px-8">
-                                {banner.button2_text}
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <HeroCarousel banners={banners} />
 
             {/* Latest News */}
             <section className="py-24 bg-white text-center">
