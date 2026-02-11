@@ -84,7 +84,10 @@ export function Footer() {
 
                 <div className="mt-16 pt-8 border-t border-blue-800 text-center text-xs text-blue-200">
                     <p>Renovação Carismática Católica da Diocese de Sinop - CNPJ: 03.162.415/0001-50</p>
-                    <p className="mt-2 text-[10px] opacity-50">&copy; {new Date().getFullYear()} RCC Diocese de Sinop. Todos os direitos reservados.</p>
+                    <p className="mt-2 text-[10px] opacity-70">
+                        Feito sob a luz do Espírito Santo e com Inteligência Artificial.
+                    </p>
+                    <p className="mt-1 text-[10px] opacity-50">&copy; {new Date().getFullYear()} RCC Diocese de Sinop. Todos os direitos reservados.</p>
                 </div>
             </div>
         </footer>
