@@ -291,24 +291,6 @@ export default async function HomePage() {
                     </div>
                 </div>
             </section>
-
-            {/* Resources/Highlights Section */}
-            <section className="py-24 bg-white">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="bg-gray-50 p-10 rounded-3xl flex items-start gap-6 group hover:shadow-lg transition-all mx-auto max-w-2xl">
-                        <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
-                            <Newspaper className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <h3 className="text-2xl font-bold mb-2">Blog da RCC</h3>
-                            <p className="text-gray-600 mb-6">Fique por dentro das notícias e formações da RCC Brasil e do nosso grupo.</p>
-                            <Link href="/blog" className="text-brand-blue font-bold flex items-center gap-1 hover:underline">
-                                Ler Blog <ChevronRight className="w-4 h-4" />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }
