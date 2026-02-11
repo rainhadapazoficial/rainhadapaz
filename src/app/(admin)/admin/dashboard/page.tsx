@@ -32,6 +32,7 @@ export default function DashboardPage() {
         posts: 0,
         events: 0,
         prayers: 0,
+        groups: 0,
         recentPrayers: [] as any[],
         lastSync: null as any
     });
@@ -51,6 +52,7 @@ export default function DashboardPage() {
                 supabase.from("posts").select("*", { count: 'exact', head: true }),
                 supabase.from("events").select("*", { count: 'exact', head: true }),
                 supabase.from("prayer_requests").select("*", { count: 'exact', head: true }),
+                supabase.from("groups").select("*", { count: 'exact', head: true }),
                 supabase.from("prayer_requests").select("*").order("created_at", { ascending: false }).limit(5),
                 supabase.from("sync_logs").select("*").order("created_at", { ascending: false }).limit(1).single()
             ]);
@@ -59,6 +61,7 @@ export default function DashboardPage() {
                 posts: postsCount || 0,
                 events: eventsCount || 0,
                 prayers: prayersCount || 0,
+                groups: (await supabase.from("groups").select("*", { count: 'exact', head: true })).count || 0,
                 recentPrayers: recentPrayers || [],
                 lastSync: lastSync || null
             });
@@ -72,7 +75,7 @@ export default function DashboardPage() {
         { title: "Notícias", value: stats.posts, icon: Newspaper, color: "text-blue-600", bg: "bg-blue-50" },
         { title: "Eventos", value: stats.events, icon: Calendar, color: "text-brand-gold", bg: "bg-amber-50" },
         { title: "Pedidos de Oração", value: stats.prayers, icon: Mail, color: "text-emerald-600", bg: "bg-emerald-50" },
-        { title: "Intercessores", value: 12, icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
+        { title: "Grupos de Oração", value: stats.groups, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
     ];
 
     if (isLoading) {
