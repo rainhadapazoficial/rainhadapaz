@@ -6,38 +6,42 @@ import { ChevronRight, Heart, Users, Calendar, Newspaper, Radio, Clock, MapPin }
 export const revalidate = 0;
 
 async function getLatestPosts() {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('posts')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(3);
+    if (error) console.error('Error fetching latest posts:', error);
     return data || [];
 }
 
 async function getLatestEvents() {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('events')
         .select('*')
         .order('date', { ascending: true })
         .limit(2);
+    if (error) console.error('Error fetching latest events:', error);
     return data || [];
 }
 
 async function getLatestGroups() {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('groups')
         .select('id, nome, cidade, dia, local, slug')
         .order('created_at', { ascending: false })
         .limit(3);
+    if (error) console.error('Error fetching latest groups:', error);
     return data || [];
 }
 
 async function getLatestMinistries() {
-    const { data } = await supabase
+    const { data, error } = await supabase
         .from('ministerios')
-        .select('id, nome, descricao, coordenador, slug, cor')
+        .select('id, nome, descricao, coordenador, cor')
         .order('ordem', { ascending: true })
         .limit(3);
+    if (error) console.error('Error fetching latest ministries:', error);
     return data || [];
 }
 
