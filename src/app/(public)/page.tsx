@@ -177,49 +177,18 @@ export default async function HomePage() {
             {/* Resources/Highlights Section */}
             <section className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="bg-gray-50 p-10 rounded-3xl flex items-start gap-6 group hover:shadow-lg transition-all">
-                            <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
-                                <Radio className="w-8 h-8" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-bold mb-2">Último Podcast</h3>
-                                <p className="text-gray-600 mb-6">Acompanhe nossas pregações e momentos de formação onde você estiver.</p>
-                                <Link href="/podcast" className="text-brand-blue font-bold flex items-center gap-1 hover:underline">
-                                    Escutar Agora <ChevronRight className="w-4 h-4" />
-                                </Link>
-                            </div>
+                    <div className="bg-gray-50 p-10 rounded-3xl flex items-start gap-6 group hover:shadow-lg transition-all mx-auto max-w-2xl">
+                        <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
+                            <Newspaper className="w-8 h-8" />
                         </div>
-
-                        <div className="bg-gray-50 p-10 rounded-3xl flex items-start gap-6 group hover:shadow-lg transition-all">
-                            <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all">
-                                <Newspaper className="w-8 h-8" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-bold mb-2">Blog da RCC</h3>
-                                <p className="text-gray-600 mb-6">Fique por dentro das notícias e formações da RCC Brasil e do nosso grupo.</p>
-                                <Link href="/blog" className="text-brand-blue font-bold flex items-center gap-1 hover:underline">
-                                    Ler Blog <ChevronRight className="w-4 h-4" />
-                                </Link>
-                            </div>
+                        <div>
+                            <h3 className="text-2xl font-bold mb-2">Blog da RCC</h3>
+                            <p className="text-gray-600 mb-6">Fique por dentro das notícias e formações da RCC Brasil e do nosso grupo.</p>
+                            <Link href="/blog" className="text-brand-blue font-bold flex items-center gap-1 hover:underline">
+                                Ler Blog <ChevronRight className="w-4 h-4" />
+                            </Link>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            {/* Prayer Request Section */}
-            <section className="bg-brand-blue py-24 text-white">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <Heart className="w-12 h-12 mx-auto mb-6 fill-brand-gold text-brand-gold" />
-                    <h2 className="text-4xl font-bold mb-4">Você precisa de oração?</h2>
-                    <p className="text-xl mb-12 opacity-90 max-w-2xl mx-auto">
-                        Nossos intercessores estão prontos para rezar por você. Deixe seu pedido e rezaremos em nossos próximos encontros.
-                    </p>
-                    <Link href="/contato#pedido-oracao">
-                        <Button size="lg" className="bg-brand-gold hover:bg-brand-gold/90 text-white font-bold px-12 h-16 text-xl shadow-xl shadow-black/20">
-                            Fazer Pedido de Oração
-                        </Button>
-                    </Link>
                 </div>
             </section>
         </div>

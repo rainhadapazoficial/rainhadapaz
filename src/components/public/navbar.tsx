@@ -36,7 +36,6 @@ const navLinks: NavItem[] = [
             { name: "Festa do Rei Jesus", href: "/festa-rei-jesus" },
         ]
     },
-    { name: "Podcast", href: "/podcast" },
     { name: "Contato", href: "/contato" },
 ];
 

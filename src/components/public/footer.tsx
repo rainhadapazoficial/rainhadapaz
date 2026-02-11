@@ -48,8 +48,6 @@ export function Footer() {
                     <div>
                         <h3 className="text-lg font-bold mb-6 text-brand-gold">Recursos</h3>
                         <ul className="space-y-4 text-sm">
-                            <li><Link href="/podcast" className="hover:underline">Web Rádio & Podcast</Link></li>
-                            <li><Link href="/contato#pedido-oracao" className="hover:underline">Fazer Pedido de Oração</Link></li>
                             <li><Link href="/admin/login" className="hover:underline">Painel Administrativo</Link></li>
                         </ul>
                     </div>
