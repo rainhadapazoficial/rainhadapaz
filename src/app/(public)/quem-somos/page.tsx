@@ -26,19 +26,19 @@ export default function QuemSomosPage() {
                         <h2 className="text-4xl font-bold text-brand-blue font-serif italic">Uma Caminhada de Fé e Adoração</h2>
                         <div className="prose prose-lg text-gray-600 space-y-4">
                             <p>
-                                A RCC Diocese de Sinop nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo na Matriz da Paróquia Santo Antônio.
+                                A RCC Diocese de Sinop nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo, expandindo-se por todas as paróquias e comunidades da nossa região.
                             </p>
                             <p>
-                                Fundado por leigos comprometidos com a Renovação Carismática Católica (RCC), o grupo tornou-se um refúgio para aqueles que buscam o Batismo no Espírito Santo, a cura interior e o crescimento na vida espiritual.
+                                Movidos pelo compromisso com a Renovação Carismática Católica (RCC), somos uma expressão de fé que busca o Batismo no Espírito Santo, a cura interior e o crescimento na vida espiritual de todo o povo de Deus.
                             </p>
                             <p>
-                                Hoje, somos uma família unida pelo amor de Maria e pela força do Pentecostes diário.
+                                Hoje, somos uma grande família diocesana unida pelo amor de Maria e pela força de um novo Pentecostes.
                             </p>
                         </div>
                         <div className="bg-brand-blue/5 p-8 border-l-4 border-brand-gold rounded-r-3xl italic text-brand-blue relative">
                             <Quote className="w-12 h-12 mb-4 text-brand-gold/20 absolute -top-4 -left-4" />
                             <p className="relative z-10 text-lg">
-                                "O Grupo de Oração é o lugar da manifestação da glória de Deus, onde os corações são transformados pelo fogo do Espírito Santo."
+                                "A Renovação Carismática Católica é um grande dom do Espírito Santo à Igreja e ao mundo."
                             </p>
                         </div>
                     </div>
