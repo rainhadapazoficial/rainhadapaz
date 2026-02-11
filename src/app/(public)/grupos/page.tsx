@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import {
     Users, MapPin, Calendar, Clock, Phone, Globe,
-    Facebook, Instagram, Search, MessageCircle
+    Facebook, Instagram, Search, MessageCircle, History
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,13 +37,38 @@ export default function GruposPublicPage() {
 
     async function fetchGroups() {
         setIsLoading(true);
-        const { data, error } = await supabase
+        const { data: groupsData, error: groupsError } = await supabase
             .from("groups")
             .select("*")
             .order("nome", { ascending: true });
 
-        if (error) console.error("Error fetching groups:", error);
-        else setGroups(data || []);
+        if (groupsError) {
+            console.error("Error fetching groups:", groupsError);
+            setIsLoading(false);
+            return;
+        }
+
+        const groupsList = groupsData || [];
+        if (groupsList.length === 0) {
+            setGroups([]);
+            setIsLoading(false);
+            return;
+        }
+
+        const ids = groupsList.map((g: { id: number }) => g.id);
+        const { data: historyData } = await supabase
+            .from("group_coordinator_history")
+            .select("group_id, nome, gestao, ordem")
+            .in("group_id", ids)
+            .order("ordem", { ascending: true });
+
+        const historyByGroup: Record<number, { nome: string; gestao: string }[]> = {};
+        (historyData || []).forEach((row: { group_id: number; nome: string; gestao: string }) => {
+            if (!historyByGroup[row.group_id]) historyByGroup[row.group_id] = [];
+            historyByGroup[row.group_id].push({ nome: row.nome, gestao: row.gestao });
+        });
+
+        setGroups(groupsList.map((g: any) => ({ ...g, coordinatorHistory: historyByGroup[g.id] || [] })));
         setIsLoading(false);
     }
 
@@ -144,8 +169,24 @@ export default function GruposPublicPage() {
                                                 <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
                                                     <Users className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="text-[10px] uppercase font-bold text-gray-400">Coordenação</p>
+                                                        <p className="text-[10px] uppercase font-bold text-gray-400">Coordenação atual</p>
                                                         <p className="font-medium">{group.coordenador}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {group.coordinatorHistory && group.coordinatorHistory.length > 0 && (
+                                                <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
+                                                    <History className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                                                    <div className="min-w-0">
+                                                        <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Histórico de coordenadores</p>
+                                                        <ul className="text-sm text-gray-600 space-y-0.5">
+                                                            {group.coordinatorHistory.map((h: { nome: string; gestao: string }, i: number) => (
+                                                                <li key={i} className="flex flex-wrap gap-1">
+                                                                    <span className="font-medium">{h.nome}</span>
+                                                                    <span className="text-gray-400">({h.gestao})</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
                                                     </div>
                                                 </div>
                                             )}

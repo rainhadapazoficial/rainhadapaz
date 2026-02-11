@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Plus, Search, Trash2, Edit, Loader2,
-    CheckCircle2, XCircle, Users,
+    CheckCircle2, XCircle, Users, History,
     MapPin, Calendar, Clock, Phone, Globe, Facebook, Instagram
 } from "lucide-react";
 import {
@@ -24,6 +24,7 @@ export default function GruposAdminPage() {
     const [editingGroup, setEditingGroup] = useState<any>(null);
     const [formData, setFormData] = useState<any>({});
     const [searchTerm, setSearchTerm] = useState("");
+    const [coordinatorHistory, setCoordinatorHistory] = useState<{ nome: string; gestao: string }[]>([]);
 
     // Page Settings State
     const [pageSettings, setPageSettings] = useState<any>({
@@ -82,6 +83,35 @@ export default function GruposAdminPage() {
         setIsLoading(false);
     }
 
+    async function fetchCoordinatorHistory(groupId: number) {
+        const { data, error } = await supabase
+            .from("group_coordinator_history")
+            .select("id, nome, gestao, ordem")
+            .eq("group_id", groupId)
+            .order("ordem", { ascending: true });
+        if (error) {
+            console.error("Error fetching coordinator history:", error);
+            return [];
+        }
+        return (data || []).map((r) => ({ nome: r.nome, gestao: r.gestao }));
+    }
+
+    function addCoordinatorHistoryRow() {
+        setCoordinatorHistory((prev) => [...prev, { nome: "", gestao: "" }]);
+    }
+
+    function updateCoordinatorHistoryRow(index: number, field: "nome" | "gestao", value: string) {
+        setCoordinatorHistory((prev) => {
+            const next = [...prev];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
+    }
+
+    function removeCoordinatorHistoryRow(index: number) {
+        setCoordinatorHistory((prev) => prev.filter((_, i) => i !== index));
+    }
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsSubmitting(true);
@@ -103,20 +133,42 @@ export default function GruposAdminPage() {
             slug: (formValues.get("nome") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
         };
 
-        let result;
+        let groupId: number;
         if (editingGroup) {
-            result = await supabase.from("groups").update(groupData).eq("id", editingGroup.id);
+            const result = await supabase.from("groups").update(groupData).eq("id", editingGroup.id).select("id").single();
+            if (result.error) {
+                alert("Erro ao salvar grupo: " + result.error.message);
+                setIsSubmitting(false);
+                return;
+            }
+            groupId = result.data.id;
         } else {
-            result = await supabase.from("groups").insert([groupData]);
+            const result = await supabase.from("groups").insert([groupData]).select("id").single();
+            if (result.error) {
+                alert("Erro ao salvar grupo: " + result.error.message);
+                setIsSubmitting(false);
+                return;
+            }
+            groupId = result.data.id;
         }
 
-        if (result.error) {
-            alert("Erro ao salvar grupo: " + result.error.message);
-        } else {
-            setIsDialogOpen(false);
-            setEditingGroup(null);
-            fetchGroups();
+        await supabase.from("group_coordinator_history").delete().eq("group_id", groupId);
+        const validHistory = coordinatorHistory.filter((h) => h.nome.trim() || h.gestao.trim());
+        if (validHistory.length > 0) {
+            await supabase.from("group_coordinator_history").insert(
+                validHistory.map((h, i) => ({
+                    group_id: groupId,
+                    nome: h.nome.trim() || "(nome não informado)",
+                    gestao: h.gestao.trim() || "(gestão não informada)",
+                    ordem: i,
+                }))
+            );
         }
+
+        setIsDialogOpen(false);
+        setEditingGroup(null);
+        setCoordinatorHistory([]);
+        fetchGroups();
         setIsSubmitting(false);
     }
 
@@ -127,15 +179,18 @@ export default function GruposAdminPage() {
         else fetchGroups();
     }
 
-    const openEdit = (group: any) => {
+    const openEdit = async (group: any) => {
         setEditingGroup(group);
         setFormData(group);
+        const history = await fetchCoordinatorHistory(group.id);
+        setCoordinatorHistory(history);
         setIsDialogOpen(true);
     };
 
     const openNew = () => {
         setEditingGroup(null);
         setFormData({});
+        setCoordinatorHistory([]);
         setIsDialogOpen(true);
     };
 
@@ -262,6 +317,48 @@ export default function GruposAdminPage() {
                                             className="rounded-xl"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Histórico de coordenadores por gestão */}
+                                <div className="space-y-3 col-span-2 border-t pt-6">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                            <History className="w-4 h-4 text-brand-blue" />
+                                            Histórico de coordenadores por gestão
+                                        </label>
+                                        <Button type="button" variant="outline" size="sm" onClick={addCoordinatorHistoryRow} className="rounded-xl">
+                                            <Plus className="w-4 h-4 mr-1" />
+                                            Adicionar gestão
+                                        </Button>
+                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                        Registre coordenadores anteriores com o período da gestão (ex: 2020-2022, 2022-2024). A primeira linha pode ser a gestão atual.
+                                    </p>
+                                    {coordinatorHistory.length === 0 ? (
+                                        <p className="text-sm text-gray-400 italic py-2">Nenhum registro. Clique em &quot;Adicionar gestão&quot; para incluir.</p>
+                                    ) : (
+                                        <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
+                                            {coordinatorHistory.map((row, index) => (
+                                                <div key={index} className="flex gap-2 items-center rounded-xl border bg-gray-50/50 p-2">
+                                                    <Input
+                                                        placeholder="Nome do coordenador"
+                                                        value={row.nome}
+                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "nome", e.target.value)}
+                                                        className="rounded-lg flex-1"
+                                                    />
+                                                    <Input
+                                                        placeholder="Gestão (ex: 2020-2022)"
+                                                        value={row.gestao}
+                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "gestao", e.target.value)}
+                                                        className="rounded-lg w-36"
+                                                    />
+                                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCoordinatorHistoryRow(index)} className="text-gray-400 hover:text-red-500 shrink-0">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <DialogFooter>

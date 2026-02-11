@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users } from "lucide-react";
+import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users, Flame } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -65,6 +65,11 @@ const data = {
             title: "Ver Site Público",
             url: "/",
             icon: Heart,
+        },
+        {
+            title: "Ministérios",
+            url: "/admin/dashboard/ministerios",
+            icon: Flame,
         },
         {
             title: "Conselho Diocesano",
