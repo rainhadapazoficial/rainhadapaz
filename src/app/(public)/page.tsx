@@ -68,6 +68,13 @@ export default async function HomePage() {
         getHomeBanner()
     ]);
 
+    console.log('--- DEBUG HOME PAGE ---');
+    console.log('Posts:', latestPosts.length);
+    console.log('Events:', latestEvents.length);
+    console.log('Groups:', latestGroups.length);
+    console.log('Ministries:', latestMinistries.length);
+    console.log('-----------------------');
+
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
