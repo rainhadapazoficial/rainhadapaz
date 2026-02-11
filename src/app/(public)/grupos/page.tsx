@@ -9,11 +9,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function GruposPublicPage() {
     const [groups, setGroups] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedGroup, setSelectedGroup] = useState<any>(null);
     const [pageSettings, setPageSettings] = useState<any>({
         title: "Grupos de Oração",
         subtitle: "Encontre um Grupo de Oração da Renovação Carismática Católica mais próximo de você e venha vivenciar Pentecostes!",
@@ -224,6 +231,13 @@ export default function GruposPublicPage() {
                                                     </Button>
                                                 </a>
                                             )}
+
+                                            <Button
+                                                onClick={() => setSelectedGroup(group)}
+                                                className="w-full h-12 rounded-xl bg-brand-gold hover:bg-yellow-600 text-brand-blue font-bold shadow-sm"
+                                            >
+                                                Conhecer Grupo
+                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -238,6 +252,120 @@ export default function GruposPublicPage() {
                     </div>
                 )}
             </div>
+
+            {/* Details Modal */}
+            <Dialog open={!!selectedGroup} onOpenChange={(open) => !open && setSelectedGroup(null)}>
+                <DialogContent className="max-w-3xl rounded-[2.5rem] p-0 overflow-hidden border-none max-h-[90vh] flex flex-col">
+                    {selectedGroup && (
+                        <>
+                            <div className="relative h-64 shrink-0">
+                                {selectedGroup.imagem && selectedGroup.imagem.length > 10 ? (
+                                    <img src={selectedGroup.imagem} alt={selectedGroup.nome} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-brand-blue flex items-center justify-center">
+                                        <Users className="w-24 h-24 text-white/20" />
+                                    </div>
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                <div className="absolute bottom-6 left-8 right-8">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-[10px] font-bold text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-md border border-brand-gold/20">
+                                            {selectedGroup.cidade}
+                                        </span>
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-white italic">{selectedGroup.nome}</h2>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sobre o Grupo</h4>
+                                        <p className="text-gray-600 leading-relaxed italic">
+                                            {selectedGroup.descricao || "Nenhuma descrição disponível."}
+                                        </p>
+
+                                        <div className="pt-4 flex gap-3">
+                                            {selectedGroup.whatsapp && (
+                                                <a href={selectedGroup.whatsapp} target="_blank" rel="noopener noreferrer" className="p-4 bg-green-50 text-green-600 rounded-2xl hover:bg-green-600 hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                                                    <MessageCircle className="w-6 h-6 fill-current" />
+                                                </a>
+                                            )}
+                                            {selectedGroup.instagram && (
+                                                <a href={selectedGroup.instagram} target="_blank" rel="noopener noreferrer" className="p-4 bg-pink-50 text-pink-600 rounded-2xl hover:bg-pink-600 hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                                                    <Instagram className="w-6 h-6" />
+                                                </a>
+                                            )}
+                                            {selectedGroup.facebook && (
+                                                <a href={selectedGroup.facebook} target="_blank" rel="noopener noreferrer" className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                                                    <Facebook className="w-6 h-6" />
+                                                </a>
+                                            )}
+                                            {selectedGroup.site && (
+                                                <a href={selectedGroup.site} target="_blank" rel="noopener noreferrer" className="p-4 bg-brand-blue/5 text-brand-blue rounded-2xl hover:bg-brand-blue hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                                                    <Globe className="w-6 h-6" />
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div className="bg-gray-50 p-6 rounded-[2rem] space-y-4 border border-gray-100">
+                                            <div className="flex items-start gap-4">
+                                                <Clock className="w-6 h-6 text-brand-blue shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="text-[10px] uppercase font-bold text-gray-400">Quando</p>
+                                                    <p className="font-bold text-brand-blue">{selectedGroup.dia}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-4">
+                                                <MapPin className="w-6 h-6 text-brand-blue shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="text-[10px] uppercase font-bold text-gray-400">Local</p>
+                                                    <p className="font-bold text-brand-blue">{selectedGroup.local}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-4">
+                                                <Users className="w-6 h-6 text-brand-blue shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="text-[10px] uppercase font-bold text-gray-400">Coordenador</p>
+                                                    <p className="font-bold text-brand-blue">{selectedGroup.coordenador || "A definir"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {selectedGroup.geolocalizacao && (
+                                            <a href={selectedGroup.geolocalizacao} target="_blank" rel="noopener noreferrer" className="block">
+                                                <Button className="w-full h-14 rounded-2xl bg-brand-blue hover:bg-brand-blue/90 text-white font-bold gap-2 shadow-lg transform hover:-translate-y-1 transition-all">
+                                                    <MapPin className="w-5 h-5" />
+                                                    Como chegar pelo GPS
+                                                </Button>
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {selectedGroup.coordinatorHistory && selectedGroup.coordinatorHistory.length > 0 && (
+                                    <div className="space-y-4 pt-4">
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                            <History className="w-4 h-4 text-brand-blue" />
+                                            Histórico de Coordenação
+                                        </h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {selectedGroup.coordinatorHistory.map((h: any, i: number) => (
+                                                <div key={i} className="flex flex-col p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
+                                                    <p className="font-bold text-brand-blue">{h.nome}</p>
+                                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">{h.gestao}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
