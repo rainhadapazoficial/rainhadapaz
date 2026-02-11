@@ -15,6 +15,7 @@ import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
     DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function GruposAdminPage() {
     const [groups, setGroups] = useState<any[]>([]);
@@ -229,139 +230,143 @@ export default function GruposAdminPage() {
                                 Novo Grupo
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl rounded-[2rem]">
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <DialogHeader>
+                        <DialogContent className="max-w-2xl rounded-[2rem] p-0 overflow-hidden bg-white">
+                            <form onSubmit={handleSubmit} className="flex flex-col h-full max-h-[90vh]">
+                                <DialogHeader className="p-8 pb-0">
                                     <DialogTitle className="text-xl font-bold italic text-brand-blue">
                                         {editingGroup ? "Editar Grupo" : "Novo Grupo de Oração"}
                                     </DialogTitle>
                                 </DialogHeader>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="imagem">URL da Imagem (Opcional)</Label>
-                                    <Input
-                                        id="imagem"
-                                        placeholder="https://exemplo.com/foto.jpg"
-                                        value={formData.imagem || ""}
-                                        onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
-                                    />
-                                    {formData.imagem && (
-                                        <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden bg-slate-100 border">
-                                            <img src={formData.imagem} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = "https://placehold.co/600x400?text=Erro+Imagem")} />
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="descricao">Descrição do Grupo</Label>
-                                    <textarea
-                                        id="descricao"
-                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        placeholder="Fale um pouco sobre o carisma do grupo, atividades..."
-                                        value={formData.descricao || ""}
-                                        onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Grupo</label>
-                                        <Input
-                                            name="nome"
-                                            value={formData.nome || ""}
-                                            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                                            placeholder="Ex: Grupo de Sinop"
-                                            required
-                                            className="rounded-xl"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dia e Horário</label>
-                                        <Input name="dia" defaultValue={editingGroup?.dia} placeholder="Ex: Terça-feira, 19:30" required className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cidade</label>
-                                        <Input name="cidade" defaultValue={editingGroup?.cidade} placeholder="Ex: Sinop" required className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Local</label>
-                                        <Input name="local" defaultValue={editingGroup?.local} placeholder="Ex: Paróquia Santo Antônio" required className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Geolocalização (Link Google Maps)</label>
-                                        <Input name="geolocalizacao" defaultValue={editingGroup?.geolocalizacao} placeholder="Link do Google Maps" className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Coordenador</label>
-                                        <Input name="coordenador" defaultValue={editingGroup?.coordenador} placeholder="Nome do coord." className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp Link</label>
-                                        <Input name="whatsapp" defaultValue={editingGroup?.whatsapp} placeholder="https://wa.me/..." className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Facebook Link</label>
-                                        <Input name="facebook" defaultValue={editingGroup?.facebook} placeholder="Link do Facebook" className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram Link</label>
-                                        <Input name="instagram" defaultValue={editingGroup?.instagram} placeholder="Link do Instagram" className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Site</label>
-                                        <Input
-                                            name="site"
-                                            value={formData.site || ""}
-                                            onChange={(e) => setFormData({ ...formData, site: e.target.value })}
-                                            placeholder="Link do Site"
-                                            className="rounded-xl"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Histórico de coordenadores por gestão */}
-                                <div className="space-y-3 col-span-2 border-t pt-6">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <History className="w-4 h-4 text-brand-blue" />
-                                            Histórico de coordenadores por gestão
-                                        </label>
-                                        <Button type="button" variant="outline" size="sm" onClick={addCoordinatorHistoryRow} className="rounded-xl">
-                                            <Plus className="w-4 h-4 mr-1" />
-                                            Adicionar gestão
-                                        </Button>
-                                    </div>
-                                    <p className="text-xs text-gray-500">
-                                        Registre coordenadores anteriores com o período da gestão (ex: 2020-2022, 2022-2024). A primeira linha pode ser a gestão atual.
-                                    </p>
-                                    {coordinatorHistory.length === 0 ? (
-                                        <p className="text-sm text-gray-400 italic py-2">Nenhum registro. Clique em &quot;Adicionar gestão&quot; para incluir.</p>
-                                    ) : (
-                                        <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
-                                            {coordinatorHistory.map((row, index) => (
-                                                <div key={index} className="flex gap-2 items-center rounded-xl border bg-gray-50/50 p-2">
-                                                    <Input
-                                                        placeholder="Nome do coordenador"
-                                                        value={row.nome}
-                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "nome", e.target.value)}
-                                                        className="rounded-lg flex-1"
-                                                    />
-                                                    <Input
-                                                        placeholder="Gestão (ex: 2020-2022)"
-                                                        value={row.gestao}
-                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "gestao", e.target.value)}
-                                                        className="rounded-lg w-36"
-                                                    />
-                                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCoordinatorHistoryRow(index)} className="text-gray-400 hover:text-red-500 shrink-0">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
+                                <ScrollArea className="flex-1 overflow-y-auto p-8">
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="imagem">URL da Imagem (Opcional)</Label>
+                                            <Input
+                                                id="imagem"
+                                                placeholder="https://exemplo.com/foto.jpg"
+                                                value={formData.imagem || ""}
+                                                onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
+                                            />
+                                            {formData.imagem && (
+                                                <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden bg-slate-100 border">
+                                                    <img src={formData.imagem} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = "https://placehold.co/600x400?text=Erro+Imagem")} />
                                                 </div>
-                                            ))}
+                                            )}
                                         </div>
-                                    )}
-                                </div>
 
-                                <DialogFooter>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="descricao">Descrição do Grupo</Label>
+                                            <textarea
+                                                id="descricao"
+                                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                placeholder="Fale um pouco sobre o carisma do grupo, atividades..."
+                                                value={formData.descricao || ""}
+                                                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2 col-span-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Grupo</label>
+                                                <Input
+                                                    name="nome"
+                                                    value={formData.nome || ""}
+                                                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                                                    placeholder="Ex: Grupo de Sinop"
+                                                    required
+                                                    className="rounded-xl"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dia e Horário</label>
+                                                <Input name="dia" defaultValue={editingGroup?.dia} placeholder="Ex: Terça-feira, 19:30" required className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cidade</label>
+                                                <Input name="cidade" defaultValue={editingGroup?.cidade} placeholder="Ex: Sinop" required className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2 col-span-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Local</label>
+                                                <Input name="local" defaultValue={editingGroup?.local} placeholder="Ex: Paróquia Santo Antônio" required className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2 col-span-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Geolocalização (Link Google Maps)</label>
+                                                <Input name="geolocalizacao" defaultValue={editingGroup?.geolocalizacao} placeholder="Link do Google Maps" className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Coordenador</label>
+                                                <Input name="coordenador" defaultValue={editingGroup?.coordenador} placeholder="Nome do coord." className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WhatsApp Link</label>
+                                                <Input name="whatsapp" defaultValue={editingGroup?.whatsapp} placeholder="https://wa.me/..." className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Facebook Link</label>
+                                                <Input name="facebook" defaultValue={editingGroup?.facebook} placeholder="Link do Facebook" className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instagram Link</label>
+                                                <Input name="instagram" defaultValue={editingGroup?.instagram} placeholder="Link do Instagram" className="rounded-xl" />
+                                            </div>
+                                            <div className="space-y-2 col-span-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Site</label>
+                                                <Input
+                                                    name="site"
+                                                    value={formData.site || ""}
+                                                    onChange={(e) => setFormData({ ...formData, site: e.target.value })}
+                                                    placeholder="Link do Site"
+                                                    className="rounded-xl"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Histórico de coordenadores por gestão */}
+                                        <div className="space-y-3 col-span-2 border-t pt-6">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                    <History className="w-4 h-4 text-brand-blue" />
+                                                    Histórico de coordenadores por gestão
+                                                </label>
+                                                <Button type="button" variant="outline" size="sm" onClick={addCoordinatorHistoryRow} className="rounded-xl">
+                                                    <Plus className="w-4 h-4 mr-1" />
+                                                    Adicionar gestão
+                                                </Button>
+                                            </div>
+                                            <p className="text-xs text-gray-500">
+                                                Registre coordenadores anteriores com o período da gestão (ex: 2020-2022, 2022-2024). A primeira linha pode ser a gestão atual.
+                                            </p>
+                                            {coordinatorHistory.length === 0 ? (
+                                                <p className="text-sm text-gray-400 italic py-2">Nenhum registro. Clique em &quot;Adicionar gestão&quot; para incluir.</p>
+                                            ) : (
+                                                <div className="space-y-2">
+                                                    {coordinatorHistory.map((row, index) => (
+                                                        <div key={index} className="flex gap-2 items-center rounded-xl border bg-gray-50/50 p-2">
+                                                            <Input
+                                                                placeholder="Nome do coordenador"
+                                                                value={row.nome}
+                                                                onChange={(e) => updateCoordinatorHistoryRow(index, "nome", e.target.value)}
+                                                                className="rounded-lg flex-1"
+                                                            />
+                                                            <Input
+                                                                placeholder="Gestão (ex: 2020-2022)"
+                                                                value={row.gestao}
+                                                                onChange={(e) => updateCoordinatorHistoryRow(index, "gestao", e.target.value)}
+                                                                className="rounded-lg w-36"
+                                                            />
+                                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeCoordinatorHistoryRow(index)} className="text-gray-400 hover:text-red-500 shrink-0">
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </ScrollArea>
+
+                                <DialogFooter className="p-8 pt-0 mt-4">
                                     <Button type="submit" className="bg-brand-blue text-white w-full rounded-xl" disabled={isSubmitting}>
                                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Grupo"}
                                     </Button>
