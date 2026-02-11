@@ -33,7 +33,7 @@ const navLinks: NavItem[] = [
     {
         name: "Formação",
         children: [
-            { name: "Como funciona?", href: "/formacao" },
+            { name: "Processo Formativo", href: "/formacao" },
             { name: "Seminário de Vida", href: "/formacao/seminario-de-vida" },
         ]
     },
