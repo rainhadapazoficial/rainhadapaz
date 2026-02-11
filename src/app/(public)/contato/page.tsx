@@ -25,21 +25,13 @@ export default function ContatoPage() {
                             <div className="inline-block px-4 py-1 bg-brand-gold/10 text-brand-gold rounded-full text-sm font-bold uppercase tracking-widest mb-4">
                                 Fale Conosco
                             </div>
-                            <h2 className="text-4xl font-bold text-brand-blue font-serif italic mb-6">Nossa Sede em Sinop</h2>
+                            <h2 className="text-4xl font-bold text-brand-blue font-serif italic mb-6">Canais de Atendimento</h2>
                             <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                                Nossa sede oficial e administrativa está localizada na Matriz da Paróquia Santo Antônio. Atendemos você com alegria em nossos canais abaixo.
+                                A Renovação Carismática Católica está presente em toda a Diocese de Sinop, levando a Cultura de Pentecostes às nossas paróquias e comunidades. Atendemos você com alegria através dos nossos canais oficiais abaixo.
                             </p>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                            <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center">
-                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
-                                    <MapPin className="w-7 h-7" />
-                                </div>
-                                <h4 className="font-bold text-brand-blue text-xl mb-2">Localização</h4>
-                                <p className="text-gray-600 italic">Av. das Palmeiras, 2697 – Jardim Imperial <br /> Sinop – MT, CEP: 78555-020</p>
-                            </div>
-
                             <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center">
                                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
                                     <Phone className="w-7 h-7" />
@@ -58,36 +50,12 @@ export default function ContatoPage() {
                                 <p className="text-brand-blue font-bold">coordenacao@rccdesinop.com.br</p>
                             </div>
 
-                            <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center">
+                            <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center sm:col-span-2">
                                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
                                     <Instagram className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-xl mb-2">Instagram</h4>
                                 <p className="text-gray-600 italic">@rccdiocesedesinop</p>
-                            </div>
-                        </div>
-
-                        {/* Google Maps Embed */}
-                        <div className="space-y-6">
-                            <div className="h-96 bg-gray-100 rounded-[3rem] overflow-hidden shadow-xl border border-gray-200">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.9!2d-55.5!3d-11.85!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x933939633e08f513%3A0xe5a2d61036f0436a!2sMatriz%20da%20Par%C3%B3quia%20Santo%20Ant%C3%B4nio!5e0!3m2!1spt-BR!2sbr!4v1"
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0 }}
-                                    allowFullScreen
-                                    loading="lazy"
-                                ></iframe>
-                            </div>
-                            <div className="text-center">
-                                <a
-                                    href="https://share.google/Rhja3jn19AngNkV4P"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 bg-brand-blue text-white px-8 py-3 rounded-full hover:bg-brand-blue/90 font-bold transition-all transform hover:scale-105 shadow-lg"
-                                >
-                                    <MapPin className="w-5 h-5 text-brand-gold" /> Abrir no Google Maps
-                                </a>
                             </div>
                         </div>
                     </div>
