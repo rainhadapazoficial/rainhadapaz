@@ -24,6 +24,7 @@ const navLinks: NavItem[] = [
         children: [
             { name: "Sobre Nós", href: "/quem-somos" },
             { name: "A RCC", href: "/a-rcc" },
+            { name: "História da RCC", href: "/historia-da-rcc" },
             { name: "Conselho Diocesano", href: "/quem-somos/conselho" },
         ]
     },
