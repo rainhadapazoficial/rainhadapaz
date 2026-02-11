@@ -9,6 +9,12 @@ import {
     GraduationCap, ArrowRight, History, Loader2, MapPin, Clock
 } from "lucide-react";
 import Link from "next/link";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 // Maple icons from Lucide for fallback/default
 const iconMap: Record<string, any> = {
@@ -29,6 +35,7 @@ const iconMap: Record<string, any> = {
 export default function MinisteriosPublicPage() {
     const [ministerios, setMinisterios] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedMinistry, setSelectedMinistry] = useState<any>(null);
 
     useEffect(() => {
         fetchMinisterios();
@@ -149,16 +156,26 @@ export default function MinisteriosPublicPage() {
                                                     <div className="min-w-0">
                                                         <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Histórico de gestões</p>
                                                         <ul className="text-xs text-gray-600 space-y-1">
-                                                            {min.history.map((h: any, i: number) => (
+                                                            {min.history.slice(0, 2).map((h: any, i: number) => (
                                                                 <li key={i} className="flex flex-wrap gap-1 items-baseline">
                                                                     <span className="font-medium text-brand-blue/80">{h.nome}</span>
                                                                     <span className="text-gray-400">({h.gestao})</span>
                                                                 </li>
                                                             ))}
+                                                            {min.history.length > 2 && (
+                                                                <li className="text-brand-gold font-bold">+{min.history.length - 2} outras gestões...</li>
+                                                            )}
                                                         </ul>
                                                     </div>
                                                 </div>
                                             )}
+
+                                            <Button
+                                                onClick={() => setSelectedMinistry(min)}
+                                                className={`w-full h-12 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-sm ${min.cor || 'bg-brand-blue text-white'}`}
+                                            >
+                                                Saiba Mais
+                                            </Button>
                                         </div>
                                     </div>
                                 );
@@ -167,6 +184,88 @@ export default function MinisteriosPublicPage() {
                     )}
                 </div>
             </section>
+
+            {/* Ministry Details Modal */}
+            <Dialog open={!!selectedMinistry} onOpenChange={(open) => !open && setSelectedMinistry(null)}>
+                <DialogContent className="max-w-3xl rounded-[2.5rem] p-0 overflow-hidden border-none max-h-[90vh] flex flex-col">
+                    {selectedMinistry && (() => {
+                        const IconComp = iconMap[selectedMinistry.nome.split(' ').pop() || ""] || iconMap[Object.keys(iconMap).find(k => selectedMinistry.nome.includes(k)) || ""] || Flame;
+                        return (
+                            <>
+                                <div className={`relative h-64 shrink-0 flex items-center justify-center ${selectedMinistry.cor || 'bg-brand-blue text-white'}`}>
+                                    <div className="absolute inset-0 bg-black/5" />
+                                    <IconComp className="w-32 h-32 opacity-20 transform -rotate-12" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                                    <div className="absolute bottom-6 left-8 right-8">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-[10px] font-bold text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-md border border-brand-gold/20">
+                                                {selectedMinistry.bienio ? `Gestão ${selectedMinistry.bienio}` : "Ministério Diocesano"}
+                                            </span>
+                                        </div>
+                                        <h2 className="text-3xl font-bold text-white italic">{selectedMinistry.nome}</h2>
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-4">
+                                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                <Flame className="w-4 h-4 text-brand-gold" />
+                                                Missão e Chamado
+                                            </h4>
+                                            <p className="text-gray-600 leading-relaxed italic text-lg">
+                                                "{selectedMinistry.descricao || "Nenhuma descrição disponível."}"
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            <div className="bg-gray-50 p-6 rounded-[2rem] space-y-4 border border-gray-100 flex flex-col">
+                                                <div className="flex items-start gap-4">
+                                                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue shrink-0">
+                                                        <Users className="w-6 h-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[10px] uppercase font-bold text-gray-400">Coordenação Atual</p>
+                                                        <p className="font-bold text-brand-blue text-xl">{selectedMinistry.coordenador || "A definir"}</p>
+                                                        <p className="text-sm text-brand-gold font-bold italic">{selectedMinistry.bienio}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <Link href="/contato" className="block">
+                                                <Button className="w-full h-14 rounded-2xl bg-brand-blue hover:bg-brand-blue/90 text-white font-bold gap-2 shadow-lg transform hover:-translate-y-1 transition-all">
+                                                    Quero servir neste ministério
+                                                    <ArrowRight className="w-4 h-4" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+
+                                    {selectedMinistry.history && selectedMinistry.history.length > 0 && (
+                                        <div className="space-y-4 pt-4">
+                                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                <History className="w-4 h-4 text-brand-blue" />
+                                                Histórico de Servos (Coordenadores)
+                                            </h4>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {selectedMinistry.history.map((h: any, i: number) => (
+                                                    <div key={i} className="flex flex-col p-5 bg-gray-50/50 rounded-2xl border border-gray-100/50 hover:border-brand-gold/30 transition-colors">
+                                                        <p className="font-bold text-brand-blue text-lg">{h.nome}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-brand-gold" />
+                                                            <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">{h.gestao}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        );
+                    })()}
+                </DialogContent>
+            </Dialog>
 
             {/* CTA Section */}
             <section className="py-20 bg-brand-blue text-white mt-auto">
