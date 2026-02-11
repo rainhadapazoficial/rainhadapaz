@@ -83,9 +83,25 @@ Acompanho a vossa Conferência com as minhas orações, convicto de que isto dar
     }
 };
 
+interface ARCCContent {
+    hero?: {
+        title: string;
+        subtitle: string;
+        image_url: string;
+    };
+    baptism?: {
+        title: string;
+        image_url: string;
+        p1: string;
+        p2: string;
+        p3: string;
+        quote: string;
+    };
+}
+
 export default function ARCCPage() {
     const [selectedPope, setSelectedPope] = useState<keyof typeof POPES | null>(null);
-    const [content, setContent] = useState<any>(null);
+    const [content, setContent] = useState<ARCCContent | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -151,7 +167,7 @@ export default function ARCCPage() {
                         <div className="bg-brand-blue/5 p-8 border-l-4 border-brand-gold rounded-r-3xl italic text-brand-blue relative">
                             <Quote className="w-12 h-12 mb-4 text-brand-gold/20 absolute -top-4 -left-4" />
                             <p className="relative z-10 text-lg">
-                                "{baptism.quote}"
+                                &quot;{baptism.quote}&quot;
                             </p>
                         </div>
                     </div>
@@ -300,10 +316,10 @@ export default function ARCCPage() {
 
             {/* Pope Message Modal */}
             <Dialog open={!!selectedPope} onOpenChange={(open) => !open && setSelectedPope(null)}>
-                <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] bg-white shadow-2xl">
+                <DialogContent className="max-w-4xl p-0 overflow-hidden border-none rounded-[2.5rem] bg-white shadow-2xl flex flex-col max-h-[90vh]">
                     {selectedPope && (
-                        <div className="flex flex-col h-[85vh]">
-                            <div className="bg-brand-blue p-8 text-white relative">
+                        <div className="flex flex-col h-full overflow-hidden">
+                            <div className="bg-brand-blue p-8 text-white relative shrink-0">
                                 <DialogHeader className="space-y-2">
                                     <div className="inline-block px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-[10px] font-bold uppercase tracking-widest border border-brand-gold/20 mb-2">
                                         Mensagem Pontifícia
@@ -322,14 +338,16 @@ export default function ARCCPage() {
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
-                            <ScrollArea className="flex-1 p-8 md:p-12">
-                                <div className="prose prose-blue max-w-none">
-                                    <div className="text-gray-600 leading-relaxed space-y-6 text-lg whitespace-pre-wrap font-medium pb-12">
-                                        {POPES[selectedPope].content}
+                            <ScrollArea className="flex-1 overflow-y-auto">
+                                <div className="p-8 md:p-12">
+                                    <div className="prose prose-blue max-w-none">
+                                        <div className="text-gray-600 leading-relaxed space-y-6 text-lg whitespace-pre-wrap font-medium pb-12">
+                                            {POPES[selectedPope].content}
+                                        </div>
                                     </div>
                                 </div>
                             </ScrollArea>
-                            <div className="p-6 bg-gray-50 border-t border-gray-100 text-center">
+                            <div className="p-6 bg-gray-50 border-t border-gray-100 text-center shrink-0">
                                 <Button
                                     onClick={() => setSelectedPope(null)}
                                     className="bg-brand-blue hover:bg-brand-gold text-white px-8 rounded-xl font-bold transition-all h-12"
