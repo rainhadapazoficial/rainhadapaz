@@ -1,28 +1,93 @@
-import { Flame, Star, BookOpen, Users, Heart, Shield, CheckCircle2, Award } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { Heart, Shield, Target, Crown, Sparkles, Flame, Loader2, BookOpen, Star, Users, CheckCircle2, Award } from "lucide-react";
 
 export default function SeminarioVidaPage() {
-    const themes = [
-        { name: "O Semeador", icon: <Star className="w-5 h-5 text-brand-gold" /> },
-        { name: "O Amor de Deus", icon: <Heart className="w-5 h-5 text-brand-gold" /> },
-        { name: "Pecado e Salvação", icon: <Shield className="w-5 h-5 text-brand-gold" /> },
-        { name: "Fé e Conversão", icon: <Flame className="w-5 h-5 text-brand-gold" /> },
-        { name: "Senhorio de Jesus", icon: <Award className="w-5 h-5 text-brand-gold" /> },
-        { name: "Perdão e Cura Interior", icon: <Heart className="w-5 h-5 text-brand-gold" /> },
-        { name: "Batismo no Espírito Santo", icon: <Flame className="w-5 h-5 text-brand-gold" /> },
-        { name: "Vida Fraterna e Vida em Comunidade", icon: <Users className="w-5 h-5 text-brand-gold" /> },
-        { name: "Testemunhando o poder de Deus", icon: <CheckCircle2 className="w-5 h-5 text-brand-gold" /> },
-    ];
+    const [content, setContent] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchContent() {
+            try {
+                const { data } = await supabase
+                    .from("site_settings")
+                    .select("value")
+                    .eq("key", "seminario_vida_content")
+                    .single();
+
+                if (data?.value) {
+                    setContent(data.value);
+                }
+            } catch (err) {
+                console.error("Error fetching content:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchContent();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-12 h-12 animate-spin text-brand-gold" />
+            </div>
+        );
+    }
+
+    const data = content || {
+        hero: {
+            title: "Seminário de Vida no Espírito Santo",
+            subtitle: "Experimente um novo Pentecostes em sua vida.",
+            image_url: "https://rccbrasil.org.br/wp-content/uploads/2023/04/seminario-1024x349.jpg"
+        },
+        about: {
+            title: "O que é e como funciona?",
+            description: "O Seminário de Vida no Espírito Santo (SVES) tem, primordialmente, um caráter evangelizador. Ele se destina a anunciar o Querigma, a mensagem básica do Evangelho, e a proclamá-la de maneira nova de forma que todos aqueles que a ouçam possam se comprometer de modo renovado com o Senhor, abrindo-se, assim, a uma experiência mais completa com a obra do Espírito em suas vidas.",
+            p1: "Através da pregação, oração e partilha, somos levados a um encontro pessoal com Jesus Cristo, renovando nossa fé e despertando para uma vida nova no Espírito.",
+            p2: "O objetivo do Seminário de Vida é levar cada participante a descobrir Jesus Cristo como seu Senhor e Salvador pessoal, através de uma nova efusão do Espírito Santo."
+        },
+        themes: [
+            { id: "1", title: "O Semeador", icon: "Star" },
+            { id: "2", title: "O Amor de Deus", icon: "Heart" },
+            { id: "3", title: "Pecado e Salvação", icon: "Shield" },
+            { id: "4", title: "Fé e Conversão", icon: "Target" },
+            { id: "5", title: "Senhorio de Jesus", icon: "Crown" },
+            { id: "6", title: "Perdão e Cura Interior", icon: "Sparkles" },
+            { id: "7", title: "Batismo no Espírito Santo", icon: "Flame" },
+            { id: "8", title: "Vida Fraterna e Comunitária", icon: "Users" },
+            { id: "9", title: "Testemunhando o Poder de Deus", icon: "CheckCircle2" }
+        ],
+        image_url: "https://rccbrasil.org.br/wp-content/uploads/2023/04/seminario-1024x349.jpg"
+    };
+
+    const getIcon = (iconName: string) => {
+        switch (iconName) {
+            case "Star": return <Star className="w-5 h-5 text-brand-gold" />;
+            case "Heart": return <Heart className="w-5 h-5 text-brand-gold" />;
+            case "Shield": return <Shield className="w-5 h-5 text-brand-gold" />;
+            case "Target": return <Target className="w-5 h-5 text-brand-gold" />;
+            case "Crown": return <Crown className="w-5 h-5 text-brand-gold" />;
+            case "Sparkles": return <Sparkles className="w-5 h-5 text-brand-gold" />;
+            case "Flame": return <Flame className="w-5 h-5 text-brand-gold" />;
+            case "Users": return <Users className="w-5 h-5 text-brand-gold" />;
+            case "CheckCircle2": return <CheckCircle2 className="w-5 h-5 text-brand-gold" />;
+            default: return <Heart className="w-5 h-5 text-brand-gold" />;
+        }
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
             <section className="relative h-[400px] flex items-center justify-center bg-brand-blue text-white text-center">
                 <div className="absolute inset-0 bg-black/50 z-10" />
-                <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: "url('https://rccbrasil.org.br/wp-content/uploads/2023/04/seminario-1024x349.jpg')" }} />
+                <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url('${data.hero.image_url}')` }} />
 
                 <div className="relative z-20 max-w-4xl px-4 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold italic mb-6 animate-in fade-in slide-in-from-bottom duration-1000">
-                        Seminário de Vida no Espírito Santo
+                        {data.hero.title}
                     </h1>
                     <div className="w-24 h-1 bg-brand-gold mx-auto mb-6 rounded-full" />
                 </div>
@@ -34,15 +99,15 @@ export default function SeminarioVidaPage() {
                     <div className="grid md:grid-cols-2 gap-16 items-start">
                         <div className="space-y-8">
                             <div>
-                                <h2 className="text-3xl font-bold text-brand-blue italic mb-6">O que é e como funciona?</h2>
+                                <h2 className="text-3xl font-bold text-brand-blue italic mb-6">{data.about.title}</h2>
                                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                                    O Seminário de Vida no Espírito Santo (SVES) tem, primordialmente, um caráter evangelizador. Ele se destina a anunciar o Querigma, a mensagem básica do Evangelho, e a proclamá-la de maneira nova de forma que todos aqueles que a ouçam possam se comprometer de modo renovado com o Senhor, abrindo-se, assim, a uma experiência mais completa com a obra do Espírito em suas vidas.
+                                    {data.about.description}
                                 </p>
                             </div>
 
                             <div className="bg-brand-blue/5 p-8 rounded-[2.5rem] border border-brand-blue/10">
                                 <p className="text-brand-blue font-medium italic mb-0">
-                                    &quot;O objetivo do Seminário de Vida é levar cada participante a descobrir Jesus Cristo como seu Senhor e Salvador pessoal, através de uma nova efusão do Espírito Santo.&quot;
+                                    &quot;{data.about.p2}&quot;
                                 </p>
                             </div>
                         </div>
@@ -53,12 +118,12 @@ export default function SeminarioVidaPage() {
                                 Temas do Querigma
                             </h3>
                             <div className="space-y-4">
-                                {themes.map((theme, index) => (
+                                {data.themes.map((theme: any, index: number) => (
                                     <div key={index} className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
                                         <div className="w-10 h-10 bg-brand-blue/5 rounded-xl flex items-center justify-center group-hover:bg-brand-gold/10 transition-colors">
-                                            {theme.icon}
+                                            {getIcon(theme.icon)}
                                         </div>
-                                        <span className="font-bold text-gray-700">{theme.name}</span>
+                                        <span className="font-bold text-gray-700">{theme.title}</span>
                                     </div>
                                 ))}
                             </div>
@@ -72,7 +137,7 @@ export default function SeminarioVidaPage() {
                 <div className="max-w-6xl mx-auto px-4">
                     <div className="rounded-[3rem] overflow-hidden shadow-2xl relative group">
                         <img
-                            src="https://rccbrasil.org.br/wp-content/uploads/2023/04/seminario-1024x349.jpg"
+                            src={data.image_url}
                             alt="Seminário de Vida no Espírito Santo"
                             className="w-full h-auto transform transition-transform duration-700 group-hover:scale-105"
                         />
