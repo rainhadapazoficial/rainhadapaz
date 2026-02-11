@@ -30,6 +30,7 @@ const navLinks: NavItem[] = [
     },
     { name: "Grupos", href: "/grupos" },
     { name: "Ministérios", href: "/ministerios" },
+    { name: "Formação", href: "/formacao" },
     { name: "Blog", href: "/blog" },
     {
         name: "Eventos",
