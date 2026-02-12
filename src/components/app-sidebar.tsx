@@ -30,14 +30,9 @@ const data = {
             icon: Newspaper,
         },
         {
-            title: "Agenda",
-            url: "/admin/dashboard/eventos",
-            icon: Calendar,
-        },
-        {
-            title: "Pedidos de Oração",
-            url: "/admin/dashboard/pedidos",
-            icon: Mail,
+            title: "Notícias",
+            url: "/admin/dashboard/noticias",
+            icon: Newspaper,
         },
         {
             title: "Banner Início",
