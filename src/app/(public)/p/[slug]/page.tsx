@@ -16,8 +16,9 @@ async function getPageData(slug: string) {
     return data;
 }
 
-export default async function CustomDynamicPage({ params }: { params: { slug: string } }) {
-    const page = await getPageData(params.slug);
+export default async function CustomDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const page = await getPageData(slug);
 
     if (!page) {
         notFound();
