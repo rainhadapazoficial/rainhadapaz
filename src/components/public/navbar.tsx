@@ -43,7 +43,6 @@ const defaultNavLinks: NavItem[] = [
         name: "Eventos",
         children: [
             { name: "Calendário Diocesano", href: "/calendario" },
-            { name: "Festa do Rei Jesus", href: "/festa-rei-jesus" },
         ]
     },
     { name: "Contato", href: "/contato" },
@@ -77,7 +76,7 @@ export function Navbar() {
                     .filter(p => normalize(p.parent_menu || "") === normalize(link.name))
                     .map(p => ({
                         name: p.title,
-                        href: `/p/${p.slug}`
+                        href: p.slug === 'festa-rei-jesus' ? '/festa-rei-jesus' : `/p/${p.slug}`
                     }));
 
                 if (dynamicChildren.length > 0) {
