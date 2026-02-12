@@ -10,7 +10,7 @@ async function getLatestPosts() {
     const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('date', { ascending: false })
         .limit(3);
     if (error) console.error('Error fetching latest posts:', error);
     return data || [];

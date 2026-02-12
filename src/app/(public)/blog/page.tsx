@@ -9,7 +9,7 @@ async function getPosts() {
     const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('date', { ascending: false });
 
     if (error) {
         console.error("Error fetching posts:", error);
@@ -67,7 +67,7 @@ export default async function BlogPage() {
                                 </Link>
                                 <div className="p-8">
                                     <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date || new Date(post.created_at).toLocaleDateString()}</span>
+                                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date ? new Date(post.date + "T12:00:00").toLocaleDateString('pt-BR') : new Date(post.created_at).toLocaleDateString('pt-BR')}</span>
                                         <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author || "RCC Diocese de Sinop"}</span>
                                     </div>
                                     <Link href={`/blog/${post.slug || post.id}`}>
