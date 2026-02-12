@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import parse from "html-react-parser";
+import { Metadata } from "next";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -14,6 +15,23 @@ async function getPageData(slug: string) {
 
     if (error || !data) return null;
     return data;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const page = await getPageData(slug);
+
+    if (!page) return { title: "Página não encontrada" };
+
+    return {
+        title: page.title,
+        description: `Saiba mais sobre ${page.title} na RCC Diocese de Sinop, Mato Grosso.`,
+        openGraph: {
+            title: page.title,
+            description: `Saiba mais sobre ${page.title} na RCC Diocese de Sinop.`,
+            type: "website",
+        },
+    };
 }
 
 export default async function CustomDynamicPage({ params }: { params: Promise<{ slug: string }> }) {

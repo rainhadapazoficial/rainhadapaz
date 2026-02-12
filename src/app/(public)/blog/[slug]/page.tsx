@@ -3,6 +3,7 @@ import parse from "html-react-parser";
 import { Calendar, User, ArrowLeft, Tag } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 export const revalidate = 60;
 
@@ -30,6 +31,25 @@ async function getPost(slugOrId: string) {
     }
 
     return data;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const post = await getPost(slug);
+
+    if (!post) return { title: "Post não encontrado" };
+
+    return {
+        title: post.title,
+        description: post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>/g, ""),
+        openGraph: {
+            title: post.title,
+            description: post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>/g, ""),
+            images: [post.image_url || ""],
+            type: "article",
+            publishedTime: post.date || post.created_at,
+        },
+    };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {

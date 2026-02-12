@@ -1,8 +1,14 @@
 import Link from "next/link";
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, MapPin, Clock, ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import FestaCountdown from "@/components/public/festa-countdown";
+
+export const metadata: Metadata = {
+    title: "Agenda de Eventos | Igreja Católica Sinop MT",
+    description: "Confira o calendário diocesano, retiros e encontros da RCC em Sinop e região do Mato Grosso.",
+};
 
 export const revalidate = 60; // Revalidate every minute
 

@@ -17,7 +17,15 @@ ALTER TABLE public.custom_pages ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow public read-only access on custom_pages" ON public.custom_pages;
 CREATE POLICY "Allow public read-only access on custom_pages" 
 ON public.custom_pages FOR SELECT 
+TO public
 USING (is_published = true);
+
+DROP POLICY IF EXISTS "Allow authenticated full access on custom_pages" ON public.custom_pages;
+CREATE POLICY "Allow authenticated full access on custom_pages" 
+ON public.custom_pages FOR ALL 
+TO authenticated 
+USING (true) 
+WITH CHECK (true);
 
 -- Inserir página inicial da História da RCC Sinop (opcional, pode ser via admin)
 INSERT INTO public.custom_pages (title, slug, content, parent_menu)

@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Search, Calendar, User, ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+
+export const metadata: Metadata = {
+    title: "Blog e Notícias | RCC Mato Grosso",
+    description: "Acompanhe as últimas notícias, formações e eventos da Renovação Carismática Católica no Mato Grosso.",
+};
 
 export const revalidate = 60; // Revalidate every minute
 
