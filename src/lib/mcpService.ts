@@ -54,6 +54,22 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
                         limit: { type: "number", default: 5 }
                     }
                 }
+            },
+            {
+                name: "get_custom_pages",
+                description: "Lista todas as páginas dinâmicas (como Festa do Rei Jesus, História, etc).",
+                inputSchema: {
+                    type: "object",
+                    properties: {}
+                }
+            },
+            {
+                name: "get_system_settings",
+                description: "Recupera as configurações globais (ex: n8n URL).",
+                inputSchema: {
+                    type: "object",
+                    properties: {}
+                }
             }
         ]
     };
@@ -101,6 +117,24 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
                 .select("*")
                 .order("date", { ascending: true })
                 .limit((args?.limit as number) || 5);
+
+            if (error) throw error;
+            return { content: [{ type: "text", text: JSON.stringify(data) }] };
+        }
+
+        if (name === "get_custom_pages") {
+            const { data, error } = await supabase
+                .from("custom_pages")
+                .select("id, slug, title, is_published");
+
+            if (error) throw error;
+            return { content: [{ type: "text", text: JSON.stringify(data) }] };
+        }
+
+        if (name === "get_system_settings") {
+            const { data, error } = await supabase
+                .from("system_settings")
+                .select("*");
 
             if (error) throw error;
             return { content: [{ type: "text", text: JSON.stringify(data) }] };
