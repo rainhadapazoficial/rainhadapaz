@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Copy, Eye, EyeOff, CheckCircle2, Save, Loader2, Zap } from "lucide-react";
+import { useEffect } from "react";
 
 interface ConfigClientProps {
     mcpUrl: string;
@@ -14,6 +15,40 @@ export function ConfigClient({ mcpUrl, mcpToken }: ConfigClientProps) {
     const [showToken, setShowToken] = useState(false);
     const [copiedUrl, setCopiedUrl] = useState(false);
     const [copiedToken, setCopiedToken] = useState(false);
+    const [n8nUrl, setN8nUrl] = useState("");
+    const [n8nKey, setN8nKey] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    async function fetchSettings() {
+        try {
+            const res = await fetch('/api/admin/settings');
+            const data = await res.json();
+            if (data.n8n_webhook_url) setN8nUrl(data.n8n_webhook_url);
+            if (data.n8n_api_key) setN8nKey(data.n8n_api_key);
+        } catch (e) {
+            console.error("Erro ao carregar configurações:", e);
+        }
+    }
+
+    async function saveSetting(key: string, value: string) {
+        setIsSaving(true);
+        try {
+            await fetch('/api/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key, value })
+            });
+            alert("Configuração salva com sucesso!");
+        } catch (e) {
+            console.error("Erro ao salvar:", e);
+            alert("Erro ao salvar configuração.");
+        }
+        setIsSaving(false);
+    }
 
     const copyToClipboard = (text: string, setStatus: (val: boolean) => void) => {
         navigator.clipboard.writeText(text);
@@ -73,6 +108,56 @@ export function ConfigClient({ mcpUrl, mcpToken }: ConfigClientProps) {
                     <li>Use o comando de transporte <strong>HTTP</strong> ou <strong>Curl</strong>.</li>
                     <li>Pronto! A IA passará a enxergar seus dados automaticamente.</li>
                 </ol>
+            </div>
+
+            <div className="border-t pt-8 space-y-6">
+                <div className="flex items-center gap-2 mb-2 text-brand-blue font-bold italic">
+                    <Zap className="w-5 h-5 text-brand-gold" />
+                    Configuração n8n (Ativa)
+                </div>
+
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL do Webhook n8n</label>
+                        <div className="flex gap-2">
+                            <Input
+                                value={n8nUrl}
+                                onChange={(e) => setN8nUrl(e.target.value)}
+                                placeholder="https://seu-n8n.com/webhook/..."
+                                className="rounded-xl h-12 bg-white"
+                            />
+                            <Button
+                                onClick={() => saveSetting('n8n_webhook_url', n8nUrl)}
+                                disabled={isSaving}
+                                className="bg-brand-blue text-white rounded-xl h-12 px-6"
+                            >
+                                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2 text-brand-gold" />}
+                                Salvar
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">API Key do n8n (Opcional)</label>
+                        <div className="flex gap-2">
+                            <Input
+                                type="password"
+                                value={n8nKey}
+                                onChange={(e) => setN8nKey(e.target.value)}
+                                placeholder="Sua chave de API"
+                                className="rounded-xl h-12 bg-white"
+                            />
+                            <Button
+                                onClick={() => saveSetting('n8n_api_key', n8nKey)}
+                                disabled={isSaving}
+                                className="bg-brand-blue text-white rounded-xl h-12 px-6"
+                            >
+                                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2 text-brand-gold" />}
+                                Salvar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
