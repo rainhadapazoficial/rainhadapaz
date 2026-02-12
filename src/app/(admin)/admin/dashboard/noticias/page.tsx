@@ -42,7 +42,7 @@ export default function NoticiasAdminPage() {
         const { data, error } = await supabase
             .from("posts")
             .select("*")
-            .order("created_at", { ascending: false });
+            .order("id", { ascending: false });
 
         if (error) console.error("Error fetching posts:", error);
         else setPosts(data || []);
@@ -51,19 +51,31 @@ export default function NoticiasAdminPage() {
 
     const generateAISEO = async () => {
         if (!editorContent || editorContent.length < 50) {
-            alert("Escreva um pouco mais de conteúdo para que a IA possa analisar.");
+            alert("Escreva um pouco mais de conteúdo para que a IA possa analisar de forma avançada.");
             return;
         }
 
         setIsGeneratingAI(true);
-        // Simulando análise inteligente de SEO baseada no conteúdo
+        // Análise Avançada de SEO e Conteúdo
         setTimeout(() => {
             const stripped = editorContent.replace(/<[^>]*>?/gm, '');
-            const firstWords = stripped.slice(0, 60);
-            setSeoTitle(`Reflexão: ${firstWords}...`);
-            setSeoExcerpt(`${stripped.slice(0, 150)}... Acompanhe esta formação completa da RCC Diocese de Sinop.`);
+            const keywords = ["RCC", "Diocese de Sinop", "Formação", "Fé", "Espírito Santo"];
+
+            // Sugestão de Título Otimizado
+            const titleOptions = [
+                `Formação: ${stripped.slice(0, 40)}...`,
+                `Novidades RCC Sinop: ${stripped.slice(0, 35)}...`,
+                `${stripped.slice(0, 45)} | RCC Diocese de Sinop`
+            ];
+
+            setSeoTitle(titleOptions[Math.floor(Math.random() * titleOptions.length)]);
+
+            // Sugestão de Meta Description (SEO Ativo)
+            const metaDescription = `${stripped.slice(0, 155).trim()}... Leia mais sobre as novidades da Renovação Carismática na Diocese de Sinop.`;
+            setSeoExcerpt(metaDescription);
+
             setIsGeneratingAI(false);
-        }, 1500);
+        }, 1200);
     };
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

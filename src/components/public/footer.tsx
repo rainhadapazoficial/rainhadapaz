@@ -41,6 +41,7 @@ export function Footer() {
                             <li><Link href="/quem-somos" className="hover:underline">Quem Somos</Link></li>
                             <li><Link href="/blog" className="hover:underline">Blog e Notícias</Link></li>
                             <li><Link href="/eventos" className="hover:underline">Calendário de Eventos</Link></li>
+                            <li><Link href="/p/apoie-nossa-missao" className="font-bold text-brand-gold hover:underline">Apoie Nossa Missão</Link></li>
                         </ul>
                     </div>
 
@@ -48,6 +49,8 @@ export function Footer() {
                     <div>
                         <h3 className="text-lg font-bold mb-6 text-brand-gold">Recursos</h3>
                         <ul className="space-y-4 text-sm">
+                            <li><Link href="/p/politica-de-privacidade" className="hover:underline opacity-80">Política de Privacidade</Link></li>
+                            <li><Link href="/p/termos-de-uso" className="hover:underline opacity-80">Termos de Uso</Link></li>
                             <li><Link href="/admin/login" className="hover:underline">Painel Administrativo</Link></li>
                         </ul>
                     </div>
