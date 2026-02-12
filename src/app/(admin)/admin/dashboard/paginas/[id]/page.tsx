@@ -33,7 +33,8 @@ export default function PaginaEditorPage() {
         slug: "",
         content: "",
         parent_menu: "quem-somos",
-        is_published: true
+        is_published: true,
+        image_url: ""
     });
 
     useEffect(() => {
@@ -167,6 +168,16 @@ export default function PaginaEditorPage() {
                                         <SelectItem value="nenhum">Nenhum (Página isolada)</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>URL da Imagem de Destaque</Label>
+                                <Input
+                                    placeholder="Ex: https://.../foto.jpg"
+                                    value={formData.image_url || ""}
+                                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                    className="rounded-xl h-12"
+                                />
+                                <p className="text-[10px] text-gray-400">Esta imagem aparecerá ao lado do texto explicativo (ex: Festa do Rei Jesus).</p>
                             </div>
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <div className="space-y-0.5">

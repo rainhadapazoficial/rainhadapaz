@@ -137,7 +137,17 @@ export default function FestaReiJesusAdminPage() {
                         <Calendar className="w-8 h-8 text-brand-gold" />
                         Histórico Festa do Rei Jesus
                     </h1>
-                    <p className="text-gray-500">Gerencie as edições passadas e futuras do evento.</p>
+                    <div className="flex items-center gap-4 mt-1">
+                        <p className="text-gray-500">Gerencie as edições passadas e futuras do evento.</p>
+                        <span className="text-gray-300">|</span>
+                        <a
+                            href="/admin/dashboard/paginas"
+                            className="text-brand-blue font-bold text-sm hover:underline flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full border border-blue-100"
+                        >
+                            <Edit className="w-3 h-3" />
+                            Editar "Sobre o Evento" e Imagem
+                        </a>
+                    </div>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">

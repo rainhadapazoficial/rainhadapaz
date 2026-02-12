@@ -126,10 +126,14 @@ export default function FestaReiJesusPage() {
                         </div>
                     </div>
                     <div className="relative h-80 rounded-[2rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
-                        <div className="absolute inset-0 bg-brand-blue text-white flex flex-col items-center justify-center p-8 text-center">
-                            <Crown className="w-20 h-20 mb-4 text-brand-gold" />
-                            <p className="font-bold text-xl">Venha Celebrar Conosco!</p>
-                        </div>
+                        {pageContent?.image_url ? (
+                            <img src={pageContent.image_url} alt="Sobre o evento" className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="absolute inset-0 bg-brand-blue text-white flex flex-col items-center justify-center p-8 text-center">
+                                <Crown className="w-20 h-20 mb-4 text-brand-gold" />
+                                <p className="font-bold text-xl">Venha Celebrar Conosco!</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>
