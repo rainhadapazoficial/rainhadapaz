@@ -101,18 +101,6 @@ export default async function EventosPage() {
                     </div>
                 </div>
             </section>
-
-            {/* Regular Meetings */}
-            <section className="py-24 bg-white text-center">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-brand-blue mb-8">Nossos Encontros Semanais</h2>
-                    <div className="bg-brand-gold/10 p-12 rounded-3xl border-2 border-dashed border-brand-gold">
-                        <h3 className="text-2xl font-bold text-brand-blue mb-4">Toda Quarta-feira</h3>
-                        <p className="text-xl text-gray-700">Às 19:30 na Matriz da Paróquia Santo Antônio.</p>
-                        <p className="mt-4 text-gray-500 italic">&quot;Esperamos por você com muita alegria!&quot;</p>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }
