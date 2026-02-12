@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X, MessageCircle, ChevronDown } from "lucide-react";
+import { Menu, X, MessageCircle, ChevronDown, Instagram, Facebook, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import {
@@ -141,6 +141,19 @@ export function Navbar() {
                                 </Link>
                             );
                         })}
+
+                        <div className="flex items-center gap-4 px-2 border-x border-gray-100">
+                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Instagram className="w-5 h-5" />
+                            </a>
+                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Facebook className="w-5 h-5" />
+                            </a>
+                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Youtube className="w-5 h-5" />
+                            </a>
+                        </div>
+
                         <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
                             <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2 rounded-full px-6">
                                 <MessageCircle className="w-4 h-4 fill-current" />
@@ -203,7 +216,18 @@ export function Navbar() {
                             </Link>
                         );
                     })}
-                    <div className="pt-4 border-t mt-2">
+                    <div className="pt-4 border-t mt-2 space-y-4">
+                        <div className="flex justify-center gap-8 py-2">
+                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Instagram className="w-6 h-6" />
+                            </a>
+                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Facebook className="w-6 h-6" />
+                            </a>
+                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                                <Youtube className="w-6 h-6" />
+                            </a>
+                        </div>
                         <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
                             <Button className="w-full bg-[#25D366] text-white gap-2 rounded-xl py-6 text-lg">
                                 <MessageCircle className="w-5 h-5 fill-current" />

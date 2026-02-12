@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Instagram, Facebook } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Youtube } from "lucide-react";
 
 export default function ContatoClient() {
     return (
@@ -59,12 +59,34 @@ export default function ContatoClient() {
                                 <p className="text-gray-600 font-medium">Sinop – MT | CEP: 78555-020</p>
                             </div>
 
-                            <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center sm:col-span-2">
-                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
+                            <div className="p-8 bg-gradient-to-br from-pink-50 to-orange-50 rounded-[2.5rem] border border-orange-100 group hover:scale-[1.02] transition-all text-center">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-orange-600 shadow-sm mb-6 mx-auto group-hover:bg-orange-600 group-hover:text-white transition-colors">
                                     <Instagram className="w-7 h-7" />
                                 </div>
-                                <h4 className="font-bold text-brand-blue text-xl mb-2">Instagram</h4>
-                                <p className="text-gray-600 italic">@rccdiocesedesinop</p>
+                                <h4 className="font-bold text-gray-800 text-xl mb-2">Instagram</h4>
+                                <a href="https://instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    @rccdiocesedesinop
+                                </a>
+                            </div>
+
+                            <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[2.5rem] border border-blue-100 group hover:scale-[1.02] transition-all text-center">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm mb-6 mx-auto group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                    <Facebook className="w-7 h-7" />
+                                </div>
+                                <h4 className="font-bold text-gray-800 text-xl mb-2">Facebook</h4>
+                                <a href="http://facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    rccdiocesedesinop
+                                </a>
+                            </div>
+
+                            <div className="p-8 bg-gradient-to-br from-red-50 to-rose-50 rounded-[2.5rem] border border-red-100 group hover:scale-[1.02] transition-all text-center sm:col-span-2">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-red-600 shadow-sm mb-6 mx-auto group-hover:bg-red-600 group-hover:text-white transition-colors">
+                                    <Youtube className="w-7 h-7" />
+                                </div>
+                                <h4 className="font-bold text-gray-800 text-xl mb-2">YouTube</h4>
+                                <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    @RCCDiocesedesinop
+                                </a>
                             </div>
                         </div>
 
