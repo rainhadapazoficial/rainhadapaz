@@ -19,7 +19,6 @@ type NavItem = {
 };
 
 const defaultNavLinks: NavItem[] = [
-    { name: "Home", href: "/" },
     {
         name: "Quem Somos",
         children: [
