@@ -69,7 +69,7 @@ export function Navbar() {
         if (!error && data) {
             const updatedLinks = defaultNavLinks.map(link => {
                 const dynamicChildren = data
-                    .filter(p => p.parent_menu === link.name.toLowerCase().replace(" ", "-"))
+                    .filter(p => p.parent_menu?.toLowerCase() === link.name.toLowerCase().replace(" ", "-"))
                     .map(p => ({
                         name: p.title,
                         href: `/p/${p.slug}`
