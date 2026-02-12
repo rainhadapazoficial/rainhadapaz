@@ -65,7 +65,6 @@ const data = {
                 { title: "A RCC", url: "/admin/dashboard/a-rcc", icon: LayoutDashboard },
                 { title: "Sobre Nós", url: "/admin/dashboard/quem-somos", icon: Users },
                 { title: "História da RCC", url: "/admin/dashboard/historia-da-rcc", icon: History },
-                { title: "História Diocese de Sinop", url: "/admin/dashboard/diocesana", icon: Globe },
                 { title: "Formação", url: "/admin/dashboard/formacao", icon: GraduationCap },
                 { title: "Seminário de Vida", url: "/admin/dashboard/formacao/seminario-de-vida", icon: Flame },
             ]
