@@ -25,6 +25,11 @@ const data = {
             icon: LayoutDashboard,
         },
         {
+            title: "Gerenciar Páginas",
+            url: "/admin/dashboard/paginas",
+            icon: Globe,
+        },
+        {
             title: "Notícias",
             url: "/admin/dashboard/noticias",
             icon: Newspaper,

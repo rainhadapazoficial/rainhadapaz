@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, MessageCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,7 +18,7 @@ type NavItem = {
     children?: { name: string; href: string }[];
 };
 
-const navLinks: NavItem[] = [
+const defaultNavLinks: NavItem[] = [
     { name: "Home", href: "/" },
     {
         name: "Quem Somos",
@@ -52,6 +53,38 @@ const navLinks: NavItem[] = [
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+    const [navLinks, setNavLinks] = useState<NavItem[]>(defaultNavLinks);
+
+    useEffect(() => {
+        fetchDynamicPages();
+    }, []);
+
+    const fetchDynamicPages = async () => {
+        const { data, error } = await supabase
+            .from("custom_pages")
+            .select("title, slug, parent_menu")
+            .eq("is_published", true);
+
+        if (!error && data) {
+            const updatedLinks = defaultNavLinks.map(link => {
+                const dynamicChildren = data
+                    .filter(p => p.parent_menu === link.name.toLowerCase().replace(" ", "-"))
+                    .map(p => ({
+                        name: p.title,
+                        href: `/p/${p.slug}`
+                    }));
+
+                if (dynamicChildren.length > 0) {
+                    return {
+                        ...link,
+                        children: [...(link.children || []), ...dynamicChildren]
+                    };
+                }
+                return link;
+            });
+            setNavLinks(updatedLinks);
+        }
+    };
 
     const toggleMobileSubmenu = (name: string) => {
         setMobileSubmenu(mobileSubmenu === name ? null : name);
@@ -84,7 +117,7 @@ export function Navbar() {
                                         <DropdownMenuContent align="end" className="bg-white">
                                             {link.children.map((child) => (
                                                 <DropdownMenuItem key={child.name} asChild>
-                                                    <Link href={child.href} className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50">
+                                                    <Link href={child.href} className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50 px-3 py-2 text-sm">
                                                         {child.name}
                                                     </Link>
                                                 </DropdownMenuItem>
