@@ -66,9 +66,15 @@ export function Navbar() {
             .eq("is_published", true);
 
         if (!error && data) {
+            const normalize = (str: string) =>
+                str.toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/\s+/g, "-");
+
             const updatedLinks = defaultNavLinks.map(link => {
                 const dynamicChildren = data
-                    .filter(p => p.parent_menu?.toLowerCase() === link.name.toLowerCase().replace(" ", "-"))
+                    .filter(p => normalize(p.parent_menu || "") === normalize(link.name))
                     .map(p => ({
                         name: p.title,
                         href: `/p/${p.slug}`
