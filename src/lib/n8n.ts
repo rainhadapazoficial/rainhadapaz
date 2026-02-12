@@ -1,38 +1,54 @@
+import { supabase } from "./supabase";
+
 /**
  * Utilitário para integração com n8n
  * Centraliza todas as chamadas de saída para o n8n
  */
 
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || (process.env.N8N_BASE_URL ? `${process.env.N8N_BASE_URL}/webhook/rcc-events` : undefined);
-const N8N_API_KEY = process.env.N8N_API_KEY;
+let CACHED_SETTINGS: any = null;
+let lastFetch = 0;
 
-export interface N8NPayload {
-    event: string;
-    timestamp: string;
-    data: any;
+async function getSettings() {
+    const now = Date.now();
+    if (CACHED_SETTINGS && (now - lastFetch < 60000)) return CACHED_SETTINGS;
+
+    const { data } = await supabase.from('system_settings').select('*');
+    if (data) {
+        CACHED_SETTINGS = data.reduce((acc: any, curr: any) => {
+            acc[curr.settings_key] = curr.settings_value;
+            return acc;
+        }, {});
+        lastFetch = now;
+    }
+    return CACHED_SETTINGS || {};
 }
 
 /**
  * Dispara um webhook genérico para o n8n
  */
 export async function triggerN8NWebhook(event: string, data: any) {
-    if (!N8N_WEBHOOK_URL) {
-        console.warn("N8N_WEBHOOK_URL não configurada. Webhook ignorado.");
+    const settings = await getSettings();
+
+    const webhookUrl = settings.n8n_webhook_url || process.env.N8N_WEBHOOK_URL || (process.env.N8N_BASE_URL ? `${process.env.N8N_BASE_URL}/webhook/rcc-events` : undefined);
+    const apiKey = settings.n8n_api_key || process.env.N8N_API_KEY;
+
+    if (!webhookUrl) {
+        console.warn("N8N_WEBHOOK_URL não configurada no painel ou env. Webhook ignorado.");
         return { success: false, error: "URL não configurada" };
     }
 
     try {
-        const payload: N8NPayload = {
+        const payload = {
             event,
             timestamp: new Date().toISOString(),
             data
         };
 
-        const response = await fetch(N8N_WEBHOOK_URL, {
+        const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${N8N_API_KEY}`
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify(payload)
         });
