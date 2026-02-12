@@ -52,11 +52,33 @@ export default function ContatoClient() {
 
                             <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center sm:col-span-2">
                                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
+                                    <MapPin className="w-7 h-7" />
+                                </div>
+                                <h4 className="font-bold text-brand-blue text-xl mb-2">Escritório Diocesano</h4>
+                                <p className="text-gray-600 mb-2">Av. das Palmeiras, 2697 – Jardim Imperial</p>
+                                <p className="text-gray-600 font-medium">Sinop – MT | CEP: 78555-020</p>
+                            </div>
+
+                            <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center sm:col-span-2">
+                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
                                     <Instagram className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-xl mb-2">Instagram</h4>
                                 <p className="text-gray-600 italic">@rccdiocesedesinop</p>
                             </div>
+                        </div>
+
+                        {/* Google Maps Embed */}
+                        <div className="mt-16 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923.364426563604!2d-55.5126849!3d-11.8546559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9330663414986427%3A0xe6709793ee5edc6b!2sAv.%20das%20Palmeiras%2C%202697%20-%20Jardim%20Imperial%2C%20Sinop%20-%20MT%2C%2078555-020!5e0!3m2!1spt-BR!2sbr!4v1707765000000"
+                                width="100%"
+                                height="450"
+                                style={{ border: 0 }}
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                            />
                         </div>
                     </div>
                 </div>
