@@ -109,9 +109,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <div className="flex items-center gap-3 px-3">
                             <img
-                                src="https://yt3.googleusercontent.com/ytc/AIdro_nHlljA3Swn3XHKIA9PXmA-Qh0QQwgj2dEXAAuL_7Wmig=s900-c-k-c0x00ffffff-no-rj"
-                                alt="Logo"
-                                className="w-10 h-10 rounded-xl object-cover shadow-lg"
+                                src="/logo-diocese.png"
+                                alt="Logo RCC"
+                                className="w-10 h-10 rounded-xl object-contain bg-white p-1 shadow-lg"
                             />
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-bold italic text-brand-gold">RCC Diocese de Sinop</span>
