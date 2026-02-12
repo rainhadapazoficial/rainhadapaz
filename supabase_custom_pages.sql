@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.custom_pages (
 ALTER TABLE public.custom_pages ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de Acesso
+DROP POLICY IF EXISTS "Allow public read-only access on custom_pages" ON public.custom_pages;
 CREATE POLICY "Allow public read-only access on custom_pages" 
 ON public.custom_pages FOR SELECT 
 USING (is_published = true);

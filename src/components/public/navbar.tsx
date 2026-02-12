@@ -56,6 +56,7 @@ export function Navbar() {
     const [navLinks, setNavLinks] = useState<NavItem[]>(defaultNavLinks);
 
     useEffect(() => {
+        console.log("Navbar: v2 (Dynamic Pages) loaded");
         fetchDynamicPages();
     }, []);
 
