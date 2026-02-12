@@ -1,0 +1,11 @@
+demo/
+SISTEMA RCC/
+RAINHA DA PAZ/
+wp-content/
+wp-includes/
+wp-json/
+*.mp4
+*.zip
+*.exe
+node_modules/
+.next/
