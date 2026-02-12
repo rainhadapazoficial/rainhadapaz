@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import nodemailer from "nodemailer";
+import { triggerN8NWebhook } from "@/lib/n8n";
 
 export async function POST(request: Request) {
     try {
@@ -36,6 +37,14 @@ export async function POST(request: Request) {
                 { status: 500 }
             );
         }
+
+        // 2.5 Trigger n8n webhook
+        triggerN8NWebhook('prayer_request', {
+            name,
+            email,
+            phone,
+            message
+        });
 
         // 3. Send Email via SMTP
         // Configuration from environment variables

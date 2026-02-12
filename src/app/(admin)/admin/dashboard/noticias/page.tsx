@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { PremiumEditor } from "@/components/admin/PremiumEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { shareToSocialMedia } from "@/lib/n8nService";
+import { shareToSocialMedia } from "@/lib/n8n";
 import { Switch } from "@/components/ui/switch";
 
 export default function NoticiasAdminPage() {

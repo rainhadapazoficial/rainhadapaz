@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { supabase } from "@/lib/supabase";
+import { triggerN8NWebhook } from "@/lib/n8n";
 
 export async function POST(req: Request) {
     try {
@@ -47,6 +48,14 @@ export async function POST(req: Request) {
           `,
             });
         }
+
+        // 3. Trigger n8n webhook
+        triggerN8NWebhook('prayer_request', {
+            name: name,
+            email: email,
+            phone: phone,
+            message: message
+        });
 
         return NextResponse.json({ message: "Recebido com sucesso" }, { status: 200 });
     } catch (error) {

@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Loader2, Calendar, MapPin, Crown, ChevronRight, History, Info, Star, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import parse from "html-react-parser";
 
 interface Atracao {
     nome: string;
@@ -16,10 +17,22 @@ export default function FestaReiJesusPage() {
     const [editions, setEditions] = useState<any[]>([]);
     const [selectedYear, setSelectedYear] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [pageContent, setPageContent] = useState<any>(null);
 
     useEffect(() => {
         fetchEditions();
+        fetchPageContent();
     }, []);
+
+    async function fetchPageContent() {
+        const { data } = await supabase
+            .from("custom_pages")
+            .select("*")
+            .eq("slug", "festa-rei-jesus")
+            .single();
+
+        if (data) setPageContent(data);
+    }
 
     async function fetchEditions() {
         const { data, error } = await supabase
@@ -95,14 +108,22 @@ export default function FestaReiJesusPage() {
                             <Info className="w-4 h-4" />
                             Sobre o Evento
                         </div>
-                        <h2 className="text-4xl font-bold text-brand-blue italic">O que é a Festa do Rei Jesus?</h2>
-                        <p className="text-gray-600 leading-relaxed text-lg">
-                            A Festa do Rei Jesus é um evento tradicional da Renovação Carismática Católica da Diocese de Sinop.
-                            Todos os anos, reunimos milhares de fiéis para celebrar a realeza de Cristo em nossas vidas com shows nacionais, pregações impactantes e momentos profundos de oração.
-                        </p>
-                        <p className="text-gray-600 leading-relaxed text-lg">
-                            É um tempo de renovação espiritual e confraternização para toda a família católica.
-                        </p>
+                        <h2 className="text-4xl font-bold text-brand-blue italic">{pageContent?.title || "O que é a Festa do Rei Jesus?"}</h2>
+                        <div className="text-gray-600 leading-relaxed text-lg space-y-4">
+                            {pageContent ? (
+                                parse(pageContent.content)
+                            ) : (
+                                <>
+                                    <p>
+                                        A Festa do Rei Jesus é um evento tradicional da Renovação Carismática Católica da Diocese de Sinop.
+                                        Todos os anos, reunimos milhares de fiéis para celebrar a realeza de Cristo em nossas vidas com shows nacionais, pregações impactantes e momentos profundos de oração.
+                                    </p>
+                                    <p>
+                                        É um tempo de renovação espiritual e confraternização para toda a família católica.
+                                    </p>
+                                </>
+                            )}
+                        </div>
                     </div>
                     <div className="relative h-80 rounded-[2rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
                         <div className="absolute inset-0 bg-brand-blue text-white flex flex-col items-center justify-center p-8 text-center">
