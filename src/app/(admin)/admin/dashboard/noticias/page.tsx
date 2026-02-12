@@ -31,7 +31,7 @@ export default function NoticiasAdminPage() {
     const [seoTitle, setSeoTitle] = useState("");
     const [seoExcerpt, setSeoExcerpt] = useState("");
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
-    const [shareTon8n, setShareTon8n] = useState(false);
+    const [shareTon8n, setShareTon8n] = useState(true);
 
     useEffect(() => {
         fetchPosts();
