@@ -42,7 +42,7 @@ export default function NoticiasAdminPage() {
         const { data, error } = await supabase
             .from("posts")
             .select("*")
-            .order("id", { ascending: false });
+            .order("created_at", { ascending: false });
 
         if (error) console.error("Error fetching posts:", error);
         else setPosts(data || []);
