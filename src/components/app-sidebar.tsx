@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 className="w-10 h-10 rounded-xl object-contain bg-white p-1 shadow-lg"
                             />
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-bold italic text-brand-gold">RCC Diocese de Sinop</span>
+                                <span className="truncate font-bold italic text-brand-gold">Rainha da Paz</span>
                                 <span className="truncate text-[10px] uppercase tracking-widest text-blue-200">Painel Admin</span>
                             </div>
                         </div>
@@ -138,7 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </div>
 
                     <div className="space-y-1">
-                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Páginas Dinâmicas</div>
+                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Páginas Institucionais</div>
                         {data.navMain.find(i => i.title === "Páginas")?.items?.map((item: any) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
