@@ -27,7 +27,7 @@ export default function ContatoClient() {
                             </div>
                             <h2 className="text-4xl font-bold text-brand-blue font-serif italic mb-6">Canais de Atendimento</h2>
                             <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                                A Renovação Carismática Católica está presente em toda a Diocese de Sinop, levando a Cultura de Pentecostes às nossas paróquias e comunidades. Atendemos você com alegria através dos nossos canais oficiais abaixo.
+                                O Grupo de Oração Rainha da Paz se reúne na Matriz da Paróquia Santo Antônio, em Sinop. Venha nos visitar ou entre em contato pelos nossos canais oficiais abaixo.
                             </p>
                         </div>
 
@@ -37,8 +37,8 @@ export default function ContatoClient() {
                                     <Phone className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-xl mb-2">WhatsApp</h4>
-                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" className="text-brand-blue font-bold text-lg hover:text-brand-gold transition-colors underline decoration-brand-gold/30">
-                                    (66) 99232-4636
+                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" className="text-brand-blue font-bold text-lg hover:text-brand-gold transition-colors underline decoration-brand-gold/30">
+                                    (66) 98136-5456
                                 </a>
                             </div>
 
@@ -47,16 +47,16 @@ export default function ContatoClient() {
                                     <Mail className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-brand-blue text-xl mb-2">E-mail</h4>
-                                <p className="text-brand-blue font-bold">coordenacao@rccdesinop.com.br</p>
+                                <p className="text-brand-blue font-bold">rainhadapazsinop@rccdesinop.com.br</p>
                             </div>
 
                             <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 group hover:border-brand-gold transition-colors text-center sm:col-span-2">
                                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-blue shadow-sm mb-6 mx-auto group-hover:bg-brand-gold group-hover:text-white transition-colors">
                                     <MapPin className="w-7 h-7" />
                                 </div>
-                                <h4 className="font-bold text-brand-blue text-xl mb-2">Escritório Diocesano</h4>
-                                <p className="text-gray-600 mb-2">Av. das Palmeiras, 2697 – Jardim Imperial</p>
-                                <p className="text-gray-600 font-medium">Sinop – MT | CEP: 78555-020</p>
+                                <h4 className="font-bold text-brand-blue text-xl mb-2">Nossa Sede</h4>
+                                <p className="text-gray-600 mb-2">Matriz da Paróquia Santo Antônio</p>
+                                <p className="text-gray-600 font-medium">Av. das Sibipirunas, 3092 - Centro, Sinop – MT</p>
                             </div>
 
                             <div className="p-8 bg-gradient-to-br from-pink-50 to-orange-50 rounded-[2.5rem] border border-orange-100 group hover:scale-[1.02] transition-all text-center">
@@ -64,8 +64,8 @@ export default function ContatoClient() {
                                     <Instagram className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-gray-800 text-xl mb-2">Instagram</h4>
-                                <a href="https://instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
-                                    @rccdiocesedesinop
+                                <a href="https://instagram.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    @rainhadapazsinop
                                 </a>
                             </div>
 
@@ -74,8 +74,8 @@ export default function ContatoClient() {
                                     <Facebook className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-gray-800 text-xl mb-2">Facebook</h4>
-                                <a href="http://facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
-                                    rccdiocesedesinop
+                                <a href="http://facebook.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    rainhadapazsinop
                                 </a>
                             </div>
 
@@ -84,8 +84,8 @@ export default function ContatoClient() {
                                     <Youtube className="w-7 h-7" />
                                 </div>
                                 <h4 className="font-bold text-gray-800 text-xl mb-2">YouTube</h4>
-                                <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
-                                    @RCCDiocesedesinop
+                                <a href="https://www.youtube.com/@rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-600 italic hover:text-brand-blue transition-colors block">
+                                    @rainhadapazsinop
                                 </a>
                             </div>
                         </div>
@@ -93,7 +93,7 @@ export default function ContatoClient() {
                         {/* Google Maps Embed */}
                         <div className="mt-16 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923.364426563604!2d-55.5126849!3d-11.8546559!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9330663414986427%3A0xe6709793ee5edc6b!2sAv.%20das%20Palmeiras%2C%202697%20-%20Jardim%20Imperial%2C%20Sinop%20-%20MT%2C%2078555-020!5e0!3m2!1spt-BR!2sbr!4v1707765000000"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923.3!2d-55.507!3d-11.862!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sAv.%20das%20Sibipirunas%2C%203092%20-%20Centro%2C%20Sinop%20-%20MT!5e0!3m2!1spt-BR!2sbr!4v1707765000000"
                                 width="100%"
                                 height="450"
                                 style={{ border: 0 }}

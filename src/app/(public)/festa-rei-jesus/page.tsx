@@ -115,7 +115,7 @@ export default function FestaReiJesusPage() {
                             ) : (
                                 <>
                                     <p>
-                                        A Festa do Rei Jesus é um evento tradicional da Renovação Carismática Católica da Diocese de Sinop.
+                                        A Festa do Rei Jesus é um evento tradicional da Renovação Carismática Católica em Sinop.
                                         Todos os anos, reunimos milhares de fiéis para celebrar a realeza de Cristo em nossas vidas com shows nacionais, pregações impactantes e momentos profundos de oração.
                                     </p>
                                     <p>

@@ -160,7 +160,7 @@ export default function MinisteriosAdminPage() {
                         <Flame className="w-8 h-8 text-brand-gold" />
                         Ministérios
                     </h1>
-                    <p className="text-gray-500">Gerencie os ministérios da RCC Diocese de Sinop e seus coordenadores.</p>
+                    <p className="text-gray-500">Gerencie os ministérios do Grupo Rainha da Paz e seus coordenadores.</p>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">

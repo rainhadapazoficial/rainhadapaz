@@ -35,14 +35,14 @@ export default function QuemSomosPage() {
     const data = content || {
         hero: {
             title: "Quem Somos",
-            subtitle: "Conheça a história, a missão e os valores que movem a RCC Diocese de Sinop.",
+            subtitle: "Conheça a história, a missão e os valores que movem o Grupo Rainha da Paz.",
             image_url: "https://images.unsplash.com/photo-1510915228340-29c85a43dbfe?q=80&w=2000"
         },
         history: {
             badge: "Nossa Herança",
             title: "Uma Caminhada de Fé e Adoração",
-            p1: "A RCC Diocese de Sinop nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo, expandindo-se por todas as paróquias e comunidades da nossa região.",
-            p2: "Movidos pelo compromisso com a Renovação Carismática Católica (RCC), somos uma expressão de fé que busca o Batismo no Espírito Santo, a cura interior e o crescimento na vida espiritual de todo o povo de Deus.",
+            p1: "O Grupo de Oração Rainha da Paz nasceu do desejo profundo de buscar uma experiência viva com o Espírito Santo, reunindo-se na Matriz da Paróquia Santo Antônio em Sinop.",
+            p2: "Movidos pelo compromisso com a Renovação Carismática Católica, somos uma expressão de fé que busca o Batismo no Espírito Santo, a cura interior e o crescimento na vida espiritual de todo o povo de Deus.",
             p3: "Hoje, somos uma grande família diocesana unida pelo amor de Maria e pela força de um novo Pentecostes.",
             quote: "A Renovação Carismática Católica é um grande dom do Espírito Santo à Igreja e ao mundo.",
             image_url: "https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=1000&auto=format&fit=crop"

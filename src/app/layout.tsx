@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     default: "Rainha da Paz | Grupo de Oração Sinop",
     template: "%s | Rainha da Paz"
   },
-  description: "Portal oficial da Renovação Carismática Católica na Diocese de Sinop/MT. Encontre Grupos de Oração, missas e eventos religiosos em Mato Grosso.",
-  keywords: ["RCC Mato Grosso", "Igreja Católica Sinop", "Grupo de Oração MT", "Renovação Carismática Católica", "Missa hoje Sinop"],
+  description: "Portal oficial do Grupo de Oração Rainha da Paz em Sinop/MT. Encontre informações sobre nossos encontros, eventos e formações na Paróquia Santo Antônio.",
+  keywords: ["Rainha da Paz Sinop", "Grupo de Oração Sinop", "Paróquia Santo Antônio Sinop", "Renovação Carismática Católica", "RCC Sinop MT"],
   openGraph: {
     title: "Rainha da Paz | Grupo de Oração Sinop",
     description: "Um encontro de amor com o Espírito Santo na Matriz da Paróquia Santo Antônio.",
@@ -48,11 +48,11 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "Rainha da Paz",
-              "url": "https://site-rcc-diocese.vercel.app/",
-              "logo": "https://site-rcc-diocese.vercel.app/logo-diocese.png",
+              "url": "https://rainha-da-paz.vercel.app/",
+              "logo": "https://rainha-da-paz.vercel.app/logo-diocese.png",
               "contactPoint": {
                 "@type": "ContactPoint",
-                "telephone": "+5566992324636",
+                "telephone": "+5566981365456",
                 "contactType": "customer service"
               }
             })

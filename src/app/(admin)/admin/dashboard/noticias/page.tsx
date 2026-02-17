@@ -59,19 +59,19 @@ export default function NoticiasAdminPage() {
         // Análise Avançada de SEO e Conteúdo
         setTimeout(() => {
             const stripped = editorContent.replace(/<[^>]*>?/gm, '');
-            const keywords = ["RCC", "Diocese de Sinop", "Formação", "Fé", "Espírito Santo"];
+            const keywords = ["Rainha da Paz", "Grupo de Oração Sinop", "Formação", "Fé", "Espírito Santo"];
 
             // Sugestão de Título Otimizado
             const titleOptions = [
                 `Formação: ${stripped.slice(0, 40)}...`,
-                `Novidades RCC Sinop: ${stripped.slice(0, 35)}...`,
-                `${stripped.slice(0, 45)} | RCC Diocese de Sinop`
+                `Novidades Rainha da Paz: ${stripped.slice(0, 35)}...`,
+                `${stripped.slice(0, 45)} | Grupo Rainha da Paz`
             ];
 
             setSeoTitle(titleOptions[Math.floor(Math.random() * titleOptions.length)]);
 
             // Sugestão de Meta Description (SEO Ativo)
-            const metaDescription = `${stripped.slice(0, 155).trim()}... Leia mais sobre as novidades da Renovação Carismática na Diocese de Sinop.`;
+            const metaDescription = `${stripped.slice(0, 155).trim()}... Leia mais sobre as novidades do Grupo Rainha da Paz em Sinop.`;
             setSeoExcerpt(metaDescription);
 
             setIsGeneratingAI(false);
@@ -115,7 +115,7 @@ export default function NoticiasAdminPage() {
                 shareToSocialMedia({
                     title: postData.title as string,
                     excerpt: postData.excerpt as string,
-                    url: `https://site-rcc-diocese.vercel.app/blog/${postData.slug}`,
+                    url: `https://rainha-da-paz.vercel.app/blog/${postData.slug}`,
                     image_url: postData.image_url as string,
                     category: postData.category as string,
                 });
@@ -286,7 +286,7 @@ export default function NoticiasAdminPage() {
                                             </div>
                                             <div>
                                                 <p className="text-xs font-bold text-brand-blue uppercase">Preview do Google</p>
-                                                <p className="text-blue-600 text-sm font-medium hover:underline cursor-pointer truncate">rccdesinop.com.br/blog/...</p>
+                                                <p className="text-blue-600 text-sm font-medium hover:underline cursor-pointer truncate">rainhadapaz.vercel.app/blog/...</p>
                                                 <p className="text-gray-800 font-medium line-clamp-1">{seoTitle || "Título do Post"}</p>
                                                 <p className="text-gray-500 text-xs line-clamp-2">{seoExcerpt || "Escreva um resumo ou use a IA para gerar um snippet otimizado."}</p>
                                             </div>

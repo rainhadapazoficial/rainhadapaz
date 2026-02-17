@@ -23,9 +23,9 @@ const defaultNavLinks: NavItem[] = [
         name: "Quem Somos",
         children: [
             { name: "Sobre Nós", href: "/quem-somos" },
-            { name: "A RCC", href: "/a-rcc" },
-            { name: "História da RCC", href: "/historia-da-rcc" },
-            { name: "Conselho Diocesano", href: "/quem-somos/conselho" },
+            { name: "O Grupo", href: "/a-rcc" },
+            { name: "Nossa História", href: "/historia-da-rcc" },
+            { name: "Conselho", href: "/quem-somos/conselho" },
         ]
     },
     { name: "Grupos", href: "/grupos" },
@@ -41,7 +41,7 @@ const defaultNavLinks: NavItem[] = [
     {
         name: "Eventos",
         children: [
-            { name: "Calendário Diocesano", href: "/calendario" },
+            { name: "Calendário", href: "/calendario" },
         ]
     },
     { name: "Contato", href: "/contato" },
@@ -102,7 +102,7 @@ export function Navbar() {
                         <Link href="/" className="flex items-center gap-3">
                             <img
                                 src="/logo-diocese.png"
-                                alt="RCC Diocese de Sinop Logo"
+                                alt="Grupo Rainha da Paz Logo"
                                 className="w-24 h-24 object-contain"
                             />
                         </Link>
@@ -142,18 +142,18 @@ export function Navbar() {
                         })}
 
                         <div className="flex items-center gap-4 px-2 border-x border-gray-100">
-                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.instagram.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.facebook.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.youtube.com/@rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Youtube className="w-5 h-5" />
                             </a>
                         </div>
 
-                        <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
+                        <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
                             <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2 rounded-full px-6">
                                 <MessageCircle className="w-4 h-4 fill-current" />
                                 Fale agora conosco
@@ -217,17 +217,17 @@ export function Navbar() {
                     })}
                     <div className="pt-4 border-t mt-2 space-y-4">
                         <div className="flex justify-center gap-8 py-2">
-                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.instagram.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Instagram className="w-6 h-6" />
                             </a>
-                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.facebook.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Facebook className="w-6 h-6" />
                             </a>
-                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
+                            <a href="https://www.youtube.com/@rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">
                                 <Youtube className="w-6 h-6" />
                             </a>
                         </div>
-                        <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
+                        <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
                             <Button className="w-full bg-[#25D366] text-white gap-2 rounded-xl py-6 text-lg">
                                 <MessageCircle className="w-5 h-5 fill-current" />
                                 Fale agora conosco

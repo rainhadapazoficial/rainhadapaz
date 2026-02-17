@@ -27,7 +27,7 @@ export async function GET() {
                     slug: postData.slug || `post-${postData.id}`,
                     date: postData.date || new Date().toISOString(),
                     image_url: "", // Pode ser refinado se houver mapeamento de mídia
-                    author: "Diocese de Sinop",
+                    author: "Grupo Rainha da Paz",
                     category: "Notícias"
                 };
 

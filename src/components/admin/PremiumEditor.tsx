@@ -230,7 +230,7 @@ export function PremiumEditor({ content, onChange }: PremiumEditorProps) {
             <MenuBar editor={editor} />
             <EditorContent editor={editor} />
             <div className="p-2 bg-gray-50 border-t flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4">
-                <span>RCC Diocese de Sinop • Editor Premium</span>
+                <span>Grupo Rainha da Paz • Editor Premium</span>
                 <span>{editor?.storage.characterCount.words()} Palavras</span>
             </div>
         </div>

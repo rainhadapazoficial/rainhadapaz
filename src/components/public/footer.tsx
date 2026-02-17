@@ -12,7 +12,7 @@ export function Footer() {
                         <div className="flex items-center gap-3">
                             <img
                                 src="/logo-diocese.png"
-                                alt="RCC Diocese de Sinop Logo"
+                                alt="Grupo Rainha da Paz Logo"
                                 className="w-14 h-14 object-contain"
                             />
                             <span className="text-xl font-bold italic">Rainha da Paz</span>
@@ -22,13 +22,13 @@ export function Footer() {
                             A serviço da Igreja, promovendo a cultura de Pentecostes.
                         </p>
                         <div className="flex gap-4">
-                            <a href="https://www.instagram.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.instagram.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="https://www.facebook.com/rccdiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.facebook.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a href="https://www.youtube.com/@RCCDiocesedesinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                            <a href="https://www.youtube.com/@rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
                                 <Youtube className="w-5 h-5" />
                             </a>
                         </div>
@@ -61,20 +61,20 @@ export function Footer() {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <span>Av. das Palmeiras, 2697 – Jardim Imperial <br /> Sinop – MT, CEP: 78555-020</span>
+                                <span>Av. das Sibipirunas, 3092 – Centro <br /> Sinop – MT</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
-                                    (66) 99232-4636 (Escritório Diocesano)
+                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">
+                                    (66) 98136-5456 (WhatsApp)
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                                <span>coordenacao@rccdesinop.com.br</span>
+                                <span>rainhadapazsinop@rccdesinop.com.br</span>
                             </li>
                             <li className="pt-4">
-                                <a href="https://wa.me/5566992324636" target="_blank" rel="noopener noreferrer">
+                                <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
                                     <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 w-full">
                                         <MessageCircle className="w-5 h-5 fill-current" />
                                         Fale agora conosco

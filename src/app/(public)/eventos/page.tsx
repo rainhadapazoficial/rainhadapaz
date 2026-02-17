@@ -7,7 +7,7 @@ import FestaCountdown from "@/components/public/festa-countdown";
 
 export const metadata: Metadata = {
     title: "Agenda de Eventos | Igreja Católica Sinop MT",
-    description: "Confira o calendário diocesano, retiros e encontros da RCC em Sinop e região do Mato Grosso.",
+    description: "Confira o calendário de retiros e encontros do Grupo Rainha da Paz em Sinop e região.",
 };
 
 export const revalidate = 60; // Revalidate every minute
@@ -60,7 +60,7 @@ export default async function EventosPage() {
                 <div className="max-w-4xl mx-auto px-4">
                     <h1 className="text-5xl font-bold mb-6 italic text-brand-blue">Agenda de Eventos</h1>
                     <p className="text-xl text-gray-600">
-                        Fique por dentro de todos os encontros e atividades da nossa diocese.
+                        Fique por dentro de todos os encontros e atividades do nosso grupo.
                     </p>
                 </div>
             </section>

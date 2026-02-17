@@ -5,8 +5,8 @@ import { Search, Calendar, User, ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
-    title: "Blog e Notícias | RCC Mato Grosso",
-    description: "Acompanhe as últimas notícias, formações e eventos da Renovação Carismática Católica no Mato Grosso.",
+    title: "Blog e Notícias | Rainha da Paz Sinop",
+    description: "Acompanhe as últimas notícias, formações e eventos do Grupo de Oração Rainha da Paz em Sinop.",
 };
 
 export const revalidate = 60; // Revalidate every minute
@@ -74,7 +74,7 @@ export default async function BlogPage() {
                                 <div className="p-8">
                                     <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date ? new Date(post.date + "T12:00:00").toLocaleDateString('pt-BR') : new Date(post.created_at).toLocaleDateString('pt-BR')}</span>
-                                        <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author || "RCC Diocese de Sinop"}</span>
+                                        <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author || "Grupo Rainha da Paz"}</span>
                                     </div>
                                     <Link href={`/blog/${post.slug || post.id}`}>
                                         <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-4 group-hover:text-brand-blue transition-colors">

@@ -91,7 +91,7 @@ export default function MinisteriosPublicPage() {
                 <div className="max-w-4xl mx-auto px-4 relative z-10">
                     <h1 className="text-5xl md:text-6xl font-extrabold mb-6 italic text-brand-gold">Nossos Ministérios</h1>
                     <p className="text-xl text-blue-100 leading-relaxed">
-                        Na RCC Diocese de Sinop, a evangelização se faz viva através de diversos ministérios
+                        No Grupo Rainha da Paz, a evangelização se faz viva através de diversos ministérios
                         que servem à Igreja e à comunidade com seus dons.
                     </p>
                 </div>

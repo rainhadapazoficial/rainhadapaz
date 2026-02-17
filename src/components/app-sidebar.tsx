@@ -50,16 +50,16 @@ const data = {
             icon: Crown,
         },
         {
-            title: "Calendário Diocesano",
+            title: "Calendário",
             url: "/admin/dashboard/calendario",
             icon: Calendar,
         },
         {
             title: "Páginas",
             items: [
-                { title: "A RCC", url: "/admin/dashboard/a-rcc", icon: LayoutDashboard },
+                { title: "O Grupo", url: "/admin/dashboard/a-rcc", icon: LayoutDashboard },
                 { title: "Sobre Nós", url: "/admin/dashboard/quem-somos", icon: Users },
-                { title: "História da RCC", url: "/admin/dashboard/historia-da-rcc", icon: History },
+                { title: "Nossa História", url: "/admin/dashboard/historia-da-rcc", icon: History },
                 { title: "Formação", url: "/admin/dashboard/formacao", icon: GraduationCap },
                 { title: "Seminário de Vida", url: "/admin/dashboard/formacao/seminario-de-vida", icon: Flame },
             ]
@@ -82,7 +82,7 @@ const data = {
             icon: Flame,
         },
         {
-            title: "Conselho Diocesano",
+            title: "Conselho",
             url: "/admin/dashboard/conselho",
             icon: Users,
         },
@@ -110,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <div className="flex items-center gap-3 px-3">
                             <img
                                 src="/logo-diocese.png"
-                                alt="Logo RCC"
+                                alt="Logo Rainha da Paz"
                                 className="w-10 h-10 rounded-xl object-contain bg-white p-1 shadow-lg"
                             />
                             <div className="grid flex-1 text-left text-sm leading-tight">

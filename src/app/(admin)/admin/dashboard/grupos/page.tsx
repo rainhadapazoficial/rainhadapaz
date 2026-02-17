@@ -208,7 +208,7 @@ export default function GruposAdminPage() {
                         <Users className="w-8 h-8 text-brand-gold" />
                         Grupos de Oração
                     </h1>
-                    <p className="text-gray-500">Gerencie os grupos de oração da RCC Diocese de Sinop.</p>
+                    <p className="text-gray-500">Gerencie os grupos de oração do Grupo Rainha da Paz.</p>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">

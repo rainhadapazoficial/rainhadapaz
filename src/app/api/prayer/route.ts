@@ -59,14 +59,14 @@ export async function POST(request: Request) {
         });
 
         const mailOptions = {
-            from: `"Diocese de Sinop - Site" <${process.env.SMTP_USER}>`,
-            to: "coordenacao@rccdesinop.com.br",
+            from: `"Grupo Rainha da Paz - Site" <${process.env.SMTP_USER}>`,
+            to: "rainhadapazsinop@rccdesinop.com.br",
             replyTo: email,
             subject: `🙏 Novo Pedido de Oração: ${name}`,
             html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
           <div style="background-color: #004d2c; padding: 20px; text-align: center;">
-            <h1 style="color: #d4af37; margin: 0; font-style: italic;">Diocese de Sinop</h1>
+            <h1 style="color: #d4af37; margin: 0; font-style: italic;">Grupo Rainha da Paz</h1>
           </div>
           <div style="padding: 30px; color: #333;">
             <h2 style="color: #004d2c; border-bottom: 2px solid #d4af37; padding-bottom: 10px;">Pedido de Intercessão</h2>
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
               <p style="margin: 0; font-style: italic;">"${message}"</p>
             </div>
             <p style="margin-top: 30px; font-size: 12px; color: #999; text-align: center;">
-              Este é um e-mail automático enviado pelo site oficial da RCC Diocese de Sinop.
+              Este é um e-mail automático enviado pelo site oficial do Grupo Rainha da Paz.
             </p>
           </div>
         </div>

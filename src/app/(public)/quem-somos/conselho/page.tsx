@@ -71,7 +71,7 @@ export default function ConselhoPublicPage() {
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 italic">Conselho Diocesano</h1>
                     <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-                        Conheça os irmãos eleitos para servir a Renovação Carismática Católica na Diocese de Sinop neste tempo.
+                        Conheça os irmãos eleitos para servir no Grupo Rainha da Paz neste tempo.
                     </p>
                 </div>
             </section>

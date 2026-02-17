@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     return {
         title: page.title,
-        description: `Saiba mais sobre ${page.title} na RCC Diocese de Sinop, Mato Grosso.`,
+        description: `Saiba mais sobre ${page.title} no Grupo Rainha da Paz, Sinop/MT.`,
         openGraph: {
             title: page.title,
-            description: `Saiba mais sobre ${page.title} na RCC Diocese de Sinop.`,
+            description: `Saiba mais sobre ${page.title} no Grupo Rainha da Paz.`,
             type: "website",
         },
     };

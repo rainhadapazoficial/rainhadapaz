@@ -66,7 +66,7 @@ export default function CalendarioPage() {
                 <div className="max-w-4xl mx-auto px-4">
                     <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-brand-gold font-bold uppercase tracking-widest text-xs mb-6 border border-white/20">
                         <Calendar className="w-4 h-4" />
-                        RCC Diocese de Sinop
+                        Grupo Rainha da Paz
                     </div>
                     <h1 className="text-5xl md:text-6xl font-bold mb-6 italic text-brand-gold">Calendário Diocesano</h1>
                     <p className="text-xl text-blue-100">
