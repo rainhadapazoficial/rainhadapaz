@@ -11,10 +11,10 @@ const MESES = [
 ];
 
 const CATEGORIAS: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    grupo: { label: "Grupo de Oração", bg: "bg-brand-blue/10", text: "text-brand-blue font-bold", dot: "bg-brand-blue" },
-    diocesano: { label: "Diocesano", bg: "bg-blue-500/10", text: "text-blue-600", dot: "bg-blue-500" },
-    estadual: { label: "Estadual", bg: "bg-blue-400/10", text: "text-blue-500", dot: "bg-blue-400" },
-    nacional: { label: "Nacional", bg: "bg-blue-300/10", text: "text-blue-400", dot: "bg-blue-300" },
+    grupo: { label: "Grupo de Oração", bg: "bg-blue-500/10", text: "text-blue-700 font-bold", dot: "bg-blue-600" },
+    diocesano: { label: "Diocesano", bg: "bg-green-500/10", text: "text-green-700", dot: "bg-green-600" },
+    estadual: { label: "Estadual", bg: "bg-yellow-500/10", text: "text-yellow-700", dot: "bg-yellow-500" },
+    nacional: { label: "Nacional", bg: "bg-orange-500/10", text: "text-orange-700", dot: "bg-orange-500" },
 };
 
 export default function CalendarioPage() {

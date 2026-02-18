@@ -25,10 +25,10 @@ const MESES = [
 ];
 
 const CATEGORIAS = [
-    { value: "grupo", label: "Grupo de Oração", color: "bg-brand-blue" },
-    { value: "diocesano", label: "Diocesano", color: "bg-blue-500" },
-    { value: "estadual", label: "Estadual", color: "bg-blue-400" },
-    { value: "nacional", label: "Nacional", color: "bg-blue-300" },
+    { value: "grupo", label: "Grupo de Oração", color: "bg-blue-600" },
+    { value: "diocesano", label: "Diocesano", color: "bg-green-600" },
+    { value: "estadual", label: "Estadual", color: "bg-yellow-500" },
+    { value: "nacional", label: "Nacional", color: "bg-orange-500" },
 ];
 
 export default function CalendarioAdminPage() {
