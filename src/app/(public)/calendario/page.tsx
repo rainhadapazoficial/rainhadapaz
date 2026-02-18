@@ -70,7 +70,7 @@ export default function CalendarioPage() {
                         <Calendar className="w-4 h-4" />
                         Grupo Rainha da Paz
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-bold mb-6 italic text-brand-gold">Calendário do Grupo de Oração</h1>
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6 italic text-brand-gold">Calendário do Grupo de Oração Rainha da Paz</h1>
                     <p className="text-xl text-blue-100 italic">
                         Acompanhe todos os eventos do Grupo Rainha da Paz e da Renovação Carismática Católica.
                     </p>
