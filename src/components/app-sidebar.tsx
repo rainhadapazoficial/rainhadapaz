@@ -72,11 +72,7 @@ const data = {
             url: "/admin/dashboard/ministerios",
             icon: Flame,
         },
-        {
-            title: "Conselho",
-            url: "/admin/dashboard/conselho",
-            icon: Users,
-        },
+
         {
             title: "Configurações",
             url: "/admin/dashboard/configuracoes",
