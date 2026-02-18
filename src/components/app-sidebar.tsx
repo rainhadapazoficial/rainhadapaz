@@ -30,20 +30,11 @@ const data = {
             icon: Newspaper,
         },
         {
-            title: "Notícias",
-            url: "/admin/dashboard/noticias",
-            icon: Newspaper,
-        },
-        {
             title: "Banner Início",
             url: "/admin/dashboard/banners",
             icon: Monitor,
         },
-        {
-            title: "Grupos de Oração",
-            url: "/admin/dashboard/grupos",
-            icon: Heart,
-        },
+
         {
             title: "Festa do Rei Jesus",
             url: "/admin/dashboard/festa-rei-jesus",

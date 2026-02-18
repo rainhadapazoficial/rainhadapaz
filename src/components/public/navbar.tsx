@@ -28,7 +28,7 @@ const defaultNavLinks: NavItem[] = [
             { name: "Conselho", href: "/quem-somos/conselho" },
         ]
     },
-    { name: "Grupos", href: "/grupos" },
+
     { name: "Ministérios", href: "/ministerios" },
     {
         name: "Formação",
