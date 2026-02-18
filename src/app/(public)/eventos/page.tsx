@@ -31,22 +31,22 @@ export default async function EventosPage() {
     // Fallback mock data if DB is empty
     const displayEvents = events.length > 0 ? events : [
         {
-            id: 1,
-            title: "Seminário de Vida no Espírito Santo",
-            description: "Um final de semana de profunda experiência com o amor de Deus e os dons do Espírito.",
-            date: "15-17 Março, 2024",
-            time: "19:00 - 21:00",
-            location: "Salão Paroquial - Catedral Sagrado Coração de Jesus",
-            category: "Retiro"
+            id: 'mock1',
+            title: "Seminário de Vida Rainha da Paz",
+            description: "Início da nossa caminhada de 8 semanas de Seminário de Vida no Espírito Santo.",
+            date: "2026-03-07",
+            time: "19:30",
+            location: "Matriz da Paróquia Santo Antônio",
+            category: "Seminário"
         },
         {
-            id: 2,
-            title: "Noite de Louvor e Adoração",
-            description: "Momento de profunda entrega e louvor com a presença do Ministério de Música Diocesano.",
-            date: "05 Abril, 2024",
-            time: "19:30 - 21:30",
-            location: "Centro de Eventos da Diocese",
-            category: "Oração"
+            id: 'mock2',
+            title: "Experiência de Oração Rainha da Paz (Dia 1)",
+            description: "Um final de semana de profunda imersão e oração.",
+            date: "2026-05-09",
+            time: "13:30",
+            location: "Matriz da Paróquia Santo Antônio",
+            category: "Retiro"
         },
     ];
 
@@ -104,6 +104,17 @@ export default async function EventosPage() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Weekly Meetings Information */}
+                    <div className="mt-20 p-12 bg-white rounded-[3rem] border-2 border-dashed border-brand-gold/30 text-center">
+                        <h2 className="text-3xl font-bold text-brand-blue italic mb-6">Nossos Encontros Semanais</h2>
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="bg-brand-blue/5 px-8 py-4 rounded-2xl">
+                                <p className="text-xl font-bold text-brand-blue">Toda Quarta-feira</p>
+                                <p className="text-gray-600 mt-1">Às 19:30 na Matriz da Paróquia Santo Antônio</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
