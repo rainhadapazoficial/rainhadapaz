@@ -10,6 +10,16 @@ export const metadata: Metadata = {
 
 export const revalidate = 60; // Revalidate every minute
 
+async function getJubileuSettings() {
+    const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'jubileu_settings')
+        .single();
+
+    return data?.value || null;
+}
+
 async function getJubileuPosts() {
     // 1. Find category ID for 'jubileu-de-ouro'
     const { data: cat } = await supabase
@@ -36,6 +46,28 @@ async function getJubileuPosts() {
 
 export default async function JubileuPage() {
     const posts = await getJubileuPosts();
+    const settings = await getJubileuSettings();
+
+    // Fallback data
+    const parish = settings?.parish || {
+        title: "A Paróquia Santo Antônio",
+        description: "Matriz da Diocese de Sinop, a Paróquia Santo Antônio é o coração espiritual de nossa cidade...",
+        image_url: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2000"
+    };
+
+    const parson = settings?.parson || {
+        name: "Pe. Roberto J. Gottardo, SJ",
+        title: "Companhia de Jesus (Jesuítas)",
+        bio: "Com sabedoria e acolhimento, Padre Roberto conduz nossa Paróquia...",
+        quote: "O Jubileu é um tempo de memória, mas sobretudo de esperança...",
+        image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwaR_9Bv_fG2TiaD0WUK4hT9pP6nEq_3mI6A&s"
+    };
+
+    const history = settings?.history || {
+        title: "50 Anos de História",
+        description: "De um pequeno grupo de amigos a um dos maiores movimentos de fé de Sinop...",
+        image_url: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=1000"
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -118,12 +150,12 @@ export default async function JubileuPage() {
                             <div className="inline-block px-4 py-1 bg-brand-blue/10 text-brand-blue rounded-full text-sm font-bold uppercase tracking-widest">
                                 Nossa Casa
                             </div>
-                            <h2 className="text-4xl font-bold text-brand-blue italic">A Paróquia Santo Antônio</h2>
+                            <h2 className="text-4xl font-bold text-brand-blue italic">{parish.title}</h2>
                             <p className="text-gray-600 leading-relaxed text-lg">
-                                Matriz da Diocese de Sinop, a Paróquia Santo Antônio é o coração espiritual de nossa cidade. É aqui, sob o manto de Santo Antônio, que o Grupo de Oração Rainha da Paz encontrou sua sede e floresceu ao longo de cinco décadas.
+                                {parish.description}
                             </p>
                             <div className="rounded-[2.5rem] overflow-hidden shadow-xl border-4 border-white">
-                                <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2000" alt="Paróquia Santo Antônio" className="w-full h-[300px] object-cover" />
+                                <img src={parish.image_url} alt={parish.title} className="w-full h-[300px] object-cover" />
                             </div>
                         </div>
 
@@ -135,18 +167,18 @@ export default async function JubileuPage() {
                             <h2 className="text-4xl font-bold text-brand-blue italic">O Pároco</h2>
                             <div className="flex flex-col md:flex-row gap-8 items-start">
                                 <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-lg shrink-0 border-2 border-brand-gold/20">
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwaR_9Bv_fG2TiaD0WUK4hT9pP6nEq_3mI6A&s" alt="Padre Roberto J. Gottardo" className="w-full h-full object-cover" />
+                                    <img src={parson.image_url} alt={parson.name} className="w-full h-full object-cover" />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-bold text-brand-blue mb-2">Pe. Roberto J. Gottardo, SJ</h3>
-                                    <p className="text-gray-500 font-medium mb-4 italic text-sm">Companhia de Jesus (Jesuítas)</p>
+                                    <h3 className="text-2xl font-bold text-brand-blue mb-2">{parson.name}</h3>
+                                    <p className="text-gray-500 font-medium mb-4 italic text-sm">{parson.title}</p>
                                     <p className="text-gray-600 leading-relaxed">
-                                        Com sabedoria e acolhimento, Padre Roberto conduz nossa Paróquia incentivando a vida comunitária e a força dos movimentos e grupos de oração, como o Rainha da Paz.
+                                        {parson.bio}
                                     </p>
                                 </div>
                             </div>
                             <div className="p-6 bg-white rounded-3xl border shadow-sm italic text-gray-500 text-sm">
-                                "O Jubileu é um tempo de memória, mas sobretudo de esperança. Olhamos para o passado com gratidão para construir um futuro com fé."
+                                &quot;{parson.quote}&quot;
                             </div>
                         </div>
                     </div>
@@ -158,9 +190,9 @@ export default async function JubileuPage() {
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-gold/10 skew-x-12 translate-x-20" />
                 <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
                     <div className="max-w-2xl">
-                        <h2 className="text-5xl font-bold mb-6 italic text-brand-gold">50 Anos de História</h2>
+                        <h2 className="text-5xl font-bold mb-6 italic text-brand-gold">{history.title}</h2>
                         <p className="text-xl text-blue-100 leading-relaxed mb-8">
-                            De um pequeno grupo de amigos a um dos maiores movimentos de fé de Sinop. Descubra os marcos, as pessoas e as graças que definiram nossa trajetória.
+                            {history.description}
                         </p>
                         <Link href="/especiais/jubileu-de-ouro/historia">
                             <button className="bg-brand-gold text-brand-blue font-bold px-10 py-4 rounded-full hover:scale-105 transition-all shadow-xl shadow-brand-gold/20 flex items-center gap-2">
@@ -172,7 +204,7 @@ export default async function JubileuPage() {
                     <div className="relative group">
                         <div className="absolute -inset-4 bg-brand-gold/20 rounded-[3rem] blur-2xl group-hover:blur-3xl transition-all" />
                         <div className="w-80 h-80 md:w-96 md:h-96 rounded-[3rem] overflow-hidden border-8 border-brand-blue/50 relative">
-                            <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=1000" alt="História do Grupo" className="w-full h-full object-cover" />
+                            <img src={history.image_url} alt={history.title} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-brand-blue to-transparent" />
                             <div className="absolute bottom-10 left-10">
                                 <span className="text-6xl font-black text-brand-gold/30">1976</span>

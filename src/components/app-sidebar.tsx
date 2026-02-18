@@ -49,6 +49,7 @@ const data = {
             title: "Especiais",
             items: [
                 { title: "Jubileu de Ouro", url: "/admin/dashboard/noticias?category=jubileu-de-ouro", icon: Sparkles },
+                { title: "Gerenciar Jubileu", url: "/admin/dashboard/especiais/jubileu", icon: Settings },
             ]
         },
         {

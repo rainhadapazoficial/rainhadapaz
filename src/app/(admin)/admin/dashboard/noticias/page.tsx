@@ -61,6 +61,7 @@ function NoticiasAdminContent() {
 
     useEffect(() => {
         fetchPosts(filterCategory);
+        fetchCategories();
     }, [filterCategory]);
 
     async function fetchCategories() {
