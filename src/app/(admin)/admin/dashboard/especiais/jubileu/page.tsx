@@ -13,6 +13,7 @@ import {
     Plus, Trash2, ChevronUp, ChevronDown, History
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export default function JubileuEditorPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -176,17 +177,13 @@ export default function JubileuEditorPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL da Imagem</label>
-                                    <div className="flex gap-4">
-                                        <Input
-                                            value={settings.parish.image_url}
-                                            onChange={(e) => updateParish('image_url', e.target.value)}
-                                            className="rounded-xl h-12 bg-gray-50"
-                                        />
-                                        <div className="w-20 h-12 rounded-xl border overflow-hidden shrink-0 bg-gray-100">
-                                            <img src={settings.parish.image_url} className="w-full h-full object-cover" />
-                                        </div>
-                                    </div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imagem da Paróquia</label>
+                                    <ImageUpload
+                                        value={settings.parish.image_url}
+                                        onChange={(url) => updateParish('image_url', url)}
+                                        onRemove={() => updateParish('image_url', '')}
+                                        folder="especiais/jubileu"
+                                    />
                                 </div>
                             </div>
                         </CardContent>
@@ -220,17 +217,13 @@ export default function JubileuEditorPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL da Foto</label>
-                                        <div className="flex gap-4">
-                                            <Input
-                                                value={settings.parson.image_url}
-                                                onChange={(e) => updateParson('image_url', e.target.value)}
-                                                className="rounded-xl h-12 bg-gray-50"
-                                            />
-                                            <div className="w-12 h-12 rounded-full border overflow-hidden shrink-0">
-                                                <img src={settings.parson.image_url} className="w-full h-full object-cover" />
-                                            </div>
-                                        </div>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Foto do Pároco</label>
+                                        <ImageUpload
+                                            value={settings.parson.image_url}
+                                            onChange={(url) => updateParson('image_url', url)}
+                                            onRemove={() => updateParson('image_url', '')}
+                                            folder="especiais/jubileu"
+                                        />
                                     </div>
                                 </div>
                                 <div className="space-y-6">
@@ -341,17 +334,13 @@ export default function JubileuEditorPage() {
                                                     </div>
                                                     <div className="space-y-4">
                                                         <div className="space-y-2">
-                                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL da Imagem Histórica</label>
-                                                            <div className="flex gap-4">
-                                                                <Input
-                                                                    value={item.image}
-                                                                    onChange={(e) => updateTimelineItem(index, 'image', e.target.value)}
-                                                                    className="rounded-xl h-12 overflow-hidden"
-                                                                />
-                                                                <div className="w-20 h-12 rounded-xl border overflow-hidden shrink-0 bg-gray-50">
-                                                                    <img src={item.image} className="w-full h-full object-cover" />
-                                                                </div>
-                                                            </div>
+                                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imagem Histórica</label>
+                                                            <ImageUpload
+                                                                value={item.image}
+                                                                onChange={(url) => updateTimelineItem(index, 'image', url)}
+                                                                onRemove={() => updateTimelineItem(index, 'image', '')}
+                                                                folder="especiais/jubileu"
+                                                            />
                                                         </div>
                                                         <div className="flex justify-end pt-8">
                                                             <Button

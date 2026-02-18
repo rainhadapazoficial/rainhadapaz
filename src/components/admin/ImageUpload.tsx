@@ -11,9 +11,10 @@ interface ImageUploadProps {
     onChange: (url: string) => void;
     onRemove: () => void;
     bucket?: string;
+    folder?: string;
 }
 
-export function ImageUpload({ value, onChange, onRemove, bucket = "media" }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, onRemove, bucket = "media", folder = "noticias" }: ImageUploadProps) {
     const [isUploading, setIsUploading] = useState(false);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +25,7 @@ export function ImageUpload({ value, onChange, onRemove, bucket = "media" }: Ima
         try {
             const fileExt = file.name.split(".").pop();
             const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-            const filePath = `noticias/${fileName}`;
+            const filePath = `${folder}/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from(bucket)
