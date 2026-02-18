@@ -44,6 +44,12 @@ const defaultNavLinks: NavItem[] = [
             { name: "Calendário", href: "/calendario" },
         ]
     },
+    {
+        name: "Especiais",
+        children: [
+            { name: "Jubileu de Ouro", href: "/especiais/jubileu-de-ouro" },
+        ]
+    },
     { name: "Contato", href: "/contato" },
 ];
 

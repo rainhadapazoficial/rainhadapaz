@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,17 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Badge } from "@/components/ui/badge";
 
 export default function NoticiasAdminPage() {
+    return (
+        <Suspense fallback={<div className="p-8 flex items-center justify-center"><Loader2 className="animate-spin" /></div>}>
+            <NoticiasAdminContent />
+        </Suspense>
+    );
+}
+
+function NoticiasAdminContent() {
+    const searchParams = useSearchParams();
+    const filterCategory = searchParams.get("category");
+
     const [posts, setPosts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,9 +60,8 @@ export default function NoticiasAdminPage() {
     const [shareTon8n, setShareTon8n] = useState(true);
 
     useEffect(() => {
-        fetchPosts();
-        fetchCategories();
-    }, []);
+        fetchPosts(filterCategory);
+    }, [filterCategory]);
 
     async function fetchCategories() {
         const { data, error } = await supabase
@@ -89,12 +100,27 @@ export default function NoticiasAdminPage() {
         else fetchCategories();
     }
 
-    async function fetchPosts() {
+    async function fetchPosts(categorySlug?: string | null) {
         setIsLoading(true);
-        const { data, error } = await supabase
+        let query = supabase
             .from("posts")
             .select("*")
             .order("created_at", { ascending: false });
+
+        if (categorySlug) {
+            // Find category ID by slug
+            const { data: cat } = await supabase
+                .from("post_categories")
+                .select("id")
+                .eq("slug", categorySlug)
+                .single();
+
+            if (cat) {
+                query = query.eq("category_id", cat.id);
+            }
+        }
+
+        const { data, error } = await query;
 
         if (error) console.error("Error fetching posts:", error);
         else setPosts(data || []);
@@ -164,7 +190,7 @@ export default function NoticiasAdminPage() {
             setCategoryId("");
             setSeoTitle("");
             setSeoExcerpt("");
-            fetchPosts();
+            fetchPosts(filterCategory);
 
             if (shareTon8n) {
                 shareToSocialMedia({
@@ -237,9 +263,11 @@ export default function NoticiasAdminPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-brand-blue italic flex items-center gap-3">
                         <FileText className="w-8 h-8 text-brand-gold" />
-                        Gerenciador Profissional
+                        {filterCategory === 'jubileu-de-ouro' ? 'Especial: Jubileu de Ouro' : 'Gerenciador Profissional'}
                     </h1>
-                    <p className="text-gray-500">Crie conteúdos com auxílio de IA e SEO avançado.</p>
+                    <p className="text-gray-500">
+                        {filterCategory === 'jubileu-de-ouro' ? 'Gerenciando conteúdos exclusivos dos 50 anos.' : 'Crie conteúdos com auxílio de IA e SEO avançado.'}
+                    </p>
                 </div>
                 <div className="flex gap-4">
                     <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users, Flame, History, Globe, GraduationCap } from "lucide-react";
+import { Newspaper, Calendar, LayoutDashboard, Mail, LogOut, Settings, Heart, Image as ImageIcon, Monitor, Crown, Users, Flame, History, Globe, GraduationCap, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -44,6 +44,12 @@ const data = {
             title: "Calendário",
             url: "/admin/dashboard/calendario",
             icon: Calendar,
+        },
+        {
+            title: "Especiais",
+            items: [
+                { title: "Jubileu de Ouro", url: "/admin/dashboard/noticias?category=jubileu-de-ouro", icon: Sparkles },
+            ]
         },
         {
             title: "Páginas",
@@ -118,6 +124,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <div className="space-y-1">
                         <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Principal</div>
                         {data.navMain.filter(item => !item.items).map((item: any) => (
+                            <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
+                                    <Link href={item.url}>
+                                        <item.icon className="group-hover:text-brand-gold transition-colors" />
+                                        <span className="font-medium">{item.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </div>
+
+                    <div className="space-y-1">
+                        <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Especiais</div>
+                        {data.navMain.find(i => i.title === "Especiais")?.items?.map((item: any) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton tooltip={item.title} asChild className="h-12 rounded-xl hover:bg-brand-blue/5 hover:text-brand-blue transition-all group">
                                     <Link href={item.url}>

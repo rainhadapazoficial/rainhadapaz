@@ -13,9 +13,23 @@ ALTER TABLE posts ADD COLUMN IF NOT EXISTS category_id BIGINT REFERENCES post_ca
 ALTER TABLE post_categories ENABLE ROW LEVEL SECURITY;
 
 -- Policies for post_categories
-CREATE POLICY "Allow public read categories" ON post_categories FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated manage categories" ON post_categories 
-FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies 
+        WHERE tablename = 'post_categories' AND policyname = 'Allow public read categories'
+    ) THEN
+        CREATE POLICY "Allow public read categories" ON post_categories FOR SELECT USING (true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies 
+        WHERE tablename = 'post_categories' AND policyname = 'Allow authenticated manage categories'
+    ) THEN
+        CREATE POLICY "Allow authenticated manage categories" ON post_categories 
+        FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    END IF;
+END $$;
 
 -- Update existing policies for posts to allow authenticated management if needed
 -- (Usually handled by master_setup.sql, but ensuring here)
