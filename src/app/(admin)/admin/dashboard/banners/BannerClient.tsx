@@ -211,7 +211,7 @@ export function BannerClient({ initialData }: BannerClientProps) {
                             </Button>
 
                             {status === 'success' && (
-                                <div className="flex items-center gap-2 text-emerald-600 font-bold animate-in fade-in slide-in-from-left duration-300">
+                                <div className="flex items-center gap-2 text-blue-600 font-bold animate-in fade-in slide-in-from-left duration-300">
                                     <CheckCircle2 className="w-5 h-5" />
                                     Tudo salvo!
                                 </div>

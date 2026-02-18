@@ -11,7 +11,7 @@ export function Footer() {
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
                             <img
-                                src="/logo-diocese.png"
+                                src="/logo-rainha.jpg"
                                 alt="Grupo Rainha da Paz Logo"
                                 className="w-14 h-14 object-contain"
                             />

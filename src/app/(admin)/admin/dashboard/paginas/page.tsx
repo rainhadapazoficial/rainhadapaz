@@ -70,7 +70,7 @@ export default function PaginasAdminPage() {
                                     <div className="flex items-center gap-4 text-xs text-gray-400">
                                         <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold uppercase">/{page.slug}</span>
                                         <span>Submenu: <strong className="text-brand-blue">{page.parent_menu || 'Nenhum'}</strong></span>
-                                        <span className={page.is_published ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                                        <span className={page.is_published ? "text-blue-500 font-bold" : "text-amber-500 font-bold"}>
                                             {page.is_published ? "Publicado" : "Rascunho"}
                                         </span>
                                     </div>

@@ -26,9 +26,9 @@ const MESES = [
 
 const CATEGORIAS = [
     { value: "grupo", label: "Grupo de Oração", color: "bg-brand-blue" },
-    { value: "diocesano", label: "Diocesano", color: "bg-brand-blue" },
-    { value: "estadual", label: "Estadual", color: "bg-red-600" },
-    { value: "nacional", label: "Nacional", color: "bg-gray-600" },
+    { value: "diocesano", label: "Diocesano", color: "bg-blue-500" },
+    { value: "estadual", label: "Estadual", color: "bg-blue-400" },
+    { value: "nacional", label: "Nacional", color: "bg-blue-300" },
 ];
 
 export default function CalendarioAdminPage() {
@@ -150,7 +150,7 @@ export default function CalendarioAdminPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-brand-blue italic flex items-center gap-3">
                         <Calendar className="w-8 h-8 text-brand-gold" />
-                        Calendário Diocesano
+                        Calendário do Grupo de Oração
                     </h1>
                     <p className="text-gray-500">Gerencie o calendário de eventos da diocese. calendario do grupo de oracao rainha da paz</p>
                 </div>

@@ -49,7 +49,7 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "Rainha da Paz",
               "url": "https://rainha-da-paz.vercel.app/",
-              "logo": "https://rainha-da-paz.vercel.app/logo-diocese.png",
+              "logo": "https://rainha-da-paz.vercel.app/logo-rainha.jpg",
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": "+5566981365456",

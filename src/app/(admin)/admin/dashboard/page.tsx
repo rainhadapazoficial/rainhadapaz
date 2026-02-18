@@ -80,7 +80,7 @@ export default function DashboardPage() {
     const kpis = [
         { title: "Notícias", value: stats.posts, icon: Newspaper, color: "text-blue-600", bg: "bg-blue-50" },
         { title: "Eventos", value: stats.events, icon: Calendar, color: "text-brand-gold", bg: "bg-amber-50" },
-        { title: "Visualizações Totais", value: stats.totalViews.toLocaleString(), icon: Activity, color: "text-emerald-600", bg: "bg-emerald-50" },
+        { title: "Visualizações Totais", value: stats.totalViews.toLocaleString(), icon: Activity, color: "text-blue-600", bg: "bg-blue-50" },
         { title: "Grupos de Oração", value: stats.groups, icon: Users, color: "text-indigo-600", bg: "bg-indigo-50" },
     ];
 
@@ -102,7 +102,7 @@ export default function DashboardPage() {
                 </div>
                 {stats.lastSync && (
                     <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 italic">
-                        <div className={`p-1.5 rounded-full ${stats.lastSync.status === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                        <div className={`p-1.5 rounded-full ${stats.lastSync.status === 'success' ? 'bg-blue-50 text-blue-600' : 'bg-rose-50 text-rose-600'}`}>
                             {stats.lastSync.status === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                         </div>
                         <div className="text-[10px]">
@@ -159,7 +159,7 @@ export default function DashboardPage() {
                                     cursor={{ fill: '#f8f8f8' }}
                                     contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '15px' }}
                                 />
-                                <Bar dataKey="views" fill="#004d2c" radius={[0, 15, 15, 0]} barSize={30} />
+                                <Bar dataKey="views" fill="#1e3a8a" radius={[0, 15, 15, 0]} barSize={30} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

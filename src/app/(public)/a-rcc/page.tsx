@@ -242,7 +242,7 @@ export default function ARCCPage() {
                         </div>
 
                         <div className="space-y-6">
-                            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto">
+                            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mx-auto">
                                 <Globe className="w-10 h-10" />
                             </div>
                             <h3 className="text-3xl font-bold italic text-brand-blue">A Cultura</h3>

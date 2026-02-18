@@ -119,7 +119,7 @@ export default function QuemSomosPage() {
                         </div>
 
                         <div className="bg-white p-12 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all border border-gray-100 group">
-                            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-8 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                                 <Heart className="w-8 h-8" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4 text-brand-blue">{data.values.title}</h3>

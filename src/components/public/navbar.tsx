@@ -25,7 +25,7 @@ const defaultNavLinks: NavItem[] = [
             { name: "Sobre Nós", href: "/quem-somos" },
             { name: "O Grupo", href: "/a-rcc" },
             { name: "Nossa História", href: "/historia-da-rcc" },
-            { name: "Gestão", href: "/quem-somos/conselho" },
+            { name: "Gestão", href: "/quem-somos/gestao" },
         ]
     },
 
@@ -101,7 +101,7 @@ export function Navbar() {
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/" className="flex items-center gap-3">
                             <img
-                                src="/logo-diocese.png"
+                                src="/logo-rainha.jpg"
                                 alt="Grupo Rainha da Paz Logo"
                                 className="w-24 h-24 object-contain"
                             />
@@ -154,7 +154,7 @@ export function Navbar() {
                         </div>
 
                         <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
-                            <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white gap-2 rounded-full px-6">
+                            <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white gap-2 rounded-full px-6">
                                 <MessageCircle className="w-4 h-4 fill-current" />
                                 Fale agora conosco
                             </Button>
@@ -228,7 +228,7 @@ export function Navbar() {
                             </a>
                         </div>
                         <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)} className="block">
-                            <Button className="w-full bg-[#25D366] text-white gap-2 rounded-xl py-6 text-lg">
+                            <Button className="w-full bg-brand-blue text-white gap-2 rounded-xl py-6 text-lg">
                                 <MessageCircle className="w-5 h-5 fill-current" />
                                 Fale agora conosco
                             </Button>

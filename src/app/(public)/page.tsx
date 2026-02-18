@@ -10,7 +10,7 @@ async function getLatestPosts() {
     const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .order('date', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(3);
     if (error) console.error('Error fetching latest posts:', error);
     return data || [];
@@ -26,32 +26,9 @@ async function getLatestEvents() {
     return data || [];
 }
 
-async function getLatestGroups() {
-    const { data, error } = await supabase
-        .from('groups')
-        .select('id, nome, cidade, dia, local, slug');
 
-    if (error) {
-        console.error('Error fetching latest groups:', error);
-        return [];
-    }
 
-    if (!data) return [];
 
-    // Shuffle and pick 3
-    const shuffled = [...data].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 3);
-}
-
-async function getLatestMinistries() {
-    const { data, error } = await supabase
-        .from('ministerios')
-        .select('id, nome, descricao, coordenador, cor')
-        .order('ordem', { ascending: true })
-        .limit(3);
-    if (error) console.error('Error fetching latest ministries:', error);
-    return data || [];
-}
 
 async function getHomeBanners() {
     const { data } = await supabase
@@ -76,11 +53,9 @@ async function getHomeBanners() {
 }
 
 export default async function HomePage() {
-    const [latestPosts, latestEvents, latestGroups, latestMinistries, banners] = await Promise.all([
+    const [latestPosts, latestEvents, banners] = await Promise.all([
         getLatestPosts(),
         getLatestEvents(),
-        getLatestGroups(),
-        getLatestMinistries(),
         getHomeBanners()
     ]);
 
@@ -147,111 +122,9 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* Grupos de Oração Section */}
-            <section className="py-24 bg-brand-blue/5 text-center border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="mb-16">
-                        <h2 className="text-4xl font-bold text-brand-blue italic">Grupos de Oração</h2>
-                        <p className="text-gray-600 mt-4 max-w-2xl mx-auto italic">"Onde dois ou três estiverem reunidos em meu nome, eu estou lá no meio deles." (Mt 18, 20)</p>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                        {latestGroups.length > 0 ? (
-                            latestGroups.map((group) => (
-                                <div key={group.id} className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 group hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all duration-500">
-                                            <Users className="w-8 h-8" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-brand-blue italic leading-tight">{group.nome}</h3>
-                                            <p className="text-brand-gold font-bold flex items-center gap-1 uppercase tracking-widest text-[10px] mt-1">
-                                                <MapPin className="w-3 h-3" /> {group.cidade}
-                                            </p>
-                                        </div>
-                                    </div>
 
-                                    <div className="space-y-4 mb-8 text-gray-600">
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
-                                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                                <Clock className="w-4 h-4 text-brand-blue" />
-                                            </div>
-                                            <span className="text-sm font-medium">{group.dia}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
-                                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                                <MapPin className="w-4 h-4 text-brand-blue" />
-                                            </div>
-                                            <span className="text-sm font-medium line-clamp-1">{group.local}</span>
-                                        </div>
-                                    </div>
 
-                                    <Link href="/grupos" className="w-full">
-                                        <Button className="w-full rounded-2xl bg-brand-blue hover:bg-brand-gold text-white transition-all h-12 font-bold shadow-md shadow-brand-blue/10">
-                                            Ver Detalhes do Grupo
-                                        </Button>
-                                    </Link>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="col-span-3 py-12 text-gray-400 italic">Nenhum grupo cadastrado.</div>
-                        )}
-                    </div>
-
-                    <Link href="/grupos" className="mt-16 inline-block">
-                        <Button size="lg" className="bg-brand-blue text-white px-12 rounded-full h-14 shadow-xl hover:scale-105 transition-all font-bold">
-                            Encontrar Grupo Próximo
-                        </Button>
-                    </Link>
-                </div>
-            </section>
-
-            {/* Ministérios Section */}
-            <section className="py-24 bg-white text-center border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="mb-16">
-                        <h2 className="text-4xl font-bold text-brand-blue italic">Nossos Ministérios</h2>
-                        <p className="text-gray-600 mt-4 max-w-2xl mx-auto italic">Servindo com alegria e guiados pelo Espírito Santo em todas as frentes de missão.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                        {latestMinistries.length > 0 ? (
-                            latestMinistries.map((min) => (
-                                <div key={min.id} className="bg-white p-10 rounded-[4rem] shadow-sm border border-gray-100/50 group hover:shadow-2xl transition-all duration-700 flex flex-col relative overflow-hidden">
-                                    <div className={`absolute top-0 right-0 w-32 h-32 ${min.cor || 'bg-brand-blue/5'} opacity-10 rounded-bl-full transition-all group-hover:scale-150 group-hover:opacity-20`} />
-
-                                    <div className={`w-16 h-16 rounded-3xl mb-8 ${min.cor || 'bg-brand-blue/5 text-brand-blue'} flex items-center justify-center group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500`}>
-                                        <Heart className="w-8 h-8" />
-                                    </div>
-
-                                    <h3 className="text-2xl font-bold text-brand-blue mb-4 italic group-hover:text-brand-gold transition-colors">{min.nome}</h3>
-                                    <p className="text-gray-500 text-sm italic mb-10 flex-1 line-clamp-4 leading-relaxed">"{min.descricao}"</p>
-
-                                    <div className="pt-8 border-t border-gray-50 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-[10px] uppercase font-bold text-gray-400 tracking-tighter">Coordenação Atual</p>
-                                            <p className="font-bold text-brand-blue text-base">{min.coordenador || 'A definir'}</p>
-                                        </div>
-                                        <Link href="/ministerios">
-                                            <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl bg-brand-gold/5 text-brand-gold group-hover:bg-brand-gold group-hover:text-white transition-all shadow-sm">
-                                                <ChevronRight className="w-6 h-6" />
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="col-span-3 py-12 text-gray-400 italic">Nenhum ministério cadastrado.</div>
-                        )}
-                    </div>
-
-                    <Link href="/ministerios" className="mt-16 inline-block">
-                        <Button variant="outline" className="border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white px-12 rounded-full h-14 font-extrabold transition-all tracking-wider">
-                            EXPLORAR TODOS OS MINISTÉRIOS
-                        </Button>
-                    </Link>
-                </div>
-            </section>
 
             {/* Upcoming Events */}
             <section className="py-24 bg-gray-50 border-t border-gray-100">

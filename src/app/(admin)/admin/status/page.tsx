@@ -5,7 +5,7 @@ async function checkSupabase() {
     try {
         const { error } = await supabase.from('events').select('id').limit(1);
         if (error) throw error;
-        return { status: "Online", icon: <CheckCircle2 className="text-green-500" />, color: "text-green-500" };
+        return { status: "Online", icon: <CheckCircle2 className="text-blue-500" />, color: "text-blue-500" };
     } catch (e) {
         return { status: "Erro de Conexão", icon: <XCircle className="text-red-500" />, color: "text-red-500" };
     }
@@ -82,7 +82,7 @@ export default async function StatusPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             {smtpConfigured ? (
-                                <><CheckCircle2 className="text-green-500" /><span className="text-xl font-bold text-green-500">Configurado</span></>
+                                <><CheckCircle2 className="text-blue-500" /><span className="text-xl font-bold text-blue-500">Configurado</span></>
                             ) : (
                                 <><AlertTriangle className="text-amber-500" /><span className="text-xl font-bold text-amber-500">Pendente</span></>
                             )}
@@ -97,7 +97,7 @@ export default async function StatusPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             {n8nConfigured ? (
-                                <><CheckCircle2 className="text-green-500" /><span className="text-xl font-bold text-green-500">Ativa</span></>
+                                <><CheckCircle2 className="text-blue-500" /><span className="text-xl font-bold text-blue-500">Ativa</span></>
                             ) : (
                                 <><AlertTriangle className="text-amber-500" /><span className="text-xl font-bold text-amber-500">Pendente</span></>
                             )}
@@ -124,7 +124,7 @@ export default async function StatusPage() {
                                     <td className="px-6 py-4 font-mono text-sm">{table.name}</td>
                                     <td className="px-6 py-4">
                                         {table.exists ? (
-                                            <span className="flex items-center gap-1.5 text-green-600 text-sm font-medium">
+                                            <span className="flex items-center gap-1.5 text-blue-600 text-sm font-medium">
                                                 <CheckCircle2 className="w-4 h-4" /> Presente
                                             </span>
                                         ) : (
@@ -166,7 +166,7 @@ export default async function StatusPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             {log.status === 'success' ? (
-                                                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase tracking-wider">
+                                                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-bold uppercase tracking-wider">
                                                     Sucesso
                                                 </span>
                                             ) : (

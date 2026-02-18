@@ -42,7 +42,7 @@ export default function NoticiasAdminPage() {
         const { data, error } = await supabase
             .from("posts")
             .select("*")
-            .order("date", { ascending: false });
+            .order("created_at", { ascending: false });
 
         if (error) console.error("Error fetching posts:", error);
         else setPosts(data || []);
@@ -347,7 +347,7 @@ export default function NoticiasAdminPage() {
                                 </div>
                                 <div className="flex justify-between items-center pt-6 border-t border-gray-50">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                                        <div className="w-2 h-2 rounded-full bg-blue-500" />
                                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Publicado em {post.date}</span>
                                     </div>
                                     <Button variant="ghost" size="icon" onClick={() => deletePost(post)} className="text-red-300 hover:text-red-500 hover:bg-red-50 rounded-xl whitespace-nowrap">

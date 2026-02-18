@@ -74,7 +74,7 @@ const data = {
         },
         {
             title: "Gestão",
-            url: "/admin/dashboard/conselho",
+            url: "/admin/dashboard/gestao",
             icon: Users,
         },
 
@@ -101,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <div className="flex items-center gap-3 px-3">
                             <img
-                                src="/logo-diocese.png"
+                                src="/logo-rainha.jpg"
                                 alt="Logo Rainha da Paz"
                                 className="w-10 h-10 rounded-xl object-contain bg-white p-1 shadow-lg"
                             />

@@ -41,7 +41,7 @@ export default function ConfigPage() {
                 {/* Integration Status Card */}
                 <Card className="rounded-[2.5rem] border-none shadow-sm bg-white p-8 space-y-6">
                     <div className="flex items-center gap-3">
-                        <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                        <ShieldCheck className="w-6 h-6 text-blue-500" />
                         <h3 className="text-xl font-bold text-brand-blue italic">Status das Integrações</h3>
                     </div>
 
@@ -51,14 +51,14 @@ export default function ConfigPage() {
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 <span className="text-sm font-bold text-gray-700">Supabase Database</span>
                             </div>
-                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase">Conectado</span>
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full uppercase">Conectado</span>
                         </div>
                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                             <div className="flex items-center gap-3">
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                                 <span className="text-sm font-bold text-gray-700">n8n Automation</span>
                             </div>
-                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full uppercase">Ativo</span>
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-3 py-1 rounded-full uppercase">Ativo</span>
                         </div>
                         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                             <div className="flex items-center gap-3">

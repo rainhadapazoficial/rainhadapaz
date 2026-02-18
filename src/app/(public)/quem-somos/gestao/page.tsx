@@ -9,7 +9,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export default function ConselhoPublicPage() {
+export default function GestaoPublicPage() {
     const [mandatos, setMandatos] = useState<any[]>([]);
     const [selectedMandatoId, setSelectedMandatoId] = useState<string | null>(null);
     const [membros, setMembros] = useState<any[]>([]);
@@ -144,7 +144,7 @@ export default function ConselhoPublicPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-center text-gray-400 italic">Nenhum conselheiro fiscal cadastrado.</p>
+                                <p className="text-center text-gray-400 italic">Nenhum membro de ministério cadastrado.</p>
                             )}
                         </div>
                     </>

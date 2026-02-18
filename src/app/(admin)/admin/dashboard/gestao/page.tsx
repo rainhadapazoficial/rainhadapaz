@@ -18,7 +18,7 @@ import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 
-export default function ConselhoAdminPage() {
+export default function GestaoAdminPage() {
     const [activeTab, setActiveTab] = useState<"mandatos" | "membros">("mandatos");
     const [isLoading, setIsLoading] = useState(true);
     const [mandatos, setMandatos] = useState<any[]>([]);
@@ -208,7 +208,7 @@ export default function ConselhoAdminPage() {
                                             <p className="text-sm text-gray-500">{m.ano_inicio} — {m.ano_fim}</p>
                                         </div>
                                         {m.ativo && (
-                                            <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                                            <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
                                                 <CheckCircle className="w-3 h-3" /> Atual
                                             </span>
                                         )}

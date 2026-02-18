@@ -88,7 +88,7 @@ export default function GruposClient() {
             <div
                 className="relative text-white py-24 px-4 overflow-hidden bg-brand-blue"
                 style={{
-                    backgroundImage: `linear-gradient(rgba(0, 77, 44, 0.8), rgba(0, 77, 44, 0.9)), url(${pageSettings.image_url})`,
+                    backgroundImage: `linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.9)), url(${pageSettings.image_url})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                 }}
@@ -200,7 +200,7 @@ export default function GruposClient() {
                                         <div className="pt-6 mt-auto space-y-4">
                                             <div className="flex gap-2 justify-center">
                                                 {group.whatsapp && (
-                                                    <a href={group.whatsapp} target="_blank" rel="noopener noreferrer" className="p-3 bg-green-50 text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition-all transform hover:scale-110">
+                                                    <a href={group.whatsapp} target="_blank" rel="noopener noreferrer" className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110">
                                                         <MessageCircle className="w-5 h-5 fill-current" />
                                                     </a>
                                                 )}
@@ -285,7 +285,7 @@ export default function GruposClient() {
 
                                         <div className="pt-4 flex gap-3">
                                             {selectedGroup.whatsapp && (
-                                                <a href={selectedGroup.whatsapp} target="_blank" rel="noopener noreferrer" className="p-4 bg-green-50 text-green-600 rounded-2xl hover:bg-green-600 hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                                                <a href={selectedGroup.whatsapp} target="_blank" rel="noopener noreferrer" className="p-4 bg-blue-50 text-blue-600 rounded-2xl hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-sm">
                                                     <MessageCircle className="w-6 h-6 fill-current" />
                                                 </a>
                                             )}

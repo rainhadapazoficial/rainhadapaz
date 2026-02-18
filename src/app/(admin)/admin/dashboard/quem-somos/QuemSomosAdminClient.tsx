@@ -89,7 +89,7 @@ export function QuemSomosAdminClient({ initialData }: QuemSomosAdminClientProps)
             </div>
 
             {status === 'success' && (
-                <div className="flex items-center gap-2 p-4 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100 font-bold">
+                <div className="flex items-center gap-2 p-4 bg-blue-50 text-blue-600 rounded-2xl border border-blue-100 font-bold">
                     <CheckCircle2 className="w-5 h-5" />
                     Conteúdo atualizado com sucesso!
                 </div>
@@ -223,7 +223,7 @@ export function QuemSomosAdminClient({ initialData }: QuemSomosAdminClientProps)
                             />
                         </div>
                         <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-emerald-600 font-bold">
+                            <div className="flex items-center gap-2 text-blue-600 font-bold">
                                 <Heart className="w-5 h-5" /> Valores
                             </div>
                             <Textarea

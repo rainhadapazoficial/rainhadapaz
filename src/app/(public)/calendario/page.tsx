@@ -12,9 +12,9 @@ const MESES = [
 
 const CATEGORIAS: Record<string, { label: string; bg: string; text: string; dot: string }> = {
     grupo: { label: "Grupo de Oração", bg: "bg-brand-blue/10", text: "text-brand-blue font-bold", dot: "bg-brand-blue" },
-    diocesano: { label: "Diocesano", bg: "bg-brand-blue/10", text: "text-brand-blue", dot: "bg-brand-blue" },
-    estadual: { label: "Estadual", bg: "bg-red-50", text: "text-red-700", dot: "bg-red-600" },
-    nacional: { label: "Nacional", bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-600" },
+    diocesano: { label: "Diocesano", bg: "bg-blue-500/10", text: "text-blue-600", dot: "bg-blue-500" },
+    estadual: { label: "Estadual", bg: "bg-blue-400/10", text: "text-blue-500", dot: "bg-blue-400" },
+    nacional: { label: "Nacional", bg: "bg-blue-300/10", text: "text-blue-400", dot: "bg-blue-300" },
 };
 
 export default function CalendarioPage() {
@@ -70,7 +70,7 @@ export default function CalendarioPage() {
                         <Calendar className="w-4 h-4" />
                         Grupo Rainha da Paz
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-bold mb-6 italic text-brand-gold">Calendário Diocesano</h1>
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6 italic text-brand-gold">Calendário do Grupo de Oração</h1>
                     <p className="text-xl text-blue-100 italic">
                         Acompanhe todos os eventos do Grupo Rainha da Paz e da Renovação Carismática Católica.
                     </p>
