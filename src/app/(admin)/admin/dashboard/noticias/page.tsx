@@ -306,7 +306,7 @@ export default function NoticiasAdminPage() {
                         setSeoExcerpt("");
                     }
                 }}>
-                    <DialogContent className="max-w-5xl h-[90vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden flex flex-col">
+                    <DialogContent className="sm:max-w-[95vw] h-[95vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden flex flex-col">
                         <form onSubmit={handleSubmit} className="flex flex-col h-full">
                             <DialogHeader className="bg-brand-blue text-white p-6 shrink-0 flex flex-row items-center justify-between">
                                 <DialogTitle className="text-xl font-bold italic text-brand-gold flex items-center gap-2">
