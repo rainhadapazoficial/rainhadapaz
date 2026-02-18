@@ -11,7 +11,14 @@ async function getPost(slugOrId: string) {
     // Try to find by slug
     let { data, error } = await supabase
         .from('posts')
-        .select('*')
+        .select(`
+            *,
+            post_categories_rel (
+                post_categories (
+                    name
+                )
+            )
+        `)
         .eq('slug', slugOrId)
         .single();
 
@@ -21,16 +28,31 @@ async function getPost(slugOrId: string) {
         if (isNumeric) {
             const { data: idData, error: idError } = await supabase
                 .from('posts')
-                .select('*')
+                .select(`
+                    *,
+                    post_categories_rel (
+                        post_categories (
+                            name
+                        )
+                    )
+                `)
                 .eq('id', parseInt(slugOrId))
                 .single();
 
-            if (!idError && idData) return idData;
+            if (!idError && idData) {
+                return {
+                    ...idData,
+                    categories: idData.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
+                };
+            }
         }
         return null;
     }
 
-    return data;
+    return {
+        ...data,
+        categories: data.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
+    };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -79,10 +101,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         >
                             <ArrowLeft className="w-4 h-4" /> Voltar ao Blog
                         </Link>
-                        <div className="flex items-center gap-4 mb-6">
-                            <span className="bg-brand-gold text-white text-[10px] font-bold uppercase px-4 py-1.5 rounded-full shadow-lg">
-                                {post.category || "Notícia"}
-                            </span>
+                        <div className="flex flex-wrap items-center gap-2 mb-6">
+                            {post.categories && post.categories.length > 0 ? (
+                                post.categories.map((cat: string) => (
+                                    <span key={cat} className="bg-brand-gold text-white text-[10px] font-bold uppercase px-4 py-1.5 rounded-full shadow-lg">
+                                        {cat}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="bg-brand-gold text-white text-[10px] font-bold uppercase px-4 py-1.5 rounded-full shadow-lg">
+                                    {post.category || "Notícia"}
+                                </span>
+                            )}
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight italic">
                             {post.title}
@@ -123,9 +153,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     <div className="mt-20 pt-10 border-t flex flex-col md:flex-row justify-between items-center gap-8">
                         <div className="flex items-center gap-3">
                             <Tag className="w-5 h-5 text-brand-gold" />
-                            <div className="flex gap-2">
-                                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{post.category}</span>
-                                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Espiritualidade</span>
+                            <div className="flex flex-wrap gap-2">
+                                {post.categories && post.categories.length > 0 ? (
+                                    post.categories.map((cat: string) => (
+                                        <span key={cat} className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{cat}</span>
+                                    ))
+                                ) : (
+                                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{post.category}</span>
+                                )}
                             </div>
                         </div>
 

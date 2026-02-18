@@ -14,14 +14,26 @@ export const revalidate = 60; // Revalidate every minute
 async function getPosts() {
     const { data, error } = await supabase
         .from('posts')
-        .select('*')
+        .select(`
+            *,
+            post_categories_rel (
+                post_categories (
+                    name
+                )
+            )
+        `)
         .order('created_at', { ascending: false });
 
     if (error) {
         console.error("Error fetching posts:", error);
         return [];
     }
-    return data || [];
+
+    // Flatten categories
+    return (data || []).map((post: any) => ({
+        ...post,
+        categories: post.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
+    }));
 }
 
 export default async function BlogPage() {
@@ -66,8 +78,18 @@ export default async function BlogPage() {
                                             alt={post.title}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                         />
-                                        <div className="absolute top-4 left-4 bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">
-                                            {post.category || "Geral"}
+                                        <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[80%]">
+                                            {post.categories && post.categories.length > 0 ? (
+                                                post.categories.map((cat: string) => (
+                                                    <div key={cat} className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                                        {cat}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                                    {post.category || "Geral"}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </Link>

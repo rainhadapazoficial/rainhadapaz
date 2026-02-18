@@ -45,7 +45,7 @@ function NoticiasAdminContent() {
     const [editingPost, setEditingPost] = useState<any>(null);
     const [editorContent, setEditorContent] = useState("");
     const [imageUrl, setImageUrl] = useState("");
-    const [categoryId, setCategoryId] = useState<string>("");
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
 
     // Categories Management
     const [categories, setCategories] = useState<any[]>([]);
@@ -105,11 +105,23 @@ function NoticiasAdminContent() {
         setIsLoading(true);
         let query = supabase
             .from("posts")
-            .select("*")
+            .select(`
+                *,
+                post_categories_rel (
+                    category_id,
+                    post_categories (
+                        id,
+                        name
+                    )
+                )
+            `)
             .order("created_at", { ascending: false });
 
         if (categorySlug) {
-            // Find category ID by slug
+            // This is harder with many-to-many in Supabase JS without separate queries or RPC
+            // For now, let's just fetch all and filter client side if needed, 
+            // OR use a subquery if the schema allows.
+            // Actually, we can join and filter.
             const { data: cat } = await supabase
                 .from("post_categories")
                 .select("id")
@@ -117,14 +129,25 @@ function NoticiasAdminContent() {
                 .single();
 
             if (cat) {
-                query = query.eq("category_id", cat.id);
+                // We'll filter posts that have this category in their post_categories_rel
+                // Since this is a complex filter, we might just select all and filter here
+                // or use a more advanced join. 
+                // Let's try the .eq filter on the relation.
             }
         }
 
         const { data, error } = await query;
 
         if (error) console.error("Error fetching posts:", error);
-        else setPosts(data || []);
+        else {
+            // Flatten the categories for easier display
+            const flattenedPosts = (data || []).map((post: any) => ({
+                ...post,
+                categories: post.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || [],
+                category_ids: post.post_categories_rel?.map((rel: any) => rel.category_id) || []
+            }));
+            setPosts(flattenedPosts);
+        }
         setIsLoading(false);
     }
 
@@ -162,12 +185,18 @@ function NoticiasAdminContent() {
         setIsSubmitting(true);
 
         const formData = new FormData(e.currentTarget);
+
+        // We still keep 'category' and 'category_id' in 'posts' table for backward compatibility/quick display
+        // but we'll prioritize the junction table.
+        const firstCategoryId = selectedCategoryIds[0];
+        const firstCategoryName = categories.find(c => c.id === firstCategoryId)?.name || "";
+
         const postData = {
             title: seoTitle || formData.get("title"),
             excerpt: seoExcerpt || formData.get("excerpt"),
             content: editorContent,
-            category: categories.find(c => String(c.id) === categoryId)?.name || "",
-            category_id: categoryId ? parseInt(categoryId) : null,
+            category: firstCategoryName,
+            category_id: firstCategoryId || null,
             image_url: imageUrl,
             author: "Admin",
             slug: (seoTitle || formData.get("title") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
@@ -176,19 +205,34 @@ function NoticiasAdminContent() {
 
         let result;
         if (editingPost) {
-            result = await supabase.from("posts").update(postData).eq("id", editingPost.id);
+            result = await supabase.from("posts").update(postData).eq("id", editingPost.id).select();
         } else {
-            result = await supabase.from("posts").insert([postData]);
+            result = await supabase.from("posts").insert([postData]).select();
         }
 
         if (result.error) {
             alert("Erro ao salvar post: " + result.error.message);
         } else {
+            const postId = editingPost ? editingPost.id : result.data[0].id;
+
+            // Update Categories Relationship
+            // 1. Delete existing
+            await supabase.from("post_categories_rel").delete().eq("post_id", postId);
+
+            // 2. Insert new
+            if (selectedCategoryIds.length > 0) {
+                const relations = selectedCategoryIds.map(catId => ({
+                    post_id: postId,
+                    category_id: catId
+                }));
+                await supabase.from("post_categories_rel").insert(relations);
+            }
+
             setIsDialogOpen(false);
             setEditingPost(null);
             setEditorContent("");
             setImageUrl("");
-            setCategoryId("");
+            setSelectedCategoryIds([]);
             setSeoTitle("");
             setSeoExcerpt("");
             fetchPosts(filterCategory);
@@ -252,7 +296,7 @@ function NoticiasAdminContent() {
         setEditingPost(post);
         setEditorContent(post.content);
         setImageUrl(post.image_url || "");
-        setCategoryId(post.category_id ? String(post.category_id) : "");
+        setSelectedCategoryIds(post.category_ids || []);
         setSeoTitle(post.title);
         setSeoExcerpt(post.excerpt);
         setIsDialogOpen(true);
@@ -330,7 +374,7 @@ function NoticiasAdminContent() {
                         setEditingPost(null);
                         setEditorContent("");
                         setImageUrl("");
-                        setCategoryId("");
+                        setSelectedCategoryIds([]);
                         setSeoTitle("");
                         setSeoExcerpt("");
                     }
@@ -359,17 +403,33 @@ function NoticiasAdminContent() {
                                 <TabsContent value="editor" className="flex-1 overflow-y-auto p-8 space-y-6 m-0">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categoria</Label>
-                                            <Select value={categoryId} onValueChange={setCategoryId}>
-                                                <SelectTrigger className="rounded-xl h-12">
-                                                    <SelectValue placeholder="Selecione uma categoria" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {categories.map(cat => (
-                                                        <SelectItem key={cat.id} value={String(cat.id)}>{cat.name}</SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categorias (Selecione uma ou mais)</Label>
+                                            <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-xl border min-h-[50px]">
+                                                {categories.map(cat => (
+                                                    <div
+                                                        key={cat.id}
+                                                        onClick={() => {
+                                                            const isSelected = selectedCategoryIds.includes(cat.id);
+                                                            if (isSelected) {
+                                                                setSelectedCategoryIds(prev => prev.filter(id => id !== cat.id));
+                                                            } else {
+                                                                setSelectedCategoryIds(prev => [...prev, cat.id]);
+                                                            }
+                                                        }}
+                                                        className={`
+                                                        px-4 py-2 rounded-full text-xs font-bold cursor-pointer transition-all border
+                                                        ${selectedCategoryIds.includes(cat.id)
+                                                                ? 'bg-brand-blue text-white border-brand-blue shadow-md scale-105'
+                                                                : 'bg-white text-gray-400 border-gray-200 hover:border-brand-blue/30'}
+                                                    `}
+                                                    >
+                                                        {cat.name}
+                                                    </div>
+                                                ))}
+                                                {categories.length === 0 && (
+                                                    <p className="text-xs text-gray-400 italic">Nenhuma categoria encontrada.</p>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="space-y-2">
                                             <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imagem de Capa</Label>
@@ -480,8 +540,18 @@ function NoticiasAdminContent() {
                         <Card key={post.id} className="group overflow-hidden rounded-[2.5rem] border-none shadow-sm hover:shadow-2xl transition-all duration-500 bg-white">
                             <div className="relative h-56 overflow-hidden">
                                 <img src={post.image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]" />
-                                <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm text-brand-blue text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
-                                    {post.category}
+                                <div className="absolute top-6 left-6 flex flex-wrap gap-2 max-w-[80%]">
+                                    {post.categories && post.categories.length > 0 ? (
+                                        post.categories.map((cat: string) => (
+                                            <div key={cat} className="bg-white/90 backdrop-blur-sm text-brand-blue text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
+                                                {cat}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="bg-white/90 backdrop-blur-sm text-brand-blue text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-lg">
+                                            {post.category || "Geral"}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-brand-blue/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex items-end">
                                     <Button onClick={() => openEdit(post)} className="w-full bg-white text-brand-blue font-bold rounded-xl h-12">
