@@ -117,7 +117,7 @@ export default function ConselhoPublicPage() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h2 className="text-3xl font-bold text-brand-blue text-center mb-10 flex items-center justify-center gap-3">
                                 <span className="w-12 h-1 bg-brand-gold rounded-full"></span>
-                                Presidência
+                                Coordenação
                                 <span className="w-12 h-1 bg-brand-gold rounded-full"></span>
                             </h2>
                             {presidencia.length > 0 ? (
@@ -134,7 +134,7 @@ export default function ConselhoPublicPage() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
                             <h2 className="text-3xl font-bold text-gray-700 text-center mb-10 flex items-center justify-center gap-3">
                                 <span className="w-8 h-1 bg-gray-300 rounded-full"></span>
-                                Conselho Fiscal
+                                Ministérios
                                 <span className="w-8 h-1 bg-gray-300 rounded-full"></span>
                             </h2>
                             {fiscal.length > 0 ? (
@@ -172,9 +172,14 @@ function MemberCard({ member }: { member: any }) {
             <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-blue transition-colors">
                 {member.nome}
             </h3>
-            <p className="text-brand-blue font-medium uppercase text-sm tracking-wide">
+            <p className="text-brand-blue font-medium uppercase text-sm tracking-wide mb-2">
                 {member.cargo}
             </p>
+            {member.descricao && (
+                <p className="text-gray-50 text-sm leading-relaxed mt-2 border-t pt-3 w-full line-clamp-4 group-hover:text-gray-600">
+                    {member.descricao}
+                </p>
+            )}
         </div>
     );
 }

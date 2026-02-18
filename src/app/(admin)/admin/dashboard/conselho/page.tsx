@@ -126,7 +126,8 @@ export default function ConselhoAdminPage() {
             cargo: formData.cargo,
             foto_url: formData.foto_url,
             categoria: formData.categoria || "presidencia",
-            ordem: parseInt(formData.ordem || "0")
+            ordem: parseInt(formData.ordem || "0"),
+            descricao: formData.descricao || ""
         };
 
         let error;
@@ -172,7 +173,7 @@ export default function ConselhoAdminPage() {
                     <Users className="w-8 h-8 text-brand-gold" />
                     Gestão
                 </h1>
-                <p className="text-gray-500">Gerencie a presidência e conselho fiscal (mandatos e membros).</p>
+                <p className="text-gray-500">Gerencie a coordenação e ministérios (mandatos e membros).</p>
             </div>
 
             <div className="flex gap-4 border-b">
@@ -294,7 +295,7 @@ export default function ConselhoAdminPage() {
                         <div className="space-y-8">
                             {/* Presidência */}
                             <div>
-                                <h3 className="text-lg font-bold text-brand-blue mb-3 border-b pb-2">Presidência</h3>
+                                <h3 className="text-lg font-bold text-brand-blue mb-3 border-b pb-2">Coordenação</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     {membros.filter(m => m.categoria === 'presidencia').map(m => (
                                         <MembroCard key={m.id} membro={m} onEdit={() => openMembroDialog(m)} onDelete={() => deleteMembro(m.id)} />
@@ -304,7 +305,7 @@ export default function ConselhoAdminPage() {
 
                             {/* Conselho Fiscal */}
                             <div>
-                                <h3 className="text-lg font-bold text-gray-600 mb-3 border-b pb-2">Conselho Fiscal</h3>
+                                <h3 className="text-lg font-bold text-gray-600 mb-3 border-b pb-2">Ministérios</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     {membros.filter(m => m.categoria === 'fiscal').map(m => (
                                         <MembroCard key={m.id} membro={m} onEdit={() => openMembroDialog(m)} onDelete={() => deleteMembro(m.id)} />
@@ -329,6 +330,15 @@ export default function ConselhoAdminPage() {
                                     <Input value={formData.cargo || ""} onChange={e => setFormData({ ...formData, cargo: e.target.value })} required />
                                 </div>
                                 <div>
+                                    <Label>Descrição / Breve Biografia</Label>
+                                    <textarea
+                                        value={formData.descricao || ""}
+                                        onChange={e => setFormData({ ...formData, descricao: e.target.value })}
+                                        className="w-full min-h-[100px] p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-white"
+                                        placeholder="Conte um pouco sobre a trajetória deste membro..."
+                                    />
+                                </div>
+                                <div>
                                     <Label>Foto URL</Label>
                                     <Input value={formData.foto_url || ""} onChange={e => setFormData({ ...formData, foto_url: e.target.value })} placeholder="https://..." />
                                 </div>
@@ -338,8 +348,8 @@ export default function ConselhoAdminPage() {
                                         <Select value={formData.categoria || "presidencia"} onValueChange={v => setFormData({ ...formData, categoria: v })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="presidencia">Presidência</SelectItem>
-                                                <SelectItem value="fiscal">Conselho Fiscal</SelectItem>
+                                                <SelectItem value="presidencia">Coordenação</SelectItem>
+                                                <SelectItem value="fiscal">Ministérios</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
