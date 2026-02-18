@@ -25,7 +25,7 @@ const defaultNavLinks: NavItem[] = [
             { name: "Sobre Nós", href: "/quem-somos" },
             { name: "O Grupo", href: "/a-rcc" },
             { name: "Nossa História", href: "/historia-da-rcc" },
-
+            { name: "Gestão", href: "/quem-somos/conselho" },
         ]
     },
 

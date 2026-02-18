@@ -69,7 +69,7 @@ export default function ConselhoPublicPage() {
                         <Users className="w-4 h-4" />
                         Quem Somos
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 italic">Conselho Diocesano</h1>
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 italic">Gestão</h1>
                     <p className="text-xl text-blue-100 max-w-2xl mx-auto">
                         Conheça os irmãos eleitos para servir no Grupo Rainha da Paz neste tempo.
                     </p>
@@ -117,7 +117,7 @@ export default function ConselhoPublicPage() {
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <h2 className="text-3xl font-bold text-brand-blue text-center mb-10 flex items-center justify-center gap-3">
                                 <span className="w-12 h-1 bg-brand-gold rounded-full"></span>
-                                Presidência do Conselho
+                                Presidência
                                 <span className="w-12 h-1 bg-brand-gold rounded-full"></span>
                             </h2>
                             {presidencia.length > 0 ? (
@@ -166,7 +166,7 @@ function MemberCard({ member }: { member: any }) {
                     />
                 </div>
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-brand-gold text-brand-blue text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
-                    RCC Sinop
+                    Rainha da Paz
                 </div>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-blue transition-colors">

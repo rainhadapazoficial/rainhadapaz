@@ -170,7 +170,7 @@ export default function ConselhoAdminPage() {
             <div>
                 <h1 className="text-3xl font-bold text-brand-blue italic flex items-center gap-3">
                     <Users className="w-8 h-8 text-brand-gold" />
-                    Conselho Diocesano
+                    Gestão
                 </h1>
                 <p className="text-gray-500">Gerencie a presidência e conselho fiscal (mandatos e membros).</p>
             </div>
@@ -186,7 +186,7 @@ export default function ConselhoAdminPage() {
                     onClick={() => setActiveTab("membros")}
                     className={`pb-3 px-4 font-bold transition-colors border-b-2 ${activeTab === "membros" ? "border-brand-blue text-brand-blue" : "border-transparent text-gray-400 hover:text-gray-600"}`}
                 >
-                    Membros do Conselho
+                    Membros da Gestão
                 </button>
             </div>
 
@@ -325,7 +325,7 @@ export default function ConselhoAdminPage() {
                                     <Input value={formData.nome || ""} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
                                 </div>
                                 <div>
-                                    <Label>Cargo (ex: Presidente do Conselho)</Label>
+                                    <Label>Cargo (ex: Coordenador de Gestão)</Label>
                                     <Input value={formData.cargo || ""} onChange={e => setFormData({ ...formData, cargo: e.target.value })} required />
                                 </div>
                                 <div>
