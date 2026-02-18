@@ -25,6 +25,7 @@ const MESES = [
 ];
 
 const CATEGORIAS = [
+    { value: "grupo", label: "Grupo de Oração", color: "bg-brand-gold" },
     { value: "diocesano", label: "Diocesano", color: "bg-brand-blue" },
     { value: "estadual", label: "Estadual", color: "bg-red-600" },
     { value: "nacional", label: "Nacional", color: "bg-gray-600" },
@@ -113,7 +114,7 @@ export default function CalendarioAdminPage() {
 
     const openNew = () => {
         setEditingEvent(null);
-        setFormData({ categoria: "diocesano", ano: filterYear });
+        setFormData({ categoria: "grupo", ano: filterYear });
         setIsDialogOpen(true);
     };
 
@@ -151,7 +152,7 @@ export default function CalendarioAdminPage() {
                         <Calendar className="w-8 h-8 text-brand-gold" />
                         Calendário Diocesano
                     </h1>
-                    <p className="text-gray-500">Gerencie o calendário de eventos da diocese.</p>
+                    <p className="text-gray-500">Gerencie o calendário de eventos da diocese. calendario do grupo de oracao rainha da paz</p>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                     <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3">
