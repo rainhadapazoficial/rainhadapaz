@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS public.calendario_diocesano (
     mes INTEGER NOT NULL,
     ano INTEGER NOT NULL,
     categoria TEXT NOT NULL, -- 'diocesano', 'estadual', 'nacional'
+    descricao TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

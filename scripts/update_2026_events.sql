@@ -1,11 +1,11 @@
--- COMPREHENSIVE UPDATE 2026 (AGENDA + CALENDAR)
--- Run this in Supabase SQL Editor
+-- 1. Ensure schema is correct
+ALTER TABLE public.calendario_diocesano ADD COLUMN IF NOT EXISTS descricao TEXT;
 
--- 1. Clear current tables
+-- 2. Clear current tables
 TRUNCATE TABLE public.events;
 TRUNCATE TABLE public.calendario_diocesano;
 
--- 2. Insert into Events (Public Agenda)
+-- 3. Insert into Events (Public Agenda)
 INSERT INTO public.events (title, description, date, time, location, category) VALUES
 ('Início do Seminário de Vida Rainha da Paz', 'Início da nossa caminhada de 8 semanas de Seminário de Vida no Espírito Santo.', '2026-03-07', '19:30', 'Matriz da Paróquia Santo Antônio', 'Seminário'),
 ('Encerramento do Seminário de Vida Rainha da Paz', 'Grande encerramento do Seminário de Vida no Espírito Santo.', '2026-04-25', '19:30', 'Matriz da Paróquia Santo Antônio', 'Seminário'),
