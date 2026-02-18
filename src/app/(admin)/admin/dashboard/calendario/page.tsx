@@ -150,9 +150,9 @@ export default function CalendarioAdminPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-brand-blue italic flex items-center gap-3">
                         <Calendar className="w-8 h-8 text-brand-gold" />
-                        Calendário do Grupo de Oração
+                        Calendário do Grupo de Oração Rainha da Paz
                     </h1>
-                    <p className="text-gray-500">Gerencie o calendário de eventos da diocese. calendario do grupo de oracao rainha da paz</p>
+                    <p className="text-gray-500">Gerencie o calendário de eventos do Grupo Rainha da Paz.</p>
                 </div>
                 <div className="flex gap-3 flex-wrap">
                     <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3">

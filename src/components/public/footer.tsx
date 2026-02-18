@@ -13,7 +13,7 @@ export function Footer() {
                             <img
                                 src="/logo-rainha.jpg"
                                 alt="Grupo Rainha da Paz Logo"
-                                className="w-14 h-14 object-contain"
+                                className="h-16 w-auto object-contain"
                             />
                             <span className="text-xl font-bold italic">Rainha da Paz</span>
                         </div>
@@ -75,7 +75,7 @@ export function Footer() {
                             </li>
                             <li className="pt-4">
                                 <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
-                                    <Button className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 w-full">
+                                    <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold gap-2 w-full">
                                         <MessageCircle className="w-5 h-5 fill-current" />
                                         Fale agora conosco
                                     </Button>

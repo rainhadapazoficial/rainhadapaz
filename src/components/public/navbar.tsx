@@ -103,7 +103,7 @@ export function Navbar() {
                             <img
                                 src="/logo-rainha.jpg"
                                 alt="Grupo Rainha da Paz Logo"
-                                className="w-24 h-24 object-contain"
+                                className="h-16 w-auto object-contain"
                             />
                         </Link>
                     </div>
