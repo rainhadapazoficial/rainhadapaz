@@ -23,6 +23,7 @@ export default function GestaoAdminPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [mandatos, setMandatos] = useState<any[]>([]);
     const [membros, setMembros] = useState<any[]>([]);
+    const [ministerios, setMinisterios] = useState<any[]>([]);
     const [selectedMandato, setSelectedMandato] = useState<string | null>(null);
 
     // Dialog States
@@ -34,7 +35,18 @@ export default function GestaoAdminPage() {
 
     useEffect(() => {
         fetchMandatos();
+        fetchMinisterios();
     }, []);
+
+    async function fetchMinisterios() {
+        const { data, error } = await supabase
+            .from("ministerios")
+            .select("id, nome")
+            .order("nome", { ascending: true });
+
+        if (error) console.error("Erro ao buscar ministérios:", error);
+        else setMinisterios(data || []);
+    }
 
     useEffect(() => {
         if (selectedMandato) {
@@ -126,6 +138,7 @@ export default function GestaoAdminPage() {
             cargo: formData.cargo,
             foto_url: formData.foto_url,
             categoria: formData.categoria || "presidencia",
+            ministerio_id: formData.categoria === 'fiscal' ? (formData.ministerio_id ? parseInt(formData.ministerio_id) : null) : null,
             ordem: parseInt(formData.ordem || "0"),
             descricao: formData.descricao || ""
         };
@@ -358,6 +371,26 @@ export default function GestaoAdminPage() {
                                         <Input type="number" value={formData.ordem || 0} onChange={e => setFormData({ ...formData, ordem: e.target.value })} />
                                     </div>
                                 </div>
+                                {formData.categoria === 'fiscal' && (
+                                    <div className="space-y-2">
+                                        <Label>Vincular ao Ministério</Label>
+                                        <Select
+                                            value={formData.ministerio_id ? String(formData.ministerio_id) : "none"}
+                                            onValueChange={v => setFormData({ ...formData, ministerio_id: v === "none" ? null : v })}
+                                        >
+                                            <SelectTrigger className="rounded-xl">
+                                                <SelectValue placeholder="Selecione um ministério..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">Nenhum (Livre)</SelectItem>
+                                                {ministerios.map(min => (
+                                                    <SelectItem key={min.id} value={String(min.id)}>{min.nome}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-[10px] text-gray-400 italic">Isso vinculará este membro como coordenador do ministério na página pública.</p>
+                                    </div>
+                                )}
                                 <Button type="submit" className="w-full bg-brand-blue text-white rounded-xl" disabled={isSubmitting}>
                                     {isSubmitting ? <Loader2 className="animate-spin" /> : "Salvar"}
                                 </Button>
@@ -382,6 +415,11 @@ function MembroCard({ membro, onEdit, onDelete }: { membro: any, onEdit: () => v
                 <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-gray-900 truncate">{membro.nome}</h4>
                     <p className="text-xs text-brand-blue font-bold uppercase truncate">{membro.cargo}</p>
+                    {membro.ministerio_id && (
+                        <div className="flex items-center gap-1 mt-1">
+                            <span className="text-[9px] bg-brand-gold/10 text-brand-gold px-1.5 py-0.5 rounded-md font-bold uppercase">Vinculado</span>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="bg-gray-50 p-2 flex justify-end gap-2 border-t">

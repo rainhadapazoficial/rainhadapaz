@@ -42,8 +42,7 @@ export default function MinisteriosPublicPage() {
     }, []);
 
     async function fetchMinisterios() {
-        setIsLoading(true);
-        // Fetch ministries
+        // 1. Fetch ministries
         const { data: minData, error: minError } = await supabase
             .from("ministerios")
             .select("*")
@@ -62,7 +61,27 @@ export default function MinisteriosPublicPage() {
             return;
         }
 
-        // Fetch history for all fetched ministries
+        // 2. Fetch coordinator from conselho_membros for the active mandate
+        const { data: activeMandate } = await supabase
+            .from("conselho_mandatos")
+            .select("id")
+            .eq("ativo", true)
+            .single();
+
+        let coordinatorsByMin: Record<number, string> = {};
+        if (activeMandate) {
+            const { data: members } = await supabase
+                .from("conselho_membros")
+                .select("nome, ministerio_id")
+                .eq("mandato_id", activeMandate.id)
+                .not("ministerio_id", "is", null);
+
+            (members || []).forEach(m => {
+                if (m.ministerio_id) coordinatorsByMin[m.ministerio_id] = m.nome;
+            });
+        }
+
+        // 3. Fetch history for all fetched ministries
         const ids = list.map(m => m.id);
         const { data: historyData } = await supabase
             .from("ministerio_coordinator_history")
@@ -78,6 +97,8 @@ export default function MinisteriosPublicPage() {
 
         setMinisterios(list.map(m => ({
             ...m,
+            // Override coordinator if found in conselho_membros
+            coordenador: coordinatorsByMin[m.id] || m.coordenador,
             history: historyByMin[m.id] || []
         })));
         setIsLoading(false);
