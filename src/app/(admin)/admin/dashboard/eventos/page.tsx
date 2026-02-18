@@ -138,8 +138,8 @@ export default function EventosAdminPage() {
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-bold text-brand-blue italic">Agenda da Diocese</h1>
-                    <p className="text-gray-500">Gerencie os encontros, retiros e missas.</p>
+                    <h1 className="text-3xl font-bold text-brand-blue italic">Agenda Rainha da Paz</h1>
+                    <p className="text-gray-500">Gerencie os encontros, retiros e missas do grupo.</p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={(open) => {
                     setIsDialogOpen(open);
