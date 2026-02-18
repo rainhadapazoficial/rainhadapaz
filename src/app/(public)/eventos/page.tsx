@@ -76,7 +76,7 @@ export default async function EventosPage() {
                                     <CalendarIcon className="w-8 h-8 mb-2" />
                                     <span className="text-lg font-bold leading-tight">
                                         {event.date.includes('-')
-                                            ? new Date(event.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                                            ? new Date(event.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
                                             : event.date.split(',')[0]}
                                     </span>
                                 </div>

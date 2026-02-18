@@ -268,7 +268,7 @@ export default async function HomePage() {
                                         <Calendar className="w-8 h-8 mb-3 opacity-80" />
                                         <span className="text-xl font-black uppercase tracking-tighter">
                                             {event.date.includes('-')
-                                                ? new Date(event.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                                                ? new Date(event.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
                                                 : event.date.split(',')[0]}
                                         </span>
                                     </div>
