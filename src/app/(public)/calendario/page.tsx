@@ -11,7 +11,7 @@ const MESES = [
 ];
 
 const CATEGORIAS: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    grupo: { label: "Grupo de Oração", bg: "bg-brand-gold/10", text: "text-brand-gold font-bold", dot: "bg-brand-gold" },
+    grupo: { label: "Grupo de Oração", bg: "bg-brand-blue/10", text: "text-brand-blue font-bold", dot: "bg-brand-blue" },
     diocesano: { label: "Diocesano", bg: "bg-brand-blue/10", text: "text-brand-blue", dot: "bg-brand-blue" },
     estadual: { label: "Estadual", bg: "bg-red-50", text: "text-red-700", dot: "bg-red-600" },
     nacional: { label: "Nacional", bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-600" },
