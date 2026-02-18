@@ -18,6 +18,12 @@ import { PremiumEditor } from "@/components/admin/PremiumEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { shareToSocialMedia } from "@/lib/n8n";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Badge } from "@/components/ui/badge";
 
 export default function NoticiasAdminPage() {
     const [posts, setPosts] = useState<any[]>([]);
@@ -26,6 +32,14 @@ export default function NoticiasAdminPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingPost, setEditingPost] = useState<any>(null);
     const [editorContent, setEditorContent] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [categoryId, setCategoryId] = useState<string>("");
+
+    // Categories Management
+    const [categories, setCategories] = useState<any[]>([]);
+    const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+    const [isCategorySubmitting, setIsCategorySubmitting] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState("");
 
     // SEO Simulation States
     const [seoTitle, setSeoTitle] = useState("");
@@ -35,7 +49,45 @@ export default function NoticiasAdminPage() {
 
     useEffect(() => {
         fetchPosts();
+        fetchCategories();
     }, []);
+
+    async function fetchCategories() {
+        const { data, error } = await supabase
+            .from("post_categories")
+            .select("*")
+            .order("name", { ascending: true });
+
+        if (error) console.error("Error fetching categories:", error);
+        else setCategories(data || []);
+    }
+
+    async function handleCategorySubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (!newCategoryName.trim()) return;
+
+        setIsCategorySubmitting(true);
+        const slug = newCategoryName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, "");
+
+        const { error } = await supabase
+            .from("post_categories")
+            .insert([{ name: newCategoryName, slug }]);
+
+        if (error) {
+            alert("Erro ao salvar categoria: " + error.message);
+        } else {
+            setNewCategoryName("");
+            fetchCategories();
+        }
+        setIsCategorySubmitting(false);
+    }
+
+    async function deleteCategory(id: number) {
+        if (!confirm("Tem certeza que deseja excluir esta categoria?")) return;
+        const { error } = await supabase.from("post_categories").delete().eq("id", id);
+        if (error) alert("Erro ao excluir: " + error.message);
+        else fetchCategories();
+    }
 
     async function fetchPosts() {
         setIsLoading(true);
@@ -87,8 +139,9 @@ export default function NoticiasAdminPage() {
             title: seoTitle || formData.get("title"),
             excerpt: seoExcerpt || formData.get("excerpt"),
             content: editorContent,
-            category: formData.get("category"),
-            image_url: formData.get("image_url"),
+            category: categories.find(c => String(c.id) === categoryId)?.name || "",
+            category_id: categoryId ? parseInt(categoryId) : null,
+            image_url: imageUrl,
             author: "Admin",
             slug: (seoTitle || formData.get("title") as string).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/[^\w-]+/g, ""),
             date: new Date().toLocaleDateString("pt-BR"),
@@ -107,6 +160,8 @@ export default function NoticiasAdminPage() {
             setIsDialogOpen(false);
             setEditingPost(null);
             setEditorContent("");
+            setImageUrl("");
+            setCategoryId("");
             setSeoTitle("");
             setSeoExcerpt("");
             fetchPosts();
@@ -169,6 +224,8 @@ export default function NoticiasAdminPage() {
     const openEdit = (post: any) => {
         setEditingPost(post);
         setEditorContent(post.content);
+        setImageUrl(post.image_url || "");
+        setCategoryId(post.category_id ? String(post.category_id) : "");
         setSeoTitle(post.title);
         setSeoExcerpt(post.excerpt);
         setIsDialogOpen(true);
@@ -184,21 +241,71 @@ export default function NoticiasAdminPage() {
                     </h1>
                     <p className="text-gray-500">Crie conteúdos com auxílio de IA e SEO avançado.</p>
                 </div>
+                <div className="flex gap-4">
+                    <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-brand-blue text-brand-blue hover:bg-brand-blue/10 rounded-xl h-12 px-6">
+                                <Tag className="w-5 h-5 mr-2" />
+                                Categorias
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="rounded-[2rem] max-w-md">
+                            <DialogHeader>
+                                <DialogTitle className="text-xl font-bold italic text-brand-blue flex items-center gap-2">
+                                    <Tag className="w-5 h-5" />
+                                    Gerenciar Categorias
+                                </DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6 py-4">
+                                <form onSubmit={handleCategorySubmit} className="flex gap-2">
+                                    <Input
+                                        placeholder="Nova categoria..."
+                                        value={newCategoryName}
+                                        onChange={e => setNewCategoryName(e.target.value)}
+                                        className="rounded-xl"
+                                    />
+                                    <Button type="submit" disabled={isCategorySubmitting} className="bg-brand-blue text-white rounded-xl">
+                                        {isCategorySubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                                    </Button>
+                                </form>
+                                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                                    {categories.map(cat => (
+                                        <div key={cat.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-xl group">
+                                            <span className="font-medium text-gray-700">{cat.name}</span>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => deleteCategory(cat.id)}
+                                                className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    {categories.length === 0 && (
+                                        <p className="text-center text-sm text-gray-400 py-4">Nenhuma categoria cadastrada.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Button onClick={() => setIsDialogOpen(true)} className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12 px-6 shadow-lg shadow-brand-blue/20 transition-all hover:scale-105">
+                        <Plus className="w-5 h-5 mr-2" />
+                        Criar Novo Artigo
+                    </Button>
+                </div>
                 <Dialog open={isDialogOpen} onOpenChange={(open) => {
                     setIsDialogOpen(open);
                     if (!open) {
                         setEditingPost(null);
                         setEditorContent("");
+                        setImageUrl("");
+                        setCategoryId("");
                         setSeoTitle("");
                         setSeoExcerpt("");
                     }
                 }}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12 px-6 shadow-lg shadow-brand-blue/20 transition-all hover:scale-105">
-                            <Plus className="w-5 h-5 mr-2" />
-                            Criar Novo Artigo
-                        </Button>
-                    </DialogTrigger>
                     <DialogContent className="max-w-5xl h-[90vh] rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden flex flex-col">
                         <form onSubmit={handleSubmit} className="flex flex-col h-full">
                             <DialogHeader className="bg-brand-blue text-white p-6 shrink-0 flex flex-row items-center justify-between">
@@ -223,12 +330,25 @@ export default function NoticiasAdminPage() {
                                 <TabsContent value="editor" className="flex-1 overflow-y-auto p-8 space-y-6 m-0">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categoria</label>
-                                            <Input name="category" defaultValue={editingPost?.category} placeholder="Ex: Formação" className="rounded-xl" required />
+                                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categoria</Label>
+                                            <Select value={categoryId} onValueChange={setCategoryId}>
+                                                <SelectTrigger className="rounded-xl h-12">
+                                                    <SelectValue placeholder="Selecione uma categoria" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {categories.map(cat => (
+                                                        <SelectItem key={cat.id} value={String(cat.id)}>{cat.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Capa (URL)</label>
-                                            <Input name="image_url" defaultValue={editingPost?.image_url} placeholder="URL da imagem" className="rounded-xl" required />
+                                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Imagem de Capa</Label>
+                                            <ImageUpload
+                                                value={imageUrl}
+                                                onChange={setImageUrl}
+                                                onRemove={() => setImageUrl("")}
+                                            />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
