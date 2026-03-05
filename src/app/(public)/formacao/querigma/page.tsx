@@ -20,7 +20,7 @@ const workbooks = [
         title: "Introdução aos Dons",
         subtitle: "Módulo Querigma",
         description: "Uma introdução fundamental aos dons e carismas que o Espírito Santo deseja derramar sobre todos os fiéis.",
-        image: "/formacao/querigma/introducao_aos_dons.jpg",
+        image: "/formacao/querigma/introducao_dons.jpg",
         color: "bg-gray-400",
         icon: <Sparkles className="w-6 h-6" />
     },
