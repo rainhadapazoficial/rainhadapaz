@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Save, Loader2, CheckCircle2, History, Play, Image as ImageIcon } from "lucide-react";
+import { getYouTubeEmbedUrl } from "@/lib/utils";
 
 interface HistoriaRCCAdminClientProps {
     initialData: any;
@@ -207,7 +208,7 @@ export function HistoriaRCCAdminClient({ initialData }: HistoriaRCCAdminClientPr
                             {formData.documentary.video_url ? (
                                 <iframe
                                     className="w-full h-full aspect-video rounded-2xl shadow-lg"
-                                    src={formData.documentary.video_url}
+                                    src={getYouTubeEmbedUrl(formData.documentary.video_url)}
                                     title="Preview"
                                     allowFullScreen
                                 />

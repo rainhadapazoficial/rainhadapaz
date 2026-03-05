@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { History, Play, Users, Flame, Quote, Loader2, Globe, Calendar, Award } from "lucide-react";
+import { getYouTubeEmbedUrl } from "@/lib/utils";
 
 export default function HistoriaRCCPage() {
     const [content, setContent] = useState<any>(null);
@@ -156,7 +157,7 @@ export default function HistoriaRCCPage() {
                     <div className="group relative rounded-[3rem] overflow-hidden shadow-2xl bg-black aspect-video max-w-4xl mx-auto transition-all duration-500 hover:shadow-brand-blue/20">
                         <iframe
                             className="w-full h-full"
-                            src={data.documentary.video_url}
+                            src={getYouTubeEmbedUrl(data.documentary.video_url)}
                             title="Documentário RCC"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen

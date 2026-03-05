@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Play, Download, GraduationCap, ChevronRight, Loader2, Quote, Flame, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getYouTubeEmbedUrl } from "@/lib/utils";
 
 export default function FormacaoPage() {
     const [content, setContent] = useState<any>(null);
@@ -128,7 +129,7 @@ export default function FormacaoPage() {
                                     <div className="aspect-video rounded-3xl overflow-hidden shadow-inner bg-black group-hover:shadow-lg transition-all duration-500">
                                         <iframe
                                             className="w-full h-full"
-                                            src={stage.video_url}
+                                            src={getYouTubeEmbedUrl(stage.video_url)}
                                             title={stage.title}
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                             allowFullScreen
