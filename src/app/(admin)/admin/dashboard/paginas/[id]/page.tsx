@@ -36,7 +36,8 @@ export default function PaginaEditorPage() {
         title: "",
         slug: "",
         content: "",
-        parent_menu: "quem-somos",
+        root_menu: "quem-somos",
+        parent_menu: "nenhum",
         is_published: true,
         image_url: ""
     });
@@ -68,7 +69,15 @@ export default function PaginaEditorPage() {
             .single();
 
         if (!error && data) {
-            setFormData(data);
+            // If parent_menu is one of the roots, it's a direct child of a root menu
+            const roots = ["quem-somos", "formacao", "eventos", "especiais"];
+            const isRoot = roots.includes(data.parent_menu);
+
+            setFormData({
+                ...data,
+                root_menu: isRoot ? data.parent_menu : (data.root_menu || "nenhum"),
+                parent_menu: isRoot ? "nenhum" : data.parent_menu
+            });
         }
         setLoading(false);
     }
@@ -77,8 +86,16 @@ export default function PaginaEditorPage() {
         setSaving(true);
         setSuccess(false);
 
+        // Final parent_menu is either the selected root_menu (if no sub-parent) or the parent_page title
+        const finalParentMenu = formData.parent_menu === "nenhum" ? formData.root_menu : formData.parent_menu;
+
         const dataToSave = {
-            ...formData,
+            title: formData.title,
+            slug: formData.slug,
+            content: formData.content,
+            parent_menu: finalParentMenu,
+            is_published: formData.is_published,
+            image_url: formData.image_url,
             updated_at: new Date().toISOString()
         };
 
@@ -169,37 +186,49 @@ export default function PaginaEditorPage() {
                                     className="rounded-xl h-12"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label>Submenu Pai (Onde aparecerá)</Label>
-                                <Select
-                                    value={formData.parent_menu}
-                                    onValueChange={(val) => setFormData({ ...formData, parent_menu: val })}
-                                >
-                                    <SelectTrigger className="rounded-xl h-12">
-                                        <SelectValue placeholder="Selecione o menu" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="nenhum">Nenhum (Página isolada)</SelectItem>
+                            <div className="space-y-4 pt-4 border-t border-gray-100">
+                                <div className="space-y-2">
+                                    <Label className="font-bold text-xs uppercase text-gray-400">1. Menu Principal (Onde aparecerá)</Label>
+                                    <Select
+                                        value={formData.root_menu}
+                                        onValueChange={(val) => setFormData({ ...formData, root_menu: val, parent_menu: "nenhum" })}
+                                    >
+                                        <SelectTrigger className="rounded-xl h-12 bg-gray-50/50">
+                                            <SelectValue placeholder="Selecione o menu raiz" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="nenhum">Nenhum (Página isolada)</SelectItem>
+                                            <SelectItem value="quem-somos">Quem Somos</SelectItem>
+                                            <SelectItem value="formacao">Formação</SelectItem>
+                                            <SelectItem value="eventos">Eventos</SelectItem>
+                                            <SelectItem value="especiais">Especiais</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
-                                        <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Menus Principais</DropdownMenuLabel>
-                                        <SelectItem value="quem-somos">Quem Somos</SelectItem>
-                                        <SelectItem value="formacao">Formação</SelectItem>
-                                        <SelectItem value="eventos">Eventos</SelectItem>
-                                        <SelectItem value="especiais">Especiais</SelectItem>
-
-                                        {allPages.length > 0 && (
-                                            <>
-                                                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider border-t mt-2">Páginas Existentes</DropdownMenuLabel>
+                                {formData.root_menu !== "nenhum" && (
+                                    <div className="space-y-2 animate-in slide-in-from-top duration-300">
+                                        <Label className="font-bold text-xs uppercase text-gray-400">2. Submenu Pai (Opcional)</Label>
+                                        <Select
+                                            value={formData.parent_menu}
+                                            onValueChange={(val) => setFormData({ ...formData, parent_menu: val })}
+                                        >
+                                            <SelectTrigger className="rounded-xl h-12 border-brand-blue/20">
+                                                <SelectValue placeholder="Vincular a uma página existente" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="nenhum">Direto no Menu Principal</SelectItem>
                                                 {allPages
                                                     .filter(p => p.id.toString() !== params.id)
                                                     .map(p => (
                                                         <SelectItem key={p.id} value={p.title}>{p.title}</SelectItem>
                                                     ))
                                                 }
-                                            </>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-[10px] text-brand-blue italic">Selecione se esta página deve ficar dentro de outra página já existente.</p>
+                                    </div>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <Label>URL da Imagem de Destaque</Label>
