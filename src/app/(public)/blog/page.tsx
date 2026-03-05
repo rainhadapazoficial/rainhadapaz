@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
-import { Search, Calendar, User, ArrowRight } from "lucide-react";
+import { Search, Calendar, User, ArrowRight, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
@@ -12,32 +12,40 @@ export const metadata: Metadata = {
 export const revalidate = 60; // Revalidate every minute
 
 async function getPosts() {
-    const { data, error } = await supabase
-        .from('posts')
-        .select(`
-            *,
-            post_categories_rel (
-                post_categories (
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .select(`
+                *,
+                post_categories!category_id (
                     name
                 )
-            )
-        `)
-        .order('created_at', { ascending: false });
+            `)
+            .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error fetching posts:", error);
-        return [];
+        if (error) {
+            return { posts: [], error: error.message };
+        }
+
+        // Flatten categories
+        const flattenedPosts = (data || []).map((post: any) => {
+            const categories = [];
+            if (post.post_categories?.name) categories.push(post.post_categories.name);
+            if (post.category && !categories.includes(post.category)) categories.push(post.category);
+            return {
+                ...post,
+                categories: categories.length > 0 ? categories : ["Geral"]
+            };
+        });
+
+        return { posts: flattenedPosts, error: null };
+    } catch (e: any) {
+        return { posts: [], error: e.message };
     }
-
-    // Flatten categories
-    return (data || []).map((post: any) => ({
-        ...post,
-        categories: post.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
-    }));
 }
 
 export default async function BlogPage() {
-    const posts = await getPosts();
+    const { posts, error } = await getPosts();
 
     const displayPosts = posts;
 
@@ -69,56 +77,69 @@ export default async function BlogPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {displayPosts.map((post: any) => (
-                            <article key={post.id} className="bg-white rounded-2xl overflow-hidden border shadow-sm group hover:shadow-xl transition-all duration-300">
-                                <Link href={`/blog/${post.slug || post.id}`}>
-                                    <div className="h-56 bg-gray-200 relative overflow-hidden">
-                                        <img
-                                            src={post.image_url || post.image || "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1000"}
-                                            alt={post.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                        <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[80%]">
-                                            {post.categories && post.categories.length > 0 ? (
-                                                post.categories.map((cat: string) => (
-                                                    <div key={cat} className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
-                                                        {cat}
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
-                                                    {post.category || "Geral"}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </Link>
-                                <div className="p-8">
-                                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date ? new Date(post.date + "T12:00:00").toLocaleDateString('pt-BR') : new Date(post.created_at).toLocaleDateString('pt-BR')}</span>
-                                        <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author || "Grupo Rainha da Paz"}</span>
-                                    </div>
+                        {error ? (
+                            <div className="col-span-full py-12 text-center text-red-500 bg-red-50 rounded-2xl border border-red-100">
+                                Erro ao carregar postagens: {error}
+                            </div>
+                        ) : displayPosts.length === 0 ? (
+                            <div className="col-span-full py-12 text-center text-gray-400 italic">
+                                Nenhuma postagem encontrada.
+                            </div>
+                        ) : (
+                            displayPosts.map((post: any) => (
+                                <article key={post.id} className="bg-white rounded-2xl overflow-hidden border shadow-sm group hover:shadow-xl transition-all duration-300">
                                     <Link href={`/blog/${post.slug || post.id}`}>
-                                        <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-4 group-hover:text-brand-blue transition-colors">
-                                            {post.title}
-                                        </h3>
+                                        <div className="h-56 bg-gray-200 relative overflow-hidden">
+                                            <img
+                                                src={post.image_url || post.image || "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1000"}
+                                                alt={post.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            />
+                                            <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[80%]">
+                                                {post.categories && post.categories.length > 0 ? (
+                                                    post.categories.map((cat: string) => (
+                                                        <div key={cat} className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                                            {cat}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="bg-brand-gold text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                                                        {post.category || "Geral"}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </Link>
-                                    <p className="text-gray-600 text-sm mb-6 line-clamp-3">
-                                        {post.excerpt || post.content?.substring(0, 150) + "..."}
-                                    </p>
-                                    <Link href={`/blog/${post.slug || post.id}`} className="text-brand-blue font-bold flex items-center gap-2 group/btn">
-                                        Ler Mais
-                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                                    </Link>
-                                </div>
-                            </article>
-                        ))}
+                                    <div className="p-8">
+                                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date ? new Date(post.date + "T12:00:00").toLocaleDateString('pt-BR') : new Date(post.created_at).toLocaleDateString('pt-BR')}</span>
+                                            <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author || "Grupo Rainha da Paz"}</span>
+                                        </div>
+                                        <Link href={`/blog/${post.slug || post.id}`}>
+                                            <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-4 group-hover:text-brand-blue transition-colors">
+                                                {post.title}
+                                            </h3>
+                                        </Link>
+                                        <p className="text-gray-600 text-sm mb-6 line-clamp-3">
+                                            {post.excerpt || post.content?.substring(0, 150) + "..."}
+                                        </p>
+                                        <Link href={`/blog/${post.slug || post.id}`} className="text-brand-blue font-bold flex items-center gap-2 group/btn">
+                                            Ler Mais
+                                            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                        </Link>
+                                    </div>
+                                </article>
+                            ))
+                        )}
                     </div>
 
                     <div className="mt-16 text-center">
-                        <Button size="lg" className="bg-brand-blue text-white px-10">
-                            Carregar mais postagens
-                        </Button>
+                        <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
+                            <Button size="lg" className="bg-brand-blue hover:bg-brand-blue/90 text-white px-10 gap-2 rounded-full h-14 text-lg shadow-xl hover:shadow-2xl transition-all duration-300">
+                                <MessageCircle className="w-6 h-6 fill-current" />
+                                Fale conosco no WhatsApp
+                            </Button>
+                        </a>
                     </div>
                 </div>
             </section>

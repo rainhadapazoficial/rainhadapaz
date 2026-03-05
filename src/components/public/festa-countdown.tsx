@@ -7,7 +7,7 @@ import { Crown, ArrowRight, Flame } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 // Fallback date if no edition with dates is found in the DB
-const FALLBACK_DATE = new Date("2026-07-18T18:00:00");
+const FALLBACK_DATE = new Date("2026-11-21T18:00:00");
 
 function getTimeLeft(target: Date) {
     const now = new Date();

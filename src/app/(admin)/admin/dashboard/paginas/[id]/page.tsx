@@ -17,6 +17,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    DropdownMenuGroup,
+    DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 
 export default function PaginaEditorPage() {
@@ -37,11 +41,24 @@ export default function PaginaEditorPage() {
         image_url: ""
     });
 
+    const [allPages, setAllPages] = useState<any[]>([]);
+
     useEffect(() => {
+        fetchAllPages();
         if (!isNew) {
             fetchPage();
         }
     }, [params.id]);
+
+    async function fetchAllPages() {
+        const { data, error } = await supabase
+            .from("custom_pages")
+            .select("id, title, slug")
+            .order("title");
+        if (!error && data) {
+            setAllPages(data);
+        }
+    }
 
     async function fetchPage() {
         const { data, error } = await supabase
@@ -162,10 +179,26 @@ export default function PaginaEditorPage() {
                                         <SelectValue placeholder="Selecione o menu" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="quem-somos">Quem Somos</SelectItem>
-                                        <SelectItem value="formacao">Formação</SelectItem>
-                                        <SelectItem value="eventos">Eventos</SelectItem>
                                         <SelectItem value="nenhum">Nenhum (Página isolada)</SelectItem>
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Menus Principais</DropdownMenuLabel>
+                                            <SelectItem value="quem-somos">Quem Somos</SelectItem>
+                                            <SelectItem value="formacao">Formação</SelectItem>
+                                            <SelectItem value="eventos">Eventos</SelectItem>
+                                            <SelectItem value="especiais">Especiais</SelectItem>
+                                        </DropdownMenuGroup>
+
+                                        {allPages.length > 0 && (
+                                            <DropdownMenuGroup>
+                                                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Páginas Existentes</DropdownMenuLabel>
+                                                {allPages
+                                                    .filter(p => p.id.toString() !== params.id) // Don't let a page be its own parent
+                                                    .map(p => (
+                                                        <SelectItem key={p.id} value={p.title}>{p.title}</SelectItem>
+                                                    ))
+                                                }
+                                            </DropdownMenuGroup>
+                                        )}
                                     </SelectContent>
                                 </Select>
                             </div>

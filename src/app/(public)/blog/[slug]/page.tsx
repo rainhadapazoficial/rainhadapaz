@@ -9,18 +9,21 @@ export const revalidate = 60;
 
 async function getPost(slugOrId: string) {
     // Try to find by slug
+    // Using explicit join path to avoid ambiguity between category_id and many-to-many relationship
     let { data, error } = await supabase
         .from('posts')
         .select(`
             *,
-            post_categories_rel (
-                post_categories (
-                    name
-                )
+            post_categories!category_id (
+                name
             )
         `)
         .eq('slug', slugOrId)
         .single();
+
+    if (error) {
+        console.error("Error fetching post by slug:", error);
+    }
 
     // Fallback try to find by ID if slug fails (for legacy links)
     if (error || !data) {
@@ -30,28 +33,34 @@ async function getPost(slugOrId: string) {
                 .from('posts')
                 .select(`
                     *,
-                    post_categories_rel (
-                        post_categories (
-                            name
-                        )
+                    post_categories!category_id (
+                        name
                     )
                 `)
                 .eq('id', parseInt(slugOrId))
                 .single();
 
             if (!idError && idData) {
+                const categories = [];
+                if (idData.post_categories?.name) categories.push(idData.post_categories.name);
+                if (idData.category && !categories.includes(idData.category)) categories.push(idData.category);
+
                 return {
                     ...idData,
-                    categories: idData.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
+                    categories: categories.length > 0 ? categories : ["Geral"]
                 };
             }
         }
         return null;
     }
 
+    const categories = [];
+    if (data.post_categories?.name) categories.push(data.post_categories.name);
+    if (data.category && !categories.includes(data.category)) categories.push(data.category);
+
     return {
         ...data,
-        categories: data.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || []
+        categories: categories.length > 0 ? categories : ["Geral"]
     };
 }
 

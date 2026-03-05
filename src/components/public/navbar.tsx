@@ -10,12 +10,15 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 type NavItem = {
     name: string;
     href?: string;
-    children?: { name: string; href: string }[];
+    children?: NavItem[];
 };
 
 const defaultNavLinks: NavItem[] = [
@@ -59,7 +62,6 @@ export function Navbar() {
     const [navLinks, setNavLinks] = useState<NavItem[]>(defaultNavLinks);
 
     useEffect(() => {
-        console.log("Navbar: v2 (Dynamic Pages) loaded");
         fetchDynamicPages();
     }, []);
 
@@ -76,13 +78,19 @@ export function Navbar() {
                     .replace(/[\u0300-\u036f]/g, "")
                     .replace(/\s+/g, "-");
 
-            const updatedLinks = defaultNavLinks.map(link => {
-                const dynamicChildren = data
-                    .filter(p => normalize(p.parent_menu || "") === normalize(link.name))
+            // Build a tree structure
+            const buildTree = (items: any[], parentName: string): NavItem[] => {
+                return items
+                    .filter(p => normalize(p.parent_menu || "") === normalize(parentName))
                     .map(p => ({
                         name: p.title,
-                        href: p.slug === 'festa-rei-jesus' ? '/festa-rei-jesus' : `/p/${p.slug}`
+                        href: p.slug === 'festa-rei-jesus' ? '/festa-rei-jesus' : `/p/${p.slug}`,
+                        children: buildTree(items, p.title) // Recursively find children for THIS page
                     }));
+            };
+
+            const updatedLinks = defaultNavLinks.map(link => {
+                const dynamicChildren = buildTree(data, link.name);
 
                 if (dynamicChildren.length > 0) {
                     return {
@@ -98,6 +106,64 @@ export function Navbar() {
 
     const toggleMobileSubmenu = (name: string) => {
         setMobileSubmenu(mobileSubmenu === name ? null : name);
+    };
+
+    // Recursive desktop sub-menu renderer
+    const renderSubMenu = (item: NavItem) => {
+        if (item.children && item.children.length > 0) {
+            return (
+                <DropdownMenuSub key={item.name}>
+                    <DropdownMenuSubTrigger className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50 px-3 py-2 text-sm justify-between">
+                        {item.name}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="bg-white">
+                        {item.children.map(child => renderSubMenu(child))}
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
+            );
+        }
+        return (
+            <DropdownMenuItem key={item.name} asChild>
+                <Link href={item.href || "#"} className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50 px-3 py-2 text-sm">
+                    {item.name}
+                </Link>
+            </DropdownMenuItem>
+        );
+    };
+
+    // Recursive mobile sub-menu renderer
+    const renderMobileSubMenu = (item: NavItem, depth = 0) => {
+        const hasChildren = item.children && item.children.length > 0;
+        const isSelected = mobileSubmenu?.split('|').includes(item.name);
+
+        return (
+            <div key={item.name} className="space-y-1">
+                {hasChildren ? (
+                    <>
+                        <button
+                            onClick={() => toggleMobileSubmenu(item.name)}
+                            className={`flex items-center justify-between w-full text-base font-medium py-2 ${depth > 0 ? 'text-gray-600 pl-4' : 'text-gray-700'}`}
+                        >
+                            {item.name}
+                            <ChevronDown className={`w-4 h-4 transition-transform ${mobileSubmenu === item.name ? "rotate-180" : ""}`} />
+                        </button>
+                        {mobileSubmenu === item.name && (
+                            <div className={`border-l-2 border-brand-blue/10 ml-1 ${depth > 0 ? 'pl-4' : 'pl-4'}`}>
+                                {item.children!.map(child => renderMobileSubMenu(child, depth + 1))}
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <Link
+                        href={item.href || "#"}
+                        onClick={() => setIsOpen(false)}
+                        className={`block text-base py-2 ${depth > 0 ? (depth > 1 ? 'text-gray-500 text-sm pl-8' : 'text-gray-600 pl-4') : 'text-gray-700 font-medium'}`}
+                    >
+                        {item.name}
+                    </Link>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -117,7 +183,7 @@ export function Navbar() {
                     {/* Desktop Menu */}
                     <div className="hidden lg:flex items-center space-x-6">
                         {navLinks.map((link) => {
-                            if (link.children) {
+                            if (link.children && link.children.length > 0) {
                                 return (
                                     <DropdownMenu key={link.name}>
                                         <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-brand-blue transition-colors outline-none">
@@ -125,13 +191,7 @@ export function Navbar() {
                                             <ChevronDown className="w-4 h-4" />
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="bg-white">
-                                            {link.children.map((child) => (
-                                                <DropdownMenuItem key={child.name} asChild>
-                                                    <Link href={child.href} className="w-full cursor-pointer hover:text-brand-blue hover:bg-slate-50 px-3 py-2 text-sm">
-                                                        {child.name}
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                            ))}
+                                            {link.children.map(child => renderSubMenu(child))}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 );
@@ -182,45 +242,8 @@ export function Navbar() {
             {/* Mobile Menu */}
             {isOpen && (
                 <div className="lg:hidden bg-white border-t p-4 space-y-2 shadow-xl animate-in slide-in-from-top duration-300 max-h-[80vh] overflow-y-auto">
-                    {navLinks.map((link) => {
-                        if (link.children) {
-                            return (
-                                <div key={link.name} className="space-y-1">
-                                    <button
-                                        onClick={() => toggleMobileSubmenu(link.name)}
-                                        className="flex items-center justify-between w-full text-base font-medium text-gray-700 hover:text-brand-blue py-2"
-                                    >
-                                        {link.name}
-                                        <ChevronDown className={`w-4 h-4 transition-transform ${mobileSubmenu === link.name ? "rotate-180" : ""}`} />
-                                    </button>
-                                    {mobileSubmenu === link.name && (
-                                        <div className="pl-4 space-y-2 border-l-2 border-brand-blue/10 ml-1">
-                                            {link.children.map((child) => (
-                                                <Link
-                                                    key={child.name}
-                                                    href={child.href}
-                                                    onClick={() => setIsOpen(false)}
-                                                    className="block text-sm text-gray-600 hover:text-brand-blue py-1"
-                                                >
-                                                    {child.name}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        }
-                        return (
-                            <Link
-                                key={link.name}
-                                href={link.href!}
-                                onClick={() => setIsOpen(false)}
-                                className="block text-base font-medium text-gray-700 hover:text-brand-blue py-2"
-                            >
-                                {link.name}
-                            </Link>
-                        );
-                    })}
+                    {navLinks.map((link) => renderMobileSubMenu(link))}
+
                     <div className="pt-4 border-t mt-2 space-y-4">
                         <div className="flex justify-center gap-8 py-2">
                             <a href="https://www.instagram.com/rainhadapazsinop" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-gold transition-colors">

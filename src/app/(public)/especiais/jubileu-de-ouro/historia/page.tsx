@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     description: "Conheça a trajetória de 50 anos do Grupo de Oração Rainha da Paz em Sinop.",
 };
 
+export const revalidate = 0; // Force dynamic rendering
+
 async function getJubileuSettings() {
     const { data } = await supabase
         .from('site_settings')
@@ -21,7 +23,14 @@ async function getJubileuSettings() {
 export default async function HistoryPage() {
     const settings = await getJubileuSettings();
 
-    const timelineData = settings?.history?.timeline || [
+    // Ensure we have a valid timeline array, falling back if empty or missing
+    const hasTimeline = settings?.history?.timeline && Array.isArray(settings.history.timeline) && settings.history.timeline.length > 0;
+
+    if (!hasTimeline) {
+        console.warn("Jubileu History: Timeline not found or empty in settings. Using fallback data.");
+    }
+
+    const timelineData = hasTimeline ? settings.history.timeline : [
         {
             year: "1976",
             title: "O Início",

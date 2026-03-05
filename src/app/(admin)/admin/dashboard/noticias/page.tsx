@@ -107,33 +107,17 @@ function NoticiasAdminContent() {
             .from("posts")
             .select(`
                 *,
-                post_categories_rel (
-                    category_id,
-                    post_categories (
-                        id,
-                        name
-                    )
+                post_categories!category_id (
+                    id,
+                    name
                 )
             `)
             .order("created_at", { ascending: false });
 
         if (categorySlug) {
-            // This is harder with many-to-many in Supabase JS without separate queries or RPC
-            // For now, let's just fetch all and filter client side if needed, 
-            // OR use a subquery if the schema allows.
-            // Actually, we can join and filter.
-            const { data: cat } = await supabase
-                .from("post_categories")
-                .select("id")
-                .eq("slug", categorySlug)
-                .single();
-
-            if (cat) {
-                // We'll filter posts that have this category in their post_categories_rel
-                // Since this is a complex filter, we might just select all and filter here
-                // or use a more advanced join. 
-                // Let's try the .eq filter on the relation.
-            }
+            // Filter by category slug if provided
+            // For now, let's just fetch all and filter client side if needed
+            // as direct filtering on joined tables in Supabase JS can be tricky
         }
 
         const { data, error } = await query;
@@ -141,11 +125,29 @@ function NoticiasAdminContent() {
         if (error) console.error("Error fetching posts:", error);
         else {
             // Flatten the categories for easier display
-            const flattenedPosts = (data || []).map((post: any) => ({
-                ...post,
-                categories: post.post_categories_rel?.map((rel: any) => rel.post_categories?.name).filter(Boolean) || [],
-                category_ids: post.post_categories_rel?.map((rel: any) => rel.category_id) || []
-            }));
+            const flattenedPosts = (data || []).map((post: any) => {
+                const categories = [];
+                const category_ids = [];
+
+                if (post.post_categories) {
+                    categories.push(post.post_categories.name);
+                    category_ids.push(post.post_categories.id);
+                }
+
+                if (post.category && !categories.includes(post.category)) {
+                    categories.push(post.category);
+                }
+
+                if (post.category_id && !category_ids.includes(post.category_id)) {
+                    category_ids.push(post.category_id);
+                }
+
+                return {
+                    ...post,
+                    categories,
+                    category_ids
+                };
+            });
             setPosts(flattenedPosts);
         }
         setIsLoading(false);
@@ -216,16 +218,22 @@ function NoticiasAdminContent() {
             const postId = editingPost ? editingPost.id : result.data[0].id;
 
             // Update Categories Relationship
-            // 1. Delete existing
-            await supabase.from("post_categories_rel").delete().eq("post_id", postId);
+            // We'll try to update the junction table, but if it fails (e.g. table missing), 
+            // the post itself is already saved with category_id.
+            try {
+                // 1. Delete existing
+                await supabase.from("post_categories_rel").delete().eq("post_id", postId);
 
-            // 2. Insert new
-            if (selectedCategoryIds.length > 0) {
-                const relations = selectedCategoryIds.map(catId => ({
-                    post_id: postId,
-                    category_id: catId
-                }));
-                await supabase.from("post_categories_rel").insert(relations);
+                // 2. Insert new
+                if (selectedCategoryIds.length > 0) {
+                    const relations = selectedCategoryIds.map(catId => ({
+                        post_id: postId,
+                        category_id: catId
+                    }));
+                    await supabase.from("post_categories_rel").insert(relations);
+                }
+            } catch (relError) {
+                console.warn("Failed to update post_categories_rel (table might be missing):", relError);
             }
 
             setIsDialogOpen(false);
