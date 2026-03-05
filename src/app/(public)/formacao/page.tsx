@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Play, Download, GraduationCap, ChevronRight, Loader2, Quote, Flame, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getYouTubeEmbedUrl } from "@/lib/utils";
+import Link from "next/link";
 
 export default function FormacaoPage() {
     const [content, setContent] = useState<any>(null);
@@ -125,7 +126,7 @@ export default function FormacaoPage() {
                                         </p>
                                     </div>
                                 </div>
-                                <div className="p-4 bg-gray-50">
+                                <div className="p-4 bg-gray-50 flex flex-col gap-4">
                                     <div className="aspect-video rounded-3xl overflow-hidden shadow-inner bg-black group-hover:shadow-lg transition-all duration-500">
                                         <iframe
                                             className="w-full h-full"
@@ -135,6 +136,20 @@ export default function FormacaoPage() {
                                             allowFullScreen
                                         />
                                     </div>
+                                    {index === 0 && (
+                                        <Link href="/formacao/querigma">
+                                            <Button className="w-full bg-white hover:bg-brand-blue hover:text-white text-brand-blue border-2 border-brand-blue/10 rounded-2xl h-12 font-bold transition-all gap-2">
+                                                <BookOpen className="w-5 h-5" /> Ver Apostilas & Detalhes
+                                            </Button>
+                                        </Link>
+                                    )}
+                                    {index === 1 && (
+                                        <Link href="/formacao/modulo-basico">
+                                            <Button className="w-full bg-white hover:bg-brand-blue hover:text-white text-brand-blue border-2 border-brand-blue/10 rounded-2xl h-12 font-bold transition-all gap-2">
+                                                <BookOpen className="w-5 h-5" /> Ver Apostilas & Detalhes
+                                            </Button>
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         ))}

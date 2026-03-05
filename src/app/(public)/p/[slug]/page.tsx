@@ -1,66 +1,106 @@
+"use client";
+
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import parse from "html-react-parser";
-import { Metadata } from "next";
+import { useEffect, useState, use } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export const revalidate = 60; // Revalidate every minute
+export default function CustomDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = use(params);
+    const [page, setPage] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-async function getPageData(slug: string) {
-    const { data, error } = await supabase
-        .from("custom_pages")
-        .select("*")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
+    useEffect(() => {
+        async function loadPage() {
+            const { data, error } = await supabase
+                .from("custom_pages")
+                .select("*")
+                .eq("slug", slug)
+                .eq("is_published", true)
+                .single();
 
-    if (error || !data) return null;
-    return data;
-}
+            if (error || !data) {
+                setPage(null);
+            } else {
+                setPage(data);
+            }
+            setLoading(false);
+        }
+        loadPage();
+    }, [slug]);
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-    const { slug } = await params;
-    const page = await getPageData(slug);
-
-    if (!page) return { title: "Página não encontrada" };
-
-    return {
-        title: page.title,
-        description: `Saiba mais sobre ${page.title} no Grupo Rainha da Paz, Sinop/MT.`,
-        openGraph: {
-            title: page.title,
-            description: `Saiba mais sobre ${page.title} no Grupo Rainha da Paz.`,
-            type: "website",
-        },
-    };
-}
-
-export default async function CustomDynamicPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
-    const page = await getPageData(slug);
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="w-12 h-12 border-4 border-brand-blue border-t-brand-gold rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     if (!page) {
         notFound();
     }
 
     return (
-        <div className="flex flex-col">
-            {/* Header */}
-            <section className="bg-brand-blue py-20 text-white text-center">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h1 className="text-5xl font-bold mb-6 italic text-brand-gold">{page.title}</h1>
-                    <div className="w-24 h-1 bg-brand-gold mx-auto rounded-full" />
+        <main className="min-h-screen bg-[#f8fafc] overflow-hidden relative">
+            {/* Background Decor */}
+            <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-blue overflow-hidden pointer-events-none">
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl" />
+                <div className="absolute top-1/2 -left-24 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
+            </div>
+
+            {/* Hero Section */}
+            <section className="relative pt-32 pb-20 px-4">
+                <div className="max-w-5xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="text-center"
+                    >
+                        <span className="inline-block px-4 py-1.5 bg-brand-gold/10 text-brand-gold text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6 backdrop-blur-md border border-brand-gold/20">
+                            Rainha da Paz • Portal
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">
+                            {page.title}
+                        </h1>
+                        <div className="w-32 h-2 bg-gradient-to-r from-brand-gold to-brand-gold/0 mx-auto rounded-full" />
+                    </motion.div>
                 </div>
             </section>
 
-            {/* Content */}
-            <section className="py-24 bg-white">
-                <div className="max-w-4xl mx-auto px-4">
-                    <article className="prose prose-lg max-w-none prose-headings:text-brand-blue prose-p:text-gray-600 prose-img:rounded-3xl prose-img:shadow-xl">
-                        {parse(page.content)}
-                    </article>
+            {/* Content Area */}
+            <section className="relative pb-32 px-4 z-10">
+                <div className="max-w-5xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                        className="glass-card rounded-[2.5rem] p-8 md:p-16 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]"
+                    >
+                        <article className="premium-prose">
+                            {parse(page.content)}
+                        </article>
+                    </motion.div>
+
+                    {/* Footer Info */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1 }}
+                        className="mt-12 flex flex-wrap items-center justify-center gap-8 text-gray-400 font-bold text-[10px] uppercase tracking-widest"
+                    >
+                        <div className="flex items-center gap-3 bg-white py-2 px-4 rounded-full border border-gray-100 shadow-sm">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                            Conteúdo Oficial
+                        </div>
+                        <div>Grupo de Oração Rainha da Paz</div>
+                        <div>{new Date().getFullYear()}</div>
+                    </motion.div>
                 </div>
             </section>
-        </div>
+        </main>
     );
 }
 
