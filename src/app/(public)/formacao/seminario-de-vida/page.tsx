@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Heart, Shield, Target, Crown, Sparkles, Flame, Loader2, BookOpen, Star, Users, CheckCircle2, Award } from "lucide-react";
+import { Heart, Shield, Target, Crown, Sparkles, Flame, Loader2, BookOpen, Star, Users, CheckCircle2, Award, Download } from "lucide-react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 export default function SeminarioVidaPage() {
     const [content, setContent] = useState<any>(null);
@@ -62,6 +64,39 @@ export default function SeminarioVidaPage() {
         ],
         image_url: "https://rccbrasil.org.br/wp-content/uploads/2023/04/seminario-1024x349.jpg"
     };
+
+    const workbooks = [
+        {
+            id: 1,
+            title: "Seminário de Vida no Espírito Santo",
+            subtitle: "Experiência de Pentecostes",
+            description: "O anúncio fundamental do Evangelho para um encontro pessoal com Jesus.",
+            icon: <Flame className="w-8 h-8 text-white" />,
+            color: "bg-orange-500",
+            image: "/formacao/querigma/seminario_espitiro_santo.jpg",
+            link: "#"
+        },
+        {
+            id: 2,
+            title: "Introdução aos Dons",
+            subtitle: "Carismas do Espírito",
+            description: "Descubra e desenvolva os presentes que o Espírito Santo reservou para você.",
+            icon: <Sparkles className="w-8 h-8 text-white" />,
+            color: "bg-blue-500",
+            image: "/formacao/querigma/introducao_aos_dons.jpg",
+            link: "#"
+        },
+        {
+            id: 3,
+            title: "Experiência de Oração",
+            subtitle: "Vida de Intimidade",
+            description: "Aprofunde seu relacionamento com Deus através da oração pessoal e comunitária.",
+            icon: <Target className="w-8 h-8 text-white" />,
+            color: "bg-purple-500",
+            image: "/formacao/querigma/experiencia_de_oracao.jpg",
+            link: "#"
+        }
+    ];
 
     const getIcon = (iconName: string) => {
         switch (iconName) {
@@ -155,6 +190,69 @@ export default function SeminarioVidaPage() {
                                 Venha ter uma experiência profunda com o amor de Deus que transforma vidas.
                             </p>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Workbook Section */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 relative z-10">
+                    <div className="text-center mb-16">
+                        <span className="inline-block px-4 py-1.5 bg-brand-gold/10 text-brand-gold text-[10px] font-black uppercase tracking-[0.3em] rounded-full mb-4 border border-brand-gold/20">
+                            Recursos de Apoio
+                        </span>
+                        <h2 className="text-4xl md:text-5xl font-black text-brand-blue italic tracking-tighter mb-4">
+                            Apostilas do Querigma
+                        </h2>
+                        <p className="text-gray-500 font-medium max-w-2xl mx-auto italic">
+                            Aprofunde os temas tratados no Seminário com nosso material didático exclusivo.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {workbooks.map((book, index) => (
+                            <motion.div
+                                key={book.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                className="group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col"
+                            >
+                                {/* Cover Image */}
+                                <div className={`aspect-[3/4] relative overflow-hidden flex items-center justify-center`}>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                    <img
+                                        src={book.image}
+                                        alt={book.title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).parentElement!.className += ` ${book.color}`;
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                    <div className="relative z-20 text-white flex flex-col items-center gap-4 p-8 text-center transition-transform duration-500 group-hover:translate-y-[-10px]">
+                                        <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
+                                            {book.icon}
+                                        </div>
+                                        <div>
+                                            <div className="font-black text-[10px] uppercase tracking-widest opacity-70 mb-1">{book.subtitle}</div>
+                                            <div className="text-2xl font-black tracking-tighter leading-none">{book.title}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-8 flex flex-col flex-1">
+                                    <p className="text-gray-500 text-sm leading-relaxed mb-8 italic flex-1">
+                                        &quot;{book.description}&quot;
+                                    </p>
+                                    <Button className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white rounded-2xl h-14 font-bold shadow-lg shadow-brand-blue/10 flex items-center justify-center gap-3 group-hover:scale-[1.02] transition-transform">
+                                        <Download className="w-5 h-5 text-brand-gold" />
+                                        Baixar Apostila
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>

@@ -129,27 +129,17 @@ export default function FormacaoPage() {
                                 <div className="p-4 bg-gray-50 flex flex-col gap-4">
                                     <div className="aspect-video rounded-3xl overflow-hidden shadow-inner bg-black group-hover:shadow-lg transition-all duration-500">
                                         <iframe
+                                            src={getYouTubeEmbedUrl(stage.video)}
                                             className="w-full h-full"
-                                            src={getYouTubeEmbedUrl(stage.video_url)}
-                                            title={stage.title}
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                             allowFullScreen
                                         />
                                     </div>
-                                    {index === 0 && (
-                                        <Link href="/formacao/querigma">
-                                            <Button className="w-full bg-white hover:bg-brand-blue hover:text-white text-brand-blue border-2 border-brand-blue/10 rounded-2xl h-12 font-bold transition-all gap-2">
-                                                <BookOpen className="w-5 h-5" /> Ver Apostilas & Detalhes
-                                            </Button>
-                                        </Link>
-                                    )}
-                                    {index === 1 && (
-                                        <Link href="/formacao/modulo-basico">
-                                            <Button className="w-full bg-white hover:bg-brand-blue hover:text-white text-brand-blue border-2 border-brand-blue/10 rounded-2xl h-12 font-bold transition-all gap-2">
-                                                <BookOpen className="w-5 h-5" /> Ver Apostilas & Detalhes
-                                            </Button>
-                                        </Link>
-                                    )}
+                                    <Link href={stage.href || "#"}>
+                                        <Button className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white rounded-2xl h-12 font-bold shadow-lg shadow-brand-blue/10 flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform">
+                                            <BookOpen className="w-4 h-4 text-brand-gold" />
+                                            Ver Apostilas & Detalhes
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         ))}
