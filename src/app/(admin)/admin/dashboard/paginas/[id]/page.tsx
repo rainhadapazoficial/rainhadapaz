@@ -180,24 +180,23 @@ export default function PaginaEditorPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="nenhum">Nenhum (Página isolada)</SelectItem>
-                                        <DropdownMenuGroup>
-                                            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Menus Principais</DropdownMenuLabel>
-                                            <SelectItem value="quem-somos">Quem Somos</SelectItem>
-                                            <SelectItem value="formacao">Formação</SelectItem>
-                                            <SelectItem value="eventos">Eventos</SelectItem>
-                                            <SelectItem value="especiais">Especiais</SelectItem>
-                                        </DropdownMenuGroup>
+
+                                        <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Menus Principais</DropdownMenuLabel>
+                                        <SelectItem value="quem-somos">Quem Somos</SelectItem>
+                                        <SelectItem value="formacao">Formação</SelectItem>
+                                        <SelectItem value="eventos">Eventos</SelectItem>
+                                        <SelectItem value="especiais">Especiais</SelectItem>
 
                                         {allPages.length > 0 && (
-                                            <DropdownMenuGroup>
-                                                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Páginas Existentes</DropdownMenuLabel>
+                                            <>
+                                                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider border-t mt-2">Páginas Existentes</DropdownMenuLabel>
                                                 {allPages
-                                                    .filter(p => p.id.toString() !== params.id) // Don't let a page be its own parent
+                                                    .filter(p => p.id.toString() !== params.id)
                                                     .map(p => (
                                                         <SelectItem key={p.id} value={p.title}>{p.title}</SelectItem>
                                                     ))
                                                 }
-                                            </DropdownMenuGroup>
+                                            </>
                                         )}
                                     </SelectContent>
                                 </Select>
