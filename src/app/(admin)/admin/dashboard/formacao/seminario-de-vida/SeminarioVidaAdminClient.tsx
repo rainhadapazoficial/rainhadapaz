@@ -34,7 +34,8 @@ export function SeminarioVidaAdminClient({ initialData }: SeminarioVidaAdminClie
             { id: "5", title: "Cura Interior", icon: "Sparkles" },
             { id: "6", title: "Batismo no Espírito", icon: "Flame" }
         ],
-        image_url: "https://images.unsplash.com/photo-1510915228340-29c85a43dbfe?q=80&w=1000"
+        image_url: "https://images.unsplash.com/photo-1510915228340-29c85a43dbfe?q=80&w=1000",
+        registration_url: ""
     });
 
     const [isSaving, setIsSaving] = useState(false);
@@ -133,6 +134,16 @@ export function SeminarioVidaAdminClient({ initialData }: SeminarioVidaAdminClie
                                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                                 className="rounded-xl"
                             />
+                        </div>
+                        <div className="space-y-2 pt-4 border-t">
+                            <Label className="text-brand-blue font-bold">Link para Inscrição</Label>
+                            <Input
+                                placeholder="Ex: https://forms.gle/..."
+                                value={formData.registration_url || ""}
+                                onChange={(e) => setFormData({ ...formData, registration_url: e.target.value })}
+                                className="rounded-xl border-brand-gold/50 focus:border-brand-gold"
+                            />
+                            <p className="text-[10px] text-gray-400 italic">Se preenchido, um botão de inscrição aparecerá na página.</p>
                         </div>
                     </CardContent>
                 </Card>

@@ -90,6 +90,15 @@ export default function SeminarioVidaPage() {
                         {data.hero.title}
                     </h1>
                     <div className="w-24 h-1 bg-brand-gold mx-auto mb-6 rounded-full" />
+
+                    {data.registration_url && (
+                        <a href={data.registration_url} target="_blank" rel="noopener noreferrer">
+                            <button className="bg-brand-gold hover:bg-white hover:text-brand-blue text-brand-blue px-8 h-12 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2 mx-auto">
+                                <Award className="w-5 h-5" />
+                                Inscreva-se Agora
+                            </button>
+                        </a>
+                    )}
                 </div>
             </section>
 
@@ -148,7 +157,24 @@ export default function SeminarioVidaPage() {
                         </div>
                     </div>
                 </div>
-            </section>
+                {/* Final CTA */}
+                {data.registration_url && (
+                    <section className="py-20 bg-gray-50 text-center">
+                        <div className="max-w-3xl mx-auto px-4">
+                            <Award className="w-16 h-16 text-brand-gold mx-auto mb-6" />
+                            <h2 className="text-4xl font-bold text-brand-blue italic mb-6">Pronto para começar?</h2>
+                            <p className="text-gray-600 text-lg mb-10 font-medium">
+                                Não perca a oportunidade de viver este tempo de graça. As inscrições estão abertas!
+                            </p>
+                            <a href={data.registration_url} target="_blank" rel="noopener noreferrer">
+                                <button className="bg-brand-blue text-white px-12 h-16 rounded-2xl text-xl font-bold shadow-xl shadow-brand-blue/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto">
+                                    <Award className="w-6 h-6 text-brand-gold" />
+                                    Quero me Inscrever
+                                </button>
+                            </a>
+                        </div>
+                    </section>
+                )}
         </div>
     );
 }
