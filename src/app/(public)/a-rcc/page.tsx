@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Flame, Users, Globe, Target, Shield, Heart, Quote, ChevronRight, X } from "lucide-react";
+import { Flame, Users, Globe, Target, Shield, Heart, Quote, ChevronRight, X, MessageCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -363,15 +363,16 @@ export default function ARCCPage() {
             {/* Footer CTA */}
             <section className="py-24 bg-white text-center">
                 <div className="max-w-3xl mx-auto px-4">
-                    <h2 className="text-4xl font-bold text-brand-blue italic mb-8">Participe da Corrente de Graça</h2>
+                    <h2 className="text-4xl font-bold text-brand-blue italic mb-8">Participe do nosso Grupo de Oração</h2>
                     <p className="text-gray-600 text-lg mb-12 font-medium">
-                        Venha viver a experiência do Batismo no Espírito Santo em um de nossos Grupos de Oração. Procure o grupo mais próximo de você!
+                        Venha viver a experiência do Batismo no Espírito Santo conosco. Fale conosco agora pelo WhatsApp e saiba como participar!
                     </p>
-                    <Link href="/grupos">
-                        <Button className="bg-brand-blue text-white px-12 h-16 rounded-2xl text-lg font-bold shadow-xl shadow-brand-blue/20 hover:scale-105 transition-all">
-                            Encontrar um Grupo de Oração
+                    <a href="https://wa.me/5566981365456" target="_blank" rel="noopener noreferrer">
+                        <Button className="bg-[#25D366] hover:bg-[#128C7E] text-white px-12 h-16 rounded-2xl text-lg font-bold shadow-xl shadow-green-500/20 hover:scale-105 transition-all gap-3">
+                            <MessageCircle className="w-6 h-6 fill-current" />
+                            Fale Conosco no WhatsApp
                         </Button>
-                    </Link>
+                    </a>
                 </div>
             </section>
         </div>
