@@ -82,16 +82,26 @@ export default function QuerigmaPage() {
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                 className="group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col"
                             >
-                                {/* Cover Placeholder/Image */}
-                                <div className={`aspect-[3/4] relative overflow-hidden ${book.color} flex items-center justify-center`}>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                                    <div className="relative text-white flex flex-col items-center gap-4 p-8 text-center">
-                                        <div className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                                {/* Cover Image */}
+                                <div className={`aspect-[3/4] relative overflow-hidden flex items-center justify-center`}>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                    <img
+                                        src={book.image}
+                                        alt={book.title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        onError={(e) => {
+                                            // Fallback if image missing
+                                            (e.target as HTMLImageElement).parentElement!.className += ` ${book.color}`;
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                    <div className="relative z-20 text-white flex flex-col items-center gap-4 p-8 text-center transition-transform duration-500 group-hover:translate-y-[-10px]">
+                                        <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
                                             {book.icon}
                                         </div>
                                         <div>
-                                            <div className="font-black text-xs uppercase tracking-widest opacity-70 mb-1">{book.subtitle}</div>
-                                            <div className="text-3xl font-black tracking-tighter">{book.title}</div>
+                                            <div className="font-black text-[10px] uppercase tracking-widest opacity-70 mb-1">{book.subtitle}</div>
+                                            <div className="text-2xl font-black tracking-tighter leading-none">{book.title}</div>
                                         </div>
                                     </div>
                                 </div>
