@@ -7,13 +7,13 @@ export default function PageClient({ page }: { page: any }) {
     return (
         <main className="min-h-screen bg-[#f8fafc] overflow-hidden relative">
             {/* Background Decor */}
-            <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-blue overflow-hidden pointer-events-none">
+            <div className="absolute top-0 left-0 w-full h-[500px] md:h-[600px] bg-brand-blue overflow-hidden pointer-events-none">
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl" />
                 <div className="absolute top-1/2 -left-24 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
             </div>
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 px-4">
+            <section className="relative pt-32 pb-16 px-4">
                 <div className="max-w-5xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -21,26 +21,34 @@ export default function PageClient({ page }: { page: any }) {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-center"
                     >
-                        <span className="inline-block px-4 py-1.5 bg-brand-gold/10 text-brand-gold text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6 backdrop-blur-md border border-brand-gold/20">
-                            Rainha da Paz • Portal
-                        </span>
-                        <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">
-                            {page.title}
-                        </h1>
-                        <div className="w-32 h-2 bg-gradient-to-r from-brand-gold to-brand-gold/0 mx-auto rounded-full" />
+                        {page.title && (
+                            <>
+                                <span className="inline-block px-4 py-1.5 bg-brand-gold/10 text-brand-gold text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6 backdrop-blur-md border border-brand-gold/20">
+                                    Rainha da Paz • Portal
+                                </span>
+                                <h1 className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-tight">
+                                    {page.title}
+                                </h1>
+                                <div className="w-32 h-2 bg-gradient-to-r from-brand-gold to-brand-gold/0 mx-auto rounded-full" />
+                            </>
+                        )}
+                        {!page.title && <div className="h-12" />}
                     </motion.div>
                 </div>
             </section>
 
             {/* Content Area */}
-            <section className="relative pb-32 px-4 z-10">
+            <section className="relative pb-32 px-4 z-10 -mt-8 md:-mt-12">
                 <div className="max-w-5xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                        className="glass-card rounded-[2.5rem] p-8 md:p-16 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]"
+                        className="glass-card rounded-[2.5rem] p-6 md:p-16 shadow-2xl relative bg-white"
                     >
+                        {/* Decorative side accent */}
+                        <div className="absolute left-0 top-12 bottom-12 w-1 bg-brand-gold/20 rounded-r-full hidden md:block" />
+
                         <article className="premium-prose">
                             {parse(page.content)}
                         </article>
