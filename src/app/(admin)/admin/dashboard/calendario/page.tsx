@@ -26,6 +26,7 @@ const MESES = [
 
 const CATEGORIAS = [
     { value: "grupo", label: "Grupo de Oração", color: "bg-blue-600" },
+    { value: "paroquial", label: "Paroquial", color: "bg-purple-600" },
     { value: "diocesano", label: "Diocesano", color: "bg-green-600" },
     { value: "estadual", label: "Estadual", color: "bg-yellow-500" },
     { value: "nacional", label: "Nacional", color: "bg-orange-500" },

@@ -12,6 +12,7 @@ const MESES = [
 
 const CATEGORIAS: Record<string, { label: string; bg: string; text: string; dot: string }> = {
     grupo: { label: "Grupo de Oração", bg: "bg-blue-500/10", text: "text-blue-700 font-bold", dot: "bg-blue-600" },
+    paroquial: { label: "Paroquial", bg: "bg-purple-500/10", text: "text-purple-700 font-bold", dot: "bg-purple-600" },
     diocesano: { label: "Diocesano", bg: "bg-green-500/10", text: "text-green-700", dot: "bg-green-600" },
     estadual: { label: "Estadual", bg: "bg-yellow-500/10", text: "text-yellow-700", dot: "bg-yellow-500" },
     nacional: { label: "Nacional", bg: "bg-orange-500/10", text: "text-orange-700", dot: "bg-orange-500" },
