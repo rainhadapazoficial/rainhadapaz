@@ -496,6 +496,11 @@ function MembroCard({ membro, onEdit, onDelete }: { membro: any, onEdit: () => v
                             <span className="text-[9px] bg-brand-gold/10 text-brand-gold px-1.5 py-0.5 rounded-md font-bold uppercase">Vinculado</span>
                         </div>
                     )}
+                    {membro.descricao && (
+                        <p className="text-[10px] text-gray-400 line-clamp-1 mt-1 italic">
+                            {membro.descricao}
+                        </p>
+                    )}
                 </div>
             </div>
             <div className="bg-gray-50 p-2 flex justify-end gap-2 border-t">

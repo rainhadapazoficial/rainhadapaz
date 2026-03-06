@@ -44,6 +44,9 @@ export interface Database {
           foto_url: string | null
           categoria: string
           ordem: number
+          membro_id: number | null
+          descricao: string | null
+          ministerio_id: number | null
           created_at: string
         }
         Insert: {
@@ -54,6 +57,9 @@ export interface Database {
           foto_url?: string | null
           categoria: string
           ordem?: number
+          membro_id?: number | null
+          descricao?: string | null
+          ministerio_id?: number | null
           created_at?: string
         }
         Update: {
@@ -64,6 +70,9 @@ export interface Database {
           foto_url?: string | null
           categoria?: string
           ordem?: number
+          membro_id?: number | null
+          descricao?: string | null
+          ministerio_id?: number | null
           created_at?: string
         }
       }
@@ -230,6 +239,29 @@ export interface Database {
           nome?: string
           gestao?: string
           ordem?: number
+          created_at?: string
+        }
+      }
+      ministerio_membros: {
+        Row: {
+          id: number
+          ministerio_id: number
+          nome: string
+          foto_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          ministerio_id: number
+          nome: string
+          foto_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          ministerio_id?: number
+          nome?: string
+          foto_url?: string | null
           created_at?: string
         }
       }

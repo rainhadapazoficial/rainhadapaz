@@ -176,7 +176,7 @@ function MemberCard({ member }: { member: any }) {
                 {member.cargo}
             </p>
             {member.descricao && (
-                <p className="text-gray-50 text-sm leading-relaxed mt-2 border-t pt-3 w-full line-clamp-4 group-hover:text-gray-600">
+                <p className="text-gray-600 text-sm leading-relaxed mt-2 border-t pt-3 w-full line-clamp-4 group-hover:text-gray-800">
                     {member.descricao}
                 </p>
             )}
