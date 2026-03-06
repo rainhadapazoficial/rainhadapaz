@@ -118,48 +118,78 @@ export default function ModuloBasicoPage() {
             {/* Workbook Grid */}
             <section className="relative px-4 z-10">
                 <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
                         {workbooks.map((book, index) => (
                             <motion.div
                                 key={book.id}
                                 initial={{ opacity: 0, y: 40 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                className="group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col"
+                                className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.12)] transition-all duration-700 flex flex-col border border-white"
                             >
-                                {/* Cover Image */}
-                                <div className={`aspect-[3/4] relative overflow-hidden flex items-center justify-center`}>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                {/* Decorative Gradient Overlay (Premium touch) */}
+                                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-brand-gold/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                                {/* Cover Image Container */}
+                                <div className="aspect-[4/5] relative overflow-hidden bg-gray-100">
+                                    {/* Glassmorphism Badge */}
+                                    <div className="absolute top-6 left-6 z-20 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl">
+                                        <div className="text-[10px] font-black text-white/90 uppercase tracking-[0.2em]">{book.subtitle}</div>
+                                    </div>
+
+                                    {/* Action Button (Hidden until hover) */}
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-brand-blue/40 backdrop-blur-[2px]">
+                                        <div className="transform scale-90 group-hover:scale-100 transition-transform duration-500">
+                                            <Button className="bg-white text-brand-blue hover:bg-brand-gold hover:text-white rounded-full h-16 w-16 shadow-2xl transition-all border-0 p-0 flex items-center justify-center">
+                                                <Download className="w-6 h-6" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 transition-opacity duration-500 group-hover:opacity-60" />
+
                                     <img
                                         src={book.image}
                                         alt={book.title}
-                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                         onError={(e) => {
-                                            // Fallback to stylized placeholder if image is missing
                                             (e.target as HTMLImageElement).parentElement!.className += ` ${book.color}`;
                                             (e.target as HTMLImageElement).style.display = 'none';
                                         }}
                                     />
-                                    <div className="relative z-20 text-white flex flex-col items-center gap-4 p-8 text-center transition-transform duration-500 group-hover:translate-y-[-10px]">
-                                        <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
-                                            {book.icon}
+
+                                    <div className="absolute bottom-6 left-6 right-6 z-20">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 bg-brand-gold rounded-xl flex items-center justify-center text-brand-blue shadow-lg scale-90 group-hover:scale-100 transition-transform duration-500">
+                                                {book.icon}
+                                            </div>
+                                            <div className="h-0.5 flex-1 bg-white/20 rounded-full overflow-hidden">
+                                                <div className="h-full bg-brand-gold w-0 group-hover:w-full transition-all duration-1000" />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="font-black text-[10px] uppercase tracking-widest opacity-70 mb-1">{book.subtitle}</div>
-                                            <div className="text-2xl font-black tracking-tighter leading-none">{book.title}</div>
-                                        </div>
+                                        <h3 className="text-2xl font-black text-white tracking-tighter leading-none group-hover:text-brand-gold transition-colors duration-500">
+                                            {book.title}
+                                        </h3>
                                     </div>
                                 </div>
 
-                                {/* Content */}
-                                <div className="p-8 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-black text-brand-blue mb-4 tracking-tight">{book.title}</h3>
-                                    <p className="text-gray-500 text-sm leading-relaxed mb-6 italic flex-1">
-                                        {book.description}
+                                {/* Content Details */}
+                                <div className="p-8 flex-1 flex flex-col bg-white">
+                                    <p className="text-gray-500 text-sm leading-relaxed mb-8 italic flex-1 border-l-2 border-gray-100 pl-4 group-hover:border-brand-gold/30 transition-colors duration-500">
+                                        &quot;{book.description}&quot;
                                     </p>
-                                    <Button className="w-full bg-brand-blue hover:bg-brand-gold text-white rounded-2xl h-14 font-black transition-all gap-2 group-hover:shadow-lg">
-                                        <Download className="w-5 h-5" /> APOSTILA PDF
-                                    </Button>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex -space-x-2">
+                                            {[1, 2, 3].map((i) => (
+                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-brand-blue shadow-sm">
+                                                    {i}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest opacity-40 group-hover:opacity-100 group-hover:text-brand-gold transition-all duration-500">
+                                            Material Didático
+                                        </span>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
