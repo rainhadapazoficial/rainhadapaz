@@ -15,6 +15,7 @@ import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
     DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export default function MinisteriosAdminPage() {
     const [ministerios, setMinisterios] = useState<any[]>([]);
@@ -224,12 +225,13 @@ export default function MinisteriosAdminPage() {
                                     </div>
 
                                     <div className="space-y-2 col-span-2">
-                                        <Label htmlFor="imagem_url">URL da Foto / Banner</Label>
-                                        <Input
-                                            id="imagem_url"
-                                            placeholder="https://exemplo.com/foto.jpg"
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Foto do Ministério / Coordenador</label>
+                                        <ImageUpload
                                             value={formData.imagem_url || ""}
-                                            onChange={(e) => setFormData({ ...formData, imagem_url: e.target.value })}
+                                            onChange={(url) => setFormData({ ...formData, imagem_url: url })}
+                                            onRemove={() => setFormData({ ...formData, imagem_url: "" })}
+                                            bucket="media"
+                                            folder="ministerios"
                                         />
                                     </div>
 
