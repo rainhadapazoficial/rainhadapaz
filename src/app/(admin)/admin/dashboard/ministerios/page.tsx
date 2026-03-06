@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
     Plus, Search, Trash2, Edit, Loader2,
     CheckCircle2, XCircle, Flame, History,
-    Users, Info, Palette
+    Users, Info, Palette, UserPlus
 } from "lucide-react";
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle,
@@ -25,7 +25,13 @@ export default function MinisteriosAdminPage() {
     const [editingMinistry, setEditingMinistry] = useState<any>(null);
     const [formData, setFormData] = useState<any>({});
     const [searchTerm, setSearchTerm] = useState("");
-    const [coordinatorHistory, setCoordinatorHistory] = useState<{ nome: string; gestao: string }[]>([]);
+
+    // Member State
+    const [membros, setMembros] = useState<any[]>([]);
+    const [isMemberLoading, setIsMemberLoading] = useState(false);
+
+    // History State (Read-only)
+    const [autoHistory, setAutoHistory] = useState<any[]>([]);
 
     useEffect(() => {
         fetchMinisterios();
@@ -43,33 +49,36 @@ export default function MinisteriosAdminPage() {
         setIsLoading(false);
     }
 
-    async function fetchCoordinatorHistory(ministryId: number) {
-        const { data, error } = await supabase
-            .from("ministerio_coordinator_history")
-            .select("id, nome, gestao, ordem")
+    async function fetchMinistryData(ministryId: number) {
+        setIsMemberLoading(true);
+
+        // Fetch Members
+        const { data: membersData } = await supabase
+            .from("ministerio_membros")
+            .select("*")
             .eq("ministerio_id", ministryId)
-            .order("ordem", { ascending: true });
-        if (error) {
-            console.error("Error fetching coordinator history:", error);
-            return [];
-        }
-        return (data || []).map((r) => ({ nome: r.nome, gestao: r.gestao }));
-    }
+            .order("nome", { ascending: true });
 
-    function addCoordinatorHistoryRow() {
-        setCoordinatorHistory((prev) => [...prev, { nome: "", gestao: "" }]);
-    }
+        setMembros(membersData || []);
 
-    function updateCoordinatorHistoryRow(index: number, field: "nome" | "gestao", value: string) {
-        setCoordinatorHistory((prev) => {
-            const next = [...prev];
-            next[index] = { ...next[index], [field]: value };
-            return next;
-        });
-    }
+        // Fetch Automatic History from Management
+        const { data: historyData } = await supabase
+            .from("conselho_membros")
+            .select(`
+                cargo,
+                nome,
+                conselho_mandatos (
+                    titulo,
+                    ano_inicio,
+                    ano_fim,
+                    ativo
+                )
+            `)
+            .eq("ministerio_id", ministryId)
+            .order("conselho_mandatos(ano_inicio)", { ascending: false });
 
-    function removeCoordinatorHistoryRow(index: number) {
-        setCoordinatorHistory((prev) => prev.filter((_, i) => i !== index));
+        setAutoHistory(historyData || []);
+        setIsMemberLoading(false);
     }
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -80,51 +89,53 @@ export default function MinisteriosAdminPage() {
         const ministryData = {
             nome: formValues.get("nome"),
             descricao: formData.descricao,
-            coordenador: formValues.get("coordenador"),
-            bienio: formValues.get("bienio"),
-            imagem_url: formData.imagem_url,
             cor: formValues.get("cor") || 'bg-blue-100 text-blue-600',
             ordem: parseInt(formValues.get("ordem") as string) || 0,
+            imagem_url: formData.imagem_url,
         };
 
-        let ministryId: number;
         if (editingMinistry) {
-            const result = await supabase.from("ministerios").update(ministryData).eq("id", editingMinistry.id).select("id").single();
+            const result = await supabase.from("ministerios").update(ministryData).eq("id", editingMinistry.id);
             if (result.error) {
                 alert("Erro ao salvar ministério: " + result.error.message);
                 setIsSubmitting(false);
                 return;
             }
-            ministryId = result.data.id;
         } else {
-            const result = await supabase.from("ministerios").insert([ministryData]).select("id").single();
+            const result = await supabase.from("ministerios").insert([ministryData]);
             if (result.error) {
                 alert("Erro ao salvar ministério: " + result.error.message);
                 setIsSubmitting(false);
                 return;
             }
-            ministryId = result.data.id;
-        }
-
-        // Update History
-        await supabase.from("ministerio_coordinator_history").delete().eq("ministerio_id", ministryId);
-        const validHistory = coordinatorHistory.filter((h) => h.nome.trim() || h.gestao.trim());
-        if (validHistory.length > 0) {
-            await supabase.from("ministerio_coordinator_history").insert(
-                validHistory.map((h, i) => ({
-                    ministerio_id: ministryId,
-                    nome: h.nome.trim() || "(nome não informado)",
-                    gestao: h.gestao.trim() || "(gestão não informada)",
-                    ordem: i,
-                }))
-            );
         }
 
         setIsDialogOpen(false);
         setEditingMinistry(null);
-        setCoordinatorHistory([]);
         fetchMinisterios();
         setIsSubmitting(false);
+    }
+
+    // Member CRUD
+    async function addMember() {
+        if (!editingMinistry) return;
+        const nome = prompt("Nome do membro:");
+        if (!nome) return;
+
+        const { error } = await supabase.from("ministerio_membros").insert([{
+            ministerio_id: editingMinistry.id,
+            nome
+        }]);
+
+        if (error) alert("Erro ao adicionar membro: " + error.message);
+        else fetchMinistryData(editingMinistry.id);
+    }
+
+    async function deleteMember(id: number) {
+        if (!confirm("Excluir este membro?")) return;
+        const { error } = await supabase.from("ministerio_membros").delete().eq("id", id);
+        if (error) alert("Erro ao excluir: " + error.message);
+        else if (editingMinistry) fetchMinistryData(editingMinistry.id);
     }
 
     async function deleteMinistry(id: number) {
@@ -137,21 +148,23 @@ export default function MinisteriosAdminPage() {
     const openEdit = async (ministry: any) => {
         setEditingMinistry(ministry);
         setFormData(ministry);
-        const history = await fetchCoordinatorHistory(ministry.id);
-        setCoordinatorHistory(history);
         setIsDialogOpen(true);
+        fetchMinistryData(ministry.id);
     };
 
     const openNew = () => {
         setEditingMinistry(null);
         setFormData({});
-        setCoordinatorHistory([]);
+        setMembros([]);
+        setAutoHistory([]);
         setIsDialogOpen(true);
     };
 
     const filteredMinisterios = ministerios.filter(m =>
         m.nome.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const currentCoordinator = autoHistory.find(h => h.conselho_mandatos?.ativo);
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
@@ -161,7 +174,7 @@ export default function MinisteriosAdminPage() {
                         <Flame className="w-8 h-8 text-brand-gold" />
                         Ministérios
                     </h1>
-                    <p className="text-gray-500">Gerencie os ministérios do Grupo Rainha da Paz e seus coordenadores.</p>
+                    <p className="text-gray-500">Gerencie os ministérios, membros e visualize o histórico de gestão.</p>
                 </div>
                 <div className="flex gap-4">
                     <div className="relative">
@@ -183,7 +196,7 @@ export default function MinisteriosAdminPage() {
                                 Novo Ministério
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl rounded-[2rem] max-h-[90vh] overflow-y-auto">
+                        <DialogContent className="max-w-4xl rounded-[2rem] max-h-[90vh] overflow-y-auto">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <DialogHeader>
                                     <DialogTitle className="text-xl font-bold italic text-brand-blue">
@@ -191,102 +204,135 @@ export default function MinisteriosAdminPage() {
                                     </DialogTitle>
                                 </DialogHeader>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Ministério</label>
-                                        <Input
-                                            name="nome"
-                                            value={formData.nome || ""}
-                                            onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                                            placeholder="Ex: Ministério de Pregação"
-                                            required
-                                            className="rounded-xl"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2 col-span-2">
-                                        <Label htmlFor="descricao">Descrição / Missão</Label>
-                                        <textarea
-                                            id="descricao"
-                                            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            placeholder="Fale sobre o objetivo deste ministério..."
-                                            value={formData.descricao || ""}
-                                            onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Coordenador Atual</label>
-                                        <Input name="coordenador" defaultValue={editingMinistry?.coordenador} placeholder="Nome do coordenador" className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Gestão Atual (Biénio)</label>
-                                        <Input name="bienio" defaultValue={editingMinistry?.bienio} placeholder="Ex: 2025-2026" className="rounded-xl" />
-                                    </div>
-
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Foto do Ministério / Coordenador</label>
-                                        <ImageUpload
-                                            value={formData.imagem_url || ""}
-                                            onChange={(url) => setFormData({ ...formData, imagem_url: url })}
-                                            onRemove={() => setFormData({ ...formData, imagem_url: "" })}
-                                            bucket="media"
-                                            folder="ministerios"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estilo Visual (Classes CSS)</label>
-                                        <Input name="cor" defaultValue={editingMinistry?.cor || "bg-blue-100 text-blue-600"} placeholder="bg-blue-100 text-blue-600" className="rounded-xl" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ordem de Exibição</label>
-                                        <Input name="ordem" type="number" defaultValue={editingMinistry?.ordem || 0} required className="rounded-xl" />
-                                    </div>
-                                </div>
-
-                                {/* Histórico de coordenadores por gestão */}
-                                <div className="space-y-3 col-span-2 border-t pt-6">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <History className="w-4 h-4 text-brand-blue" />
-                                            Histórico de coordenadores (Ano a Ano)
-                                        </label>
-                                        <Button type="button" variant="outline" size="sm" onClick={addCoordinatorHistoryRow} className="rounded-xl">
-                                            <Plus className="w-4 h-4 mr-1" />
-                                            Adicionar gestão
-                                        </Button>
-                                    </div>
-                                    {coordinatorHistory.length === 0 ? (
-                                        <p className="text-sm text-gray-400 italic py-2">Nenhum registro histórico.</p>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {coordinatorHistory.map((row, index) => (
-                                                <div key={index} className="flex gap-2 items-center rounded-xl border bg-gray-50/50 p-2">
-                                                    <Input
-                                                        placeholder="Nome do coordenador"
-                                                        value={row.nome}
-                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "nome", e.target.value)}
-                                                        className="rounded-lg flex-1"
-                                                    />
-                                                    <Input
-                                                        placeholder="Gestão (ex: 2020-2022)"
-                                                        value={row.gestao}
-                                                        onChange={(e) => updateCoordinatorHistoryRow(index, "gestao", e.target.value)}
-                                                        className="rounded-lg w-36"
-                                                    />
-                                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCoordinatorHistoryRow(index)} className="text-gray-400 hover:text-red-500 shrink-0">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* Left Column: Basic Info */}
+                                    <div className="space-y-6">
+                                        <div className="space-y-4">
+                                            <h4 className="text-sm font-bold text-brand-blue uppercase tracking-widest border-b pb-2 flex items-center gap-2">
+                                                <Info className="w-4 h-4" /> Informações Básicas
+                                            </h4>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nome do Ministério</label>
+                                                <Input
+                                                    name="nome"
+                                                    value={formData.nome || ""}
+                                                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                                                    placeholder="Ex: Ministério de Pregação"
+                                                    required
+                                                    className="rounded-xl"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="descricao">Descrição / Missão</Label>
+                                                <textarea
+                                                    id="descricao"
+                                                    className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    placeholder="Fale sobre o objetivo deste ministério..."
+                                                    value={formData.descricao || ""}
+                                                    onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estilo Visual</label>
+                                                    <Input name="cor" defaultValue={editingMinistry?.cor || "bg-blue-100 text-blue-600"} className="rounded-xl" />
                                                 </div>
-                                            ))}
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ordem</label>
+                                                    <Input name="ordem" type="number" defaultValue={editingMinistry?.ordem || 0} required className="rounded-xl" />
+                                                </div>
+                                            </div>
                                         </div>
-                                    )}
+
+                                        <div className="space-y-4">
+                                            <h4 className="text-sm font-bold text-brand-blue uppercase tracking-widest border-b pb-2 flex items-center gap-2">
+                                                <Palette className="w-4 h-4" /> Imagem / Foto
+                                            </h4>
+                                            <ImageUpload
+                                                value={formData.imagem_url || ""}
+                                                onChange={(url) => setFormData({ ...formData, imagem_url: url })}
+                                                onRemove={() => setFormData({ ...formData, imagem_url: "" })}
+                                                bucket="media"
+                                                folder="ministerios"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column: Members & History */}
+                                    <div className="space-y-8">
+                                        {/* Members Section */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between border-b pb-2">
+                                                <h4 className="text-sm font-bold text-brand-blue uppercase tracking-widest flex items-center gap-2">
+                                                    <Users className="w-4 h-4" /> Membros do Ministério
+                                                </h4>
+                                                {editingMinistry && (
+                                                    <Button type="button" variant="ghost" size="sm" onClick={addMember} className="h-6 text-brand-blue hover:text-brand-blue hover:bg-brand-blue/10">
+                                                        <UserPlus className="w-4 h-4 mr-1" /> Add
+                                                    </Button>
+                                                )}
+                                            </div>
+
+                                            {!editingMinistry ? (
+                                                <p className="text-xs text-gray-400 italic">Salve o ministério primeiro para adicionar membros.</p>
+                                            ) : isMemberLoading ? (
+                                                <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-brand-blue" /></div>
+                                            ) : membros.length === 0 ? (
+                                                <p className="text-xs text-gray-400 italic">Nenhum membro cadastrado.</p>
+                                            ) : (
+                                                <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-2">
+                                                    {membros.map((m) => (
+                                                        <div key={m.id} className="flex items-center justify-between p-2 rounded-lg bg-gray-50 text-sm group">
+                                                            <span>{m.nome}</span>
+                                                            <Button type="button" variant="ghost" size="icon" onClick={() => deleteMember(m.id)} className="w-6 h-6 text-gray-300 hover:text-red-500">
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Auto History Section */}
+                                        <div className="space-y-4">
+                                            <h4 className="text-sm font-bold text-brand-blue uppercase tracking-widest border-b pb-2 flex items-center gap-2">
+                                                <History className="w-4 h-4" /> Histórico de Gestão
+                                            </h4>
+
+                                            {!editingMinistry ? (
+                                                <p className="text-xs text-gray-400 italic">O histórico será gerado automaticamente.</p>
+                                            ) : isMemberLoading ? (
+                                                <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-brand-blue" /></div>
+                                            ) : autoHistory.length === 0 ? (
+                                                <p className="text-xs text-gray-400 italic">Nenhum vínculo na Gestão encontrado.</p>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    {autoHistory.map((h, i) => (
+                                                        <div key={i} className={`p-3 rounded-xl border flex justify-between items-center ${h.conselho_mandatos?.ativo ? "bg-brand-blue/5 border-brand-blue/20" : "bg-white"}`}>
+                                                            <div>
+                                                                <p className="text-sm font-bold text-gray-900">{h.nome}</p>
+                                                                <p className="text-[10px] text-brand-blue font-bold uppercase">{h.cargo}</p>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-[10px] font-bold text-gray-500 uppercase">{h.conselho_mandatos?.titulo}</p>
+                                                                {h.conselho_mandatos?.ativo && (
+                                                                    <span className="text-[9px] bg-brand-gold text-brand-blue px-1.5 py-0.5 rounded-md font-bold uppercase">Atual</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <p className="text-[9px] text-gray-400 italic leading-tight">
+                                                * O histórico é alimentado automaticamente através da seção <strong>GESTÃO</strong> do painel.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <DialogFooter className="sticky bottom-0 bg-white pt-4">
-                                    <Button type="submit" className="bg-brand-blue text-white w-full rounded-xl" disabled={isSubmitting}>
-                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Ministério"}
+                                <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t">
+                                    <Button type="submit" className="bg-brand-blue text-white w-full rounded-xl h-12 text-lg font-bold" disabled={isSubmitting}>
+                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Alterações"}
                                     </Button>
                                 </DialogFooter>
                             </form>
@@ -325,12 +371,13 @@ export default function MinisteriosAdminPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold text-brand-blue italic">{ministry.nome}</h3>
-                                    <p className="text-brand-gold font-medium text-sm flex items-center gap-1">
-                                        <Users className="w-3 h-3" /> {ministry.coordenador || "Não definido"}
+                                    <p className="text-gray-500 text-xs line-clamp-1 italic">
+                                        {ministry.descricao}
                                     </p>
                                 </div>
-                                <div className="space-y-2 text-sm text-gray-600 line-clamp-2 italic">
-                                    {ministry.descricao}
+                                <div className="pt-2 border-t flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                                    <span>Ordem: {ministry.ordem}</span>
+                                    <span className="flex items-center gap-1"><Users className="w-3 h-3" /> Ver Detalhes</span>
                                 </div>
                             </CardContent>
                         </Card>

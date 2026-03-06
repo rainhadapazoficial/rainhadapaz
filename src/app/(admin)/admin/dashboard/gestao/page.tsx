@@ -33,6 +33,9 @@ export default function GestaoAdminPage() {
     const [formData, setFormData] = useState<any>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Ministry Members for selection
+    const [ministryMembers, setMinistryMembers] = useState<any[]>([]);
+
     useEffect(() => {
         fetchMandatos();
         fetchMinisterios();
@@ -66,7 +69,6 @@ export default function GestaoAdminPage() {
         if (error) console.error("Erro ao buscar mandatos:", error);
         else {
             setMandatos(data || []);
-            // Select the first one by default if none selected
             if (!selectedMandato && data && data.length > 0) {
                 setSelectedMandato(String(data[0].id));
             }
@@ -80,11 +82,26 @@ export default function GestaoAdminPage() {
             .from("conselho_membros")
             .select("*")
             .eq("mandato_id", mandatoId)
-            .order("categoria", { ascending: false }) // presidencia first usually
+            .order("categoria", { ascending: false })
             .order("ordem", { ascending: true });
 
         if (error) console.error("Erro ao buscar membros:", error);
         else setMembros(data || []);
+    }
+
+    // Fetch members from a specific ministry
+    async function fetchMinistryMembers(ministerioId: string) {
+        if (!ministerioId || ministerioId === "none") {
+            setMinistryMembers([]);
+            return;
+        }
+        const { data } = await supabase
+            .from("ministerio_membros")
+            .select("*")
+            .eq("ministerio_id", ministerioId)
+            .order("nome", { ascending: true });
+
+        setMinistryMembers(data || []);
     }
 
     // --- MANDATO ACTIONS ---
@@ -100,7 +117,6 @@ export default function GestaoAdminPage() {
         };
 
         if (data.ativo) {
-            // Deactivate others if this one is active
             await supabase.from("conselho_mandatos").update({ ativo: false }).neq("id", 0);
         }
 
@@ -140,7 +156,8 @@ export default function GestaoAdminPage() {
             categoria: formData.categoria || "presidencia",
             ministerio_id: formData.categoria === 'fiscal' ? (formData.ministerio_id ? parseInt(formData.ministerio_id) : null) : null,
             ordem: parseInt(formData.ordem || "0"),
-            descricao: formData.descricao || ""
+            descricao: formData.descricao || "",
+            membro_id: formData.membro_id ? parseInt(formData.membro_id) : null
         };
 
         let error;
@@ -176,7 +193,34 @@ export default function GestaoAdminPage() {
     const openMembroDialog = (item: any = null) => {
         setEditingItem(item);
         setFormData(item || { categoria: "presidencia", ordem: 0 });
+        if (item?.ministerio_id) {
+            fetchMinistryMembers(String(item.ministerio_id));
+        } else {
+            setMinistryMembers([]);
+        }
         setIsMembroDialogOpen(true);
+    };
+
+    const onMinistryChange = (val: string) => {
+        const ministerio_id = val === "none" ? null : val;
+        setFormData({ ...formData, ministerio_id, membro_id: null });
+        fetchMinistryMembers(val);
+    };
+
+    const onMemberSelectionChange = (val: string) => {
+        if (val === "none") {
+            setFormData({ ...formData, membro_id: null });
+            return;
+        }
+        const member = ministryMembers.find(m => String(m.id) === val);
+        if (member) {
+            setFormData({
+                ...formData,
+                membro_id: val,
+                nome: member.nome,
+                foto_url: member.foto_url || formData.foto_url
+            });
+        }
     };
 
     return (
@@ -306,7 +350,6 @@ export default function GestaoAdminPage() {
                         </div>
                     ) : (
                         <div className="space-y-8">
-                            {/* Presidência */}
                             <div>
                                 <h3 className="text-lg font-bold text-brand-blue mb-3 border-b pb-2">Coordenação</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -316,7 +359,6 @@ export default function GestaoAdminPage() {
                                 </div>
                             </div>
 
-                            {/* Conselho Fiscal */}
                             <div>
                                 <h3 className="text-lg font-bold text-gray-600 mb-3 border-b pb-2">Ministérios</h3>
                                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -334,31 +376,10 @@ export default function GestaoAdminPage() {
                                 <DialogTitle>{editingItem ? "Editar Membro" : "Novo Membro"}</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={handleMembroSubmit} className="space-y-4">
-                                <div>
-                                    <Label>Nome</Label>
-                                    <Input value={formData.nome || ""} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
-                                </div>
-                                <div>
-                                    <Label>Cargo (ex: Coordenador de Gestão)</Label>
-                                    <Input value={formData.cargo || ""} onChange={e => setFormData({ ...formData, cargo: e.target.value })} required />
-                                </div>
-                                <div>
-                                    <Label>Descrição / Breve Biografia</Label>
-                                    <textarea
-                                        value={formData.descricao || ""}
-                                        onChange={e => setFormData({ ...formData, descricao: e.target.value })}
-                                        className="w-full min-h-[100px] p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-white"
-                                        placeholder="Conte um pouco sobre a trajetória deste membro..."
-                                    />
-                                </div>
-                                <div>
-                                    <Label>Foto URL</Label>
-                                    <Input value={formData.foto_url || ""} onChange={e => setFormData({ ...formData, foto_url: e.target.value })} placeholder="https://..." />
-                                </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <Label>Categoria</Label>
-                                        <Select value={formData.categoria || "presidencia"} onValueChange={v => setFormData({ ...formData, categoria: v })}>
+                                        <Select value={formData.categoria || "presidencia"} onValueChange={v => setFormData({ ...formData, categoria: v, ministerio_id: null, membro_id: null })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="presidencia">Coordenação</SelectItem>
@@ -371,26 +392,69 @@ export default function GestaoAdminPage() {
                                         <Input type="number" value={formData.ordem || 0} onChange={e => setFormData({ ...formData, ordem: e.target.value })} />
                                     </div>
                                 </div>
+
                                 {formData.categoria === 'fiscal' && (
-                                    <div className="space-y-2">
-                                        <Label>Vincular ao Ministério</Label>
-                                        <Select
-                                            value={formData.ministerio_id ? String(formData.ministerio_id) : "none"}
-                                            onValueChange={v => setFormData({ ...formData, ministerio_id: v === "none" ? null : v })}
-                                        >
-                                            <SelectTrigger className="rounded-xl">
-                                                <SelectValue placeholder="Selecione um ministério..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="none">Nenhum (Livre)</SelectItem>
-                                                {ministerios.map(min => (
-                                                    <SelectItem key={min.id} value={String(min.id)}>{min.nome}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <p className="text-[10px] text-gray-400 italic">Isso vinculará este membro como coordenador do ministério na página pública.</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Ministério</Label>
+                                            <Select
+                                                value={formData.ministerio_id ? String(formData.ministerio_id) : "none"}
+                                                onValueChange={onMinistryChange}
+                                            >
+                                                <SelectTrigger className="rounded-xl">
+                                                    <SelectValue placeholder="Selecione..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">Nenhum (Livre)</SelectItem>
+                                                    {ministerios.map(min => (
+                                                        <SelectItem key={min.id} value={String(min.id)}>{min.nome}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Selecionar Membro</Label>
+                                            <Select
+                                                disabled={!formData.ministerio_id}
+                                                value={formData.membro_id ? String(formData.membro_id) : "none"}
+                                                onValueChange={onMemberSelectionChange}
+                                            >
+                                                <SelectTrigger className="rounded-xl">
+                                                    <SelectValue placeholder={formData.ministerio_id ? "Selecione..." : "Selecione Minist."} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">Novo/Manual</SelectItem>
+                                                    {ministryMembers.map(m => (
+                                                        <SelectItem key={m.id} value={String(m.id)}>{m.nome}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
                                 )}
+
+                                <div>
+                                    <Label>Nome</Label>
+                                    <Input value={formData.nome || ""} onChange={e => setFormData({ ...formData, nome: e.target.value, membro_id: null })} required />
+                                </div>
+                                <div>
+                                    <Label>Cargo (ex: Coordenador de Gestão)</Label>
+                                    <Input value={formData.cargo || ""} onChange={e => setFormData({ ...formData, cargo: e.target.value })} required />
+                                </div>
+                                <div>
+                                    <Label>Descrição / Breve Biografia</Label>
+                                    <textarea
+                                        value={formData.descricao || ""}
+                                        onChange={e => setFormData({ ...formData, descricao: e.target.value })}
+                                        className="w-full min-h-[100px] p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 bg-white text-sm"
+                                        placeholder="Conte um pouco sobre a trajetória deste membro..."
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Foto URL</Label>
+                                    <Input value={formData.foto_url || ""} onChange={e => setFormData({ ...formData, foto_url: e.target.value })} placeholder="https://..." />
+                                </div>
+
                                 <Button type="submit" className="w-full bg-brand-blue text-white rounded-xl" disabled={isSubmitting}>
                                     {isSubmitting ? <Loader2 className="animate-spin" /> : "Salvar"}
                                 </Button>
@@ -408,8 +472,8 @@ function MembroCard({ membro, onEdit, onDelete }: { membro: any, onEdit: () => v
         <Card className="rounded-2xl overflow-hidden hover:shadow-md transition-all">
             <div className="flex items-center p-3 gap-4">
                 <img
-                    src={membro.foto_url || "https://ui-avatars.com/api/?name=" + membro.nome}
-                    alt={membro.nome}
+                    src={membro.foto_url || "https://ui-avatars.com/api/?name=" + (membro.nome ? encodeURIComponent(membro.nome) : "User")}
+                    alt={membro.nome || "Membro"}
                     className="w-16 h-16 rounded-full object-cover bg-gray-100"
                 />
                 <div className="flex-1 min-w-0">

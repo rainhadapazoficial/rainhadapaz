@@ -61,44 +61,58 @@ export default function MinisteriosPublicPage() {
             return;
         }
 
-        // 2. Fetch coordinator from conselho_membros for the active mandate
-        const { data: activeMandate } = await supabase
-            .from("conselho_mandatos")
-            .select("id")
-            .eq("ativo", true)
-            .single();
-
-        let coordinatorsByMin: Record<number, string> = {};
-        if (activeMandate) {
-            const { data: members } = await supabase
-                .from("conselho_membros")
-                .select("nome, ministerio_id")
-                .eq("mandato_id", activeMandate.id)
-                .not("ministerio_id", "is", null);
-
-            (members || []).forEach(m => {
-                if (m.ministerio_id) coordinatorsByMin[m.ministerio_id] = m.nome;
-            });
-        }
-
-        // 3. Fetch history for all fetched ministries
-        const ids = list.map(m => m.id);
-        const { data: historyData } = await supabase
-            .from("ministerio_coordinator_history")
-            .select("ministerio_id, nome, gestao, ordem")
-            .in("ministerio_id", ids)
-            .order("ordem", { ascending: true });
+        // 2. Fetch all members linked to ministries across ALL mandates
+        // This replaces the manual history table
+        const { data: allHistory } = await supabase
+            .from("conselho_membros")
+            .select(`
+                nome, 
+                ministerio_id,
+                conselho_mandatos (
+                    id,
+                    titulo,
+                    ano_inicio,
+                    ativo
+                )
+            `)
+            .not("ministerio_id", "is", null);
 
         const historyByMin: Record<number, any[]> = {};
-        (historyData || []).forEach(row => {
-            if (!historyByMin[row.ministerio_id]) historyByMin[row.ministerio_id] = [];
-            historyByMin[row.ministerio_id].push({ nome: row.nome, gestao: row.gestao });
+        const currentCoordByMin: Record<number, { nome: string, gestao: string }> = {};
+
+        (allHistory || []).forEach((row: any) => {
+            const minId = row.ministerio_id;
+            const mandato = row.conselho_mandatos;
+
+            if (!minId || !mandato) return;
+
+            // Formata para o histórico
+            if (!historyByMin[minId]) historyByMin[minId] = [];
+            historyByMin[minId].push({
+                nome: row.nome,
+                gestao: mandato.titulo,
+                ano: mandato.ano_inicio,
+                ativo: mandato.ativo
+            });
+
+            // Se for o mandato ativo, define como coordenador atual
+            if (mandato.ativo) {
+                currentCoordByMin[minId] = {
+                    nome: row.nome,
+                    gestao: mandato.titulo
+                };
+            }
+        });
+
+        // Ordena histórico por ano (mais recente primeiro)
+        Object.keys(historyByMin).forEach((key: any) => {
+            historyByMin[key].sort((a, b) => b.ano - a.ano);
         });
 
         setMinisterios(list.map(m => ({
             ...m,
-            // Override coordinator if found in conselho_membros
-            coordenador: coordinatorsByMin[m.id] || m.coordenador,
+            coordenador: currentCoordByMin[m.id]?.nome || m.coordenador,
+            bienio: currentCoordByMin[m.id]?.gestao || m.bienio,
             history: historyByMin[m.id] || []
         })));
         setIsLoading(false);
