@@ -213,12 +213,24 @@ export default function GestaoAdminPage() {
             return;
         }
         const member = ministryMembers.find(m => String(m.id) === val);
+        const ministry = ministerios.find(min => String(min.id) === String(formData.ministerio_id));
+
         if (member) {
+            // Suggest a cargo based on ministry name if it's not already set or it's generic
+            let suggestedCargo = formData.cargo;
+            if (ministry && (!formData.cargo || formData.cargo.toLowerCase().includes('coordenador'))) {
+                suggestedCargo = `Coordenadora ${ministry.nome}`; // Using feminine as default per user screenshot "Maria Iraci"
+                // But let's try to be smart about the gender if possible, otherwise keep it neutral-ish or per context.
+                // The user's screenshot had "Coordenadora Ministério da Promoção Humana"
+                suggestedCargo = `Coordenador(a) do ${ministry.nome}`;
+            }
+
             setFormData({
                 ...formData,
                 membro_id: val,
                 nome: member.nome,
-                foto_url: member.foto_url || formData.foto_url
+                foto_url: member.foto_url || formData.foto_url,
+                cargo: suggestedCargo
             });
         }
     };
