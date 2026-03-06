@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ImageIcon, X, Loader2, UploadCloud } from "lucide-react";
 
 interface ImageUploadProps {
@@ -75,12 +74,12 @@ export function ImageUpload({ value, onChange, onRemove, bucket = "media", folde
                         <p className="text-sm font-bold text-gray-700">Clique para fazer upload</p>
                         <p className="text-xs text-gray-500">PNG, JPG ou WEBP (Max 2MB)</p>
                     </div>
-                    <Input
+                    <input
                         type="file"
                         accept="image/*"
                         onChange={handleUpload}
                         disabled={isUploading}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                 </div>
             )}
@@ -88,11 +87,11 @@ export function ImageUpload({ value, onChange, onRemove, bucket = "media", folde
             <div className="space-y-1">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ou use um link externo</p>
                 <div className="flex gap-2">
-                    <Input
+                    <input
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder="https://exemplo.com/imagem.jpg"
-                        className="rounded-xl"
+                        className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     {value && (
                         <Button type="button" variant="outline" onClick={onRemove} className="rounded-xl">
