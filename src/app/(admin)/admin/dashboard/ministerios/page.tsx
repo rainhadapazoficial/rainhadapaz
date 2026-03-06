@@ -39,13 +39,41 @@ export default function MinisteriosAdminPage() {
 
     async function fetchMinisterios() {
         setIsLoading(true);
-        const { data, error } = await supabase
+        const { data: minData, error: minError } = await supabase
             .from("ministerios")
             .select("*")
             .order("ordem", { ascending: true });
 
-        if (error) console.error("Error fetching ministerios:", error);
-        else setMinisterios(data || []);
+        if (minError) {
+            console.error("Error fetching ministerios:", minError);
+            setIsLoading(false);
+            return;
+        }
+
+        // Fetch current active mandate to identify coordinators
+        const { data: activeMandate } = await supabase
+            .from("conselho_mandatos")
+            .select("id")
+            .eq("ativo", true)
+            .single();
+
+        let coordinators: Record<number, string> = {};
+        if (activeMandate) {
+            const { data: members } = await supabase
+                .from("conselho_membros")
+                .select("nome, ministerio_id")
+                .eq("mandato_id", activeMandate.id)
+                .not("ministerio_id", "is", null);
+
+            (members || []).forEach(m => {
+                if (m.ministerio_id) coordinators[m.ministerio_id] = m.nome;
+            });
+        }
+
+        setMinisterios((minData || []).map(m => ({
+            ...m,
+            currentCoordinator: coordinators[m.id]
+        })));
         setIsLoading(false);
     }
 
@@ -101,17 +129,29 @@ export default function MinisteriosAdminPage() {
                 setIsSubmitting(false);
                 return;
             }
+            setIsDialogOpen(false);
+            setEditingMinistry(null);
         } else {
-            const result = await supabase.from("ministerios").insert([ministryData]);
-            if (result.error) {
-                alert("Erro ao salvar ministério: " + result.error.message);
+            const { data, error } = await supabase
+                .from("ministerios")
+                .insert([ministryData])
+                .select()
+                .single();
+
+            if (error) {
+                alert("Erro ao salvar ministério: " + error.message);
                 setIsSubmitting(false);
                 return;
             }
+
+            // After creating a new ministry, keep the dialog open but switch to edit mode
+            // This allows the user to immediately add members
+            setEditingMinistry(data);
+            setFormData(data);
+            fetchMinistryData(data.id);
+            // We don't close the dialog here
         }
 
-        setIsDialogOpen(false);
-        setEditingMinistry(null);
         fetchMinisterios();
         setIsSubmitting(false);
     }
@@ -188,7 +228,10 @@ export default function MinisteriosAdminPage() {
                     </div>
                     <Dialog open={isDialogOpen} onOpenChange={(open) => {
                         setIsDialogOpen(open);
-                        if (!open) setEditingMinistry(null);
+                        if (!open) {
+                            setEditingMinistry(null);
+                            setFormData({});
+                        }
                     }}>
                         <DialogTrigger asChild>
                             <Button onClick={openNew} className="bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl h-12">
@@ -235,11 +278,11 @@ export default function MinisteriosAdminPage() {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estilo Visual</label>
-                                                    <Input name="cor" defaultValue={editingMinistry?.cor || "bg-blue-100 text-blue-600"} className="rounded-xl" />
+                                                    <Input name="cor" value={formData.cor || "bg-blue-100 text-blue-600"} onChange={e => setFormData({ ...formData, cor: e.target.value })} className="rounded-xl" />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ordem</label>
-                                                    <Input name="ordem" type="number" defaultValue={editingMinistry?.ordem || 0} required className="rounded-xl" />
+                                                    <Input name="ordem" type="number" value={formData.ordem || 0} onChange={e => setFormData({ ...formData, ordem: e.target.value })} required className="rounded-xl" />
                                                 </div>
                                             </div>
                                         </div>
@@ -274,7 +317,11 @@ export default function MinisteriosAdminPage() {
                                             </div>
 
                                             {!editingMinistry ? (
-                                                <p className="text-xs text-gray-400 italic">Salve o ministério primeiro para adicionar membros.</p>
+                                                <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                                                    <p className="text-[11px] text-amber-800 leading-tight">
+                                                        <strong>Nota:</strong> Salve as informações básicas primeiro para liberar o cadastro de membros.
+                                                    </p>
+                                                </div>
                                             ) : isMemberLoading ? (
                                                 <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-brand-blue" /></div>
                                             ) : membros.length === 0 ? (
@@ -296,11 +343,17 @@ export default function MinisteriosAdminPage() {
                                         {/* Auto History Section */}
                                         <div className="space-y-4">
                                             <h4 className="text-sm font-bold text-brand-blue uppercase tracking-widest border-b pb-2 flex items-center gap-2">
-                                                <History className="w-4 h-4" /> Histórico de Gestão
+                                                <History className="w-4 h-4" /> Coordenador & Histórico
                                             </h4>
 
+                                            <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl mb-4">
+                                                <p className="text-[11px] text-blue-800 leading-tight">
+                                                    <strong>Gestão Centralizada:</strong> O coordenador e o biênio são definidos na aba <span className="font-bold">GESTÃO</span> do painel, selecionando um dos membros cadastrados acima.
+                                                </p>
+                                            </div>
+
                                             {!editingMinistry ? (
-                                                <p className="text-xs text-gray-400 italic">O histórico será gerado automaticamente.</p>
+                                                <p className="text-xs text-gray-400 italic">O coordenador aparecerá aqui após ser vinculado na Gestão.</p>
                                             ) : isMemberLoading ? (
                                                 <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-brand-blue" /></div>
                                             ) : autoHistory.length === 0 ? (
@@ -323,16 +376,18 @@ export default function MinisteriosAdminPage() {
                                                     ))}
                                                 </div>
                                             )}
-                                            <p className="text-[9px] text-gray-400 italic leading-tight">
-                                                * O histórico é alimentado automaticamente através da seção <strong>GESTÃO</strong> do painel.
-                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t">
-                                    <Button type="submit" className="bg-brand-blue text-white w-full rounded-xl h-12 text-lg font-bold" disabled={isSubmitting}>
-                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Salvar Alterações"}
+                                <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t gap-2">
+                                    {editingMinistry && (
+                                        <Button type="button" variant="outline" onClick={() => { setIsDialogOpen(false); setEditingMinistry(null); }} className="rounded-xl h-12 px-8">
+                                            Fechar
+                                        </Button>
+                                    )}
+                                    <Button type="submit" className="bg-brand-blue text-white flex-1 rounded-xl h-12 text-lg font-bold" disabled={isSubmitting}>
+                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : editingMinistry ? "Salvar Alterações" : "Criar Ministério e Adicionar Membros"}
                                     </Button>
                                 </DialogFooter>
                             </form>
@@ -369,15 +424,28 @@ export default function MinisteriosAdminPage() {
                                         </Button>
                                     </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-brand-blue italic">{ministry.nome}</h3>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold text-brand-blue italic leading-tight">{ministry.nome}</h3>
                                     <p className="text-gray-500 text-xs line-clamp-1 italic">
-                                        {ministry.descricao}
+                                        {ministry.descricao || "Sem descrição."}
                                     </p>
                                 </div>
+
+                                <div className="bg-gray-50 p-3 rounded-2xl flex items-center gap-3">
+                                    <Users className="w-4 h-4 text-brand-blue opacity-50" />
+                                    <div className="min-w-0">
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase leading-none mb-1">Coordenador Atual</p>
+                                        <p className="text-xs font-bold text-brand-blue truncate">
+                                            {ministry.currentCoordinator || "Não definido na Gestão"}
+                                        </p>
+                                    </div>
+                                </div>
+
                                 <div className="pt-2 border-t flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-400">
                                     <span>Ordem: {ministry.ordem}</span>
-                                    <span className="flex items-center gap-1"><Users className="w-3 h-3" /> Ver Detalhes</span>
+                                    <button onClick={() => openEdit(ministry)} className="flex items-center gap-1 hover:text-brand-blue transition-colors">
+                                        <Info className="w-3 h-3" /> Gerenciar
+                                    </button>
                                 </div>
                             </CardContent>
                         </Card>
